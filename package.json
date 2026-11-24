@@ -1,0 +1,12 @@
+{
+  "name": "nyc-in-compagnia",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PWA del viaggio a New York, 4-9 dicembre 2026",
+  "scripts": {
+    "start": "node server.js",
+    "admin": "node server.js admin",
+    "icons": "node tools/make-icons.js"
+  },
+  "engines": { "node": ">=20.12" }
+}
