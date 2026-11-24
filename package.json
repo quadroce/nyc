@@ -5,6 +5,8 @@
   "description": "PWA del viaggio a New York, 4-9 dicembre 2026",
   "scripts": {
     "start": "node server.js",
+    "check": "node tools/check-seed.js",
+    "build": "node tools/check-seed.js --stamp",
     "admin": "node server.js admin",
     "icons": "node tools/make-icons.js"
   },

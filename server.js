@@ -13,6 +13,8 @@ const ROOT = __dirname;
 try { process.loadEnvFile(path.join(ROOT, '.env')); } catch { /* .env facoltativo */ }
 
 const SEED = require('./data/seed.json');
+let BUILT_AT = null; // scritto da tools/check-seed.js durante la pubblicazione
+try { BUILT_AT = require('./data/build.json').builtAt || null; } catch { /* in locale non c'è */ }
 const DATA = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(ROOT, 'data');
 const PORT = Number(process.env.PORT) || 3000;
 const PLACES_KEY = process.env.GOOGLE_PLACES_API_KEY || '';
@@ -106,7 +108,8 @@ async function loadState(fresh) {
   if (!fresh && state && Date.now() - stateAt < 3000) return state;
   let s = await store.get('state', null);
   if (!s) {
-    s = { version: 1, updatedAt: new Date().toISOString(), changes: [], ...clone(SEED) };
+    // senza archivio il programma è il file pubblicato: vale la data di pubblicazione, non quella di avvio dell'istanza
+    s = { version: 1, updatedAt: readOnly() ? BUILT_AT : new Date().toISOString(), changes: [], ...clone(SEED) };
     await store.set('state', s);
   }
   state = s; stateAt = Date.now();

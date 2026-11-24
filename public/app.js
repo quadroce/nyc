@@ -72,9 +72,41 @@
 
   // ---------- cambi di programma ----------
   function pendingChanges() {
+    if (!data) return [];
+    if (data.readOnly) return localChanges();
     const seen = LS.get('seenVersion', null);
-    if (seen == null || !data) return [];
+    if (seen == null) return [];
     return (data.changes || []).filter((c) => c.entity === 'activity' && c.v > seen);
+  }
+  // Programma pubblicato come file, senza registro delle modifiche: il telefono confronta le attività
+  // con l'ultima copia che l'utente ha visto («baseline») e ricava da solo prima → dopo.
+  const DIFF_SKIP = ['id', 'updatedAt', 'sourceRef', 'order', 'lat', 'lng', 'coordsVerified', 'placeId'];
+  let diffCache = { key: null, list: [] };
+  function localChanges() {
+    const base = LS.get('baseline', null);
+    if (!base) return [];
+    if (diffCache.key === data.activities) return diffCache.list; // stesso oggetto dati: confronto già fatto
+    const at = LS.get('changedAt', null) || new Date().toISOString();
+    const prev = new Map(base.map((a) => [a.id, a]));
+    const next = new Map(data.activities.map((a) => [a.id, a]));
+    const list = [];
+    const entry = (a, action, fields = []) => list.push({ entity: 'activity', entityId: a.id, title: a.title, date: a.date, action, fields, at });
+    for (const [id, n] of next) {
+      const p = prev.get(id);
+      if (!p) { entry(n, 'create'); continue; }
+      const fields = Object.keys({ ...p, ...n }).filter((k) => !DIFF_SKIP.includes(k) && (p[k] ?? '') !== (n[k] ?? '')).map((k) => ({ f: k, before: p[k] ?? '', after: n[k] ?? '' }));
+      if (fields.length) entry(n, 'update', fields);
+    }
+    for (const [id, p] of prev) if (!next.has(id)) entry(p, 'delete');
+    diffCache = { key: data.activities, list };
+    return list;
+  }
+  function trackBaseline() {
+    if (!data.readOnly) return;
+    if (!LS.get('baseline', null)) return LS.set('baseline', data.activities); // prima visita: niente da segnalare
+    const changed = localChanges().length > 0;
+    if (changed && !LS.get('changedAt', null)) LS.set('changedAt', new Date().toISOString());
+    if (!changed) LS.set('changedAt', null);
   }
   const fmtVal = (f, v) => {
     if (v === '' || v == null) return '—';
@@ -114,7 +146,7 @@
       }
       const link = g.deleted ? '' : ` · <a href="#/programma/${esc(g.date)}/${esc(g.id)}">Apri la scheda</a>`;
       return `<li><b>${esc(g.title)}</b>${g.date ? ` · ${esc(fmtDay(g.date, { weekday: 'short', day: 'numeric', month: 'short' }))}` : ''}${body}
-        <span class="who">Modificato da ${esc(g.author || 'admin')}, ${esc(fmtInstant(g.at))}${link}</span></li>`;
+        <span class="who">${g.author ? `Modificato da ${esc(g.author)}, ` : 'Rilevato su questo telefono il '}${esc(fmtInstant(g.at))}${link}</span></li>`;
     }).join('');
     const off = net === 'offline' ? '<p class="note">Sei senza rete: potrebbe esistere una versione ancora più recente.</p>' : '';
     return `<section class="alert" aria-label="Cambio di programma"><h3>Cambio di programma</h3><ul>${items}</ul>${off}
@@ -240,6 +272,7 @@
       data = d; fetchedAt = new Date().toISOString(); net = 'ok';
       LS.set('data', d); LS.set('fetchedAt', fetchedAt);
       if (LS.get('seenVersion', null) == null) LS.set('seenVersion', d.version);
+      trackBaseline();
     } catch {
       net = 'offline';
     }
@@ -273,7 +306,8 @@
     const copy = fetchedAt ? fmtInstant(fetchedAt) : 'mai';
     el.className = net === 'offline' ? 'off' : '';
     el.textContent = net === 'offline' ? `Senza rete · stai leggendo la copia salvata il ${copy}`
-      : data ? `Programma aggiornato il ${fmtInstant(data.updatedAt)}` : '';
+      : !data ? '' : !data.readOnly ? `Programma aggiornato il ${fmtInstant(data.updatedAt)}`
+      : data.updatedAt ? `Programma pubblicato il ${fmtInstant(data.updatedAt)}` : `Programma scaricato il ${copy}`;
   }
 
   const badge = (cls, label) => `<span class="badge ${cls}">${esc(label)}</span>`;
@@ -483,9 +517,8 @@
       <p class="lead">Suggerimento: prima di partire apri l'app una volta con la rete e, in Google Maps, scarica l'area di New York.</p>
       <h2>Riservatezza</h2>
       <p class="lead">Chiunque abbia il link può leggere queste pagine: per questo non contengono biglietti, numeri di prenotazione o dati personali. La tua posizione non lascia il telefono, tranne le coordinate inviate quando premi «Cerca» in TrovaCibo.</p>
-      ${data.readOnly ? '<div class="alert plain">Su questo server il programma è in sola lettura: le modifiche degli amministratori non sono ancora attive.</div>' : ''}
-      <p class="meta">Versione del programma: ${data.version} · aggiornato il ${esc(fmtInstant(data.updatedAt))}</p>
-      <div class="actions">${admin ? '<a class="btn" href="#/admin">Pannello amministratore</a>' : '<button class="btn small" data-act="login">Accesso amministratori</button>'}
+      <p class="meta">${data.readOnly ? (data.updatedAt ? `Programma pubblicato il ${esc(fmtInstant(data.updatedAt))}` : 'Programma pubblicato dagli organizzatori') : `Versione del programma: ${data.version} · aggiornato il ${esc(fmtInstant(data.updatedAt))}`}</p>
+      <div class="actions">${admin ? '<a class="btn" href="#/admin">Pannello amministratore</a>' : data.readOnly ? '' : '<button class="btn small" data-act="login">Accesso amministratori</button>'}
         <button class="btn small" data-act="reload">Aggiorna ora</button></div>`;
   }
 
@@ -674,7 +707,7 @@
   });
 
   const ACTIONS = {
-    seen() { LS.set('seenVersion', data.version); render(); },
+    seen() { LS.set('seenVersion', data.version); if (data.readOnly) { LS.set('baseline', data.activities); LS.set('changedAt', null); diffCache = { key: null, list: [] }; } render(); },
     day(el) { location.hash = '#/programma/' + el.dataset.day; },
     'only-mine'() { onlyMine = !onlyMine; LS.set('onlyMine', onlyMine); render(); },
     interest(el) { const id = el.dataset.id; if (interest[id]) delete interest[id]; else interest[id] = true; LS.set('interest', interest); render(); },

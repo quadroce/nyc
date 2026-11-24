@@ -3,6 +3,36 @@
 PWA del viaggio a New York (4–9 dicembre 2026), dal documento di prodotto v0.2.
 Nessuna dipendenza da installare: serve solo Node.js 20.12 o successivo.
 
+## Modificare il programma (sito su Vercel)
+
+Il sito pubblicato legge il programma da `data/seed.json`. Per cambiarlo non serve nessun database:
+
+1. Apri [`data/seed.json`](data/seed.json) su GitHub e premi la matita (**Edit this file**). Funziona anche dal telefono.
+2. Modifica la tappa, poi **Commit changes** sul ramo `main`.
+3. Vercel ripubblica da solo in circa un minuto. Chi ha già aperto l'app vede l'avviso «Cambio di programma» con prima → dopo; chi la apre per la prima volta vede direttamente la versione nuova.
+
+Prima di pubblicare, Vercel esegue `npm run build`, che controlla il file (`tools/check-seed.js`). Se c'è un errore, per esempio una virgola di troppo o un orario scritto `8:40`, la pubblicazione si ferma, **resta online la versione precedente** e l'errore è leggibile nei log del deploy su Vercel. Dal PC lo stesso controllo è `npm run check`.
+
+Campi di una tappa (`activities`):
+
+| Campo | Valori |
+| --- | --- |
+| `date` | `2026-12-04` … `2026-12-09` |
+| `meetTime`, `time`, `endTime` | Ritrovo, inizio, fine: `HH:MM` ora di New York, oppure `""` |
+| `meetPlace` | Punto di ritrovo, se diverso dal luogo. Se contiene «hotel», «Portami qui» porta all'hotel |
+| `status` | `prenotato`, `proposto`, `da_confermare`, `facoltativo` |
+| `audience` | `tutti`, `facoltativo`, `sottogruppo` (con `audienceNote`, es. «3 persone») |
+| `type` | `ritrovo`, `visita`, `pasto`, `spostamento` |
+| `placeName`, `address` | Luogo e indirizzo completo usati per Google Maps |
+| `description`, `transportNote` | Testi liberi |
+| `id` | Non cambiarlo: serve a riconoscere la tappa. Per una tappa nuova inventane uno, es. `a-0612-brunch` |
+
+Le curiosità stanno in `pois`: `published: false` le nasconde, `linkedActivityId` le aggancia a una tappa. Le note della sezione Info sono in `config.infoNotes`, le opzioni di emergenza per il cibo in `config.foodFallback` (`name`, `address`, `note`).
+
+La pagina è pubblica, come il repository: niente numeri di prenotazione, biglietti o dati personali.
+
+In questa modalità il pannello Admin è spento. Per riaccenderlo basta collegare un archivio (vedi Pubblicazione).
+
 ## Avvio
 
 ```powershell
@@ -62,7 +92,7 @@ Serve **HTTPS** (obbligatorio per installare la PWA e per la posizione). L'archi
 | Supabase | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (o `SUPABASE_SECRET_KEY`) | Crea prima la tabella con `supabase/schema.sql`. Una riga per chiave nella tabella `nyc_kv` (nome modificabile con `SUPABASE_TABLE`). |
 | Redis via REST (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (o `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | Chiavi `nyc:*`. |
 | File | `DATA_DIR` (facoltativa) | Solo dove il disco è scrivibile e persistente (PC, VPS, Render, Fly). Dietro un proxy imposta `TRUST_PROXY=1`. |
-| Nessuno | | Sola lettura: il sito mostra il programma del seed, l'accesso admin è spento e lo dichiara. È il caso di Vercel senza variabili. |
+| Nessuno | | Il programma è `data/seed.json` e si modifica su GitHub (vedi sopra); il pannello Admin è spento. È la configurazione attuale su Vercel. |
 
 La chiave di servizio di Supabase dà accesso completo al progetto: va messa solo tra le variabili d'ambiente del server (su Vercel senza prefissi pubblici) e nel `.env` locale, mai nel repository.
 
