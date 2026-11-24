@@ -9,6 +9,7 @@ const seed = JSON.parse(fs.readFileSync(file, 'utf8'));
 
 const SRC = 'Schede redatte a novembre 2026 da fonti pubbliche; da ricontrollare sul posto';
 const SRC_VIA = 'https://www.davinotti.com/forum/location-verificate/vacanze-in-america/50002211';
+const SRC_FR = 'Elenco fornito dagli organizzatori (novembre 2026); da ricontrollare sul posto';
 const SET = 'set_verificato', AMB = 'ambientazione', ISP = 'ispirazione', STO = 'luogo_storico', CUR = 'curiosita';
 
 // [id, nome, categoria, legame, opera, indirizzo, zona, lat, lng, racconto, nota, extra]
@@ -198,7 +199,7 @@ const LIST = [
     'Lunedì 7: è davanti all\'uscita della metropolitana di Bowling Green.'],
   ['p-castle-clinton', 'Castle Clinton', 'storia', STO, '', 'Castle Clinton National Monument, Battery Park, New York, NY 10004', 'Downtown', 40.7035, -74.0168,
     'Prima di Ellis Island gli immigrati sbarcavano in questo forte rotondo: tra il 1855 e il 1890 ne passarono circa otto milioni.',
-    'Lunedì 7: è il punto dei controlli per il traghetto.', { linkedActivityId: 'a-0712-isole' }],
+    'Lunedì 7: i controlli per il traghetto sono dietro il forte, verso l\'acqua.', { linkedActivityId: 'a-0712-isole' }],
   ['p-wall-street', 'Wall Street', 'storia', STO, '', 'Wall St & Broad St, New York, NY 10005', 'Downtown', 40.7069, -74.0113,
     'Si chiama «via del muro» per la palizzata di legno che gli olandesi costruirono nel Seicento per difendere Nuova Amsterdam.',
     'Lunedì 7, cinque minuti da Bowling Green.'],
@@ -234,6 +235,50 @@ const LIST = [
   ['p-leone', "L'inquadratura di Sergio Leone", 'film', SET, "C'era una volta in America", 'Washington St & Water St, Brooklyn, NY 11201', 'Brooklyn', 40.7033, -73.9894,
     "Il Manhattan Bridge incorniciato tra i palazzi di mattoni è l'immagine del manifesto di C'era una volta in America.",
     'Lunedì 7.', { linkedActivityId: 'a-0712-dumbo' }],
+  // ---------- Dall'elenco degli organizzatori: negozi ----------
+  ['p-nintendo', 'Nintendo NEW YORK', 'ragazzi', CUR, '', '10 Rockefeller Plaza, New York, NY 10020', 'Midtown', 40.758, -73.979,
+    'Il negozio ufficiale Nintendo, su due piani, con console da provare e una piccola esposizione di vecchi videogiochi.',
+    "Venerdì 4 o sabato 5: è al Rockefeller Center, con l'ingresso sulla 48th Street.", { source: SRC_FR }],
+  ['p-lego', 'LEGO Store Fifth Avenue', 'ragazzi', CUR, '', '636 5th Ave, New York, NY 10020', 'Midtown', 40.7588, -73.9772,
+    'Il negozio LEGO più grande di New York, con sculture di mattoncini dedicate alla città.',
+    'Venerdì 4 o sabato 5: è sulla Fifth Avenue, di fronte al Rockefeller Center.', { source: SRC_FR }],
+
+  // ---------- Die Hard - Duri a morire ----------
+  ['p-dh-fed', 'Federal Reserve Bank', 'film', SET, 'Die Hard - Duri a morire', '33 Liberty St, New York, NY 10045', 'Downtown', 40.7084, -74.0087,
+    "È la banca al centro della rapina del film: nei sotterranei c'è davvero uno dei più grandi depositi d'oro del mondo. Si riconosce dall'esterno, sembra un palazzo fiorentino.",
+    'Lunedì 7: è a cinque minuti da Wall Street, da valutare se avanza tempo.', { source: SRC_FR }],
+  ['p-dh-oneill', "O'Neill Building", 'film', SET, 'Die Hard - Duri a morire', '655 6th Ave, New York, NY 10010', 'Chelsea e Flatiron', 40.7407, -73.9939,
+    "La facciata di questo palazzo con le due cupole dorate è quella del grande magazzino che esplode all'inizio del film.",
+    '', { source: SRC_FR }],
+  ['p-dh-72', 'La metro della 72nd Street', 'film', SET, 'Die Hard - Duri a morire', 'Broadway & W 72nd St, New York, NY 10023', 'Upper West Side', 40.7785, -73.9819,
+    'Davanti a questa stazione McClane e Zeus devono rispondere alla telefonata di Simon prima che scada il tempo.',
+    'Mercoledì 9: è a dieci minuti dal museo.', { source: SRC_FR }],
+  ['p-dh-tompkins', 'Tompkins Square Park', 'film', SET, 'Die Hard - Duri a morire', 'Avenue A & E 7th St, New York, NY 10009', 'Village e SoHo', 40.7265, -73.9818,
+    "Qui si svolge l'enigma delle due taniche da 3 e 5 galloni. La fontana del film era un elemento di scena: non cercatela.",
+    '', { source: SRC_FR }],
+  ['p-dh-zeus', 'Il negozio di Zeus', 'film', SET, 'Die Hard - Duri a morire', '188 Audubon Ave, New York, NY 10033', 'Nord di Manhattan (fuori zona)', 40.845, -73.9357,
+    'Il negozio di Zeus nel film è a questo indirizzo di Washington Heights.',
+    'Fuori zona: nessuna deviazione prevista.', { source: SRC_FR }],
+  ['p-dh-cartello', "L'incrocio del cartello", 'film', SET, 'Die Hard - Duri a morire', 'Audubon Ave & W 176th St, New York, NY 10033', 'Nord di Manhattan (fuori zona)', 40.8463, -73.9351,
+    "La scena in cui McClane è costretto a stare all'incrocio con un cartello addosso è girata qui. I cartelli stradali furono cambiati per far sembrare il posto Harlem.",
+    'Fuori zona: nessuna deviazione prevista.', { source: SRC_FR }],
+  ['p-dh-yankee', 'Yankee Stadium', 'film', AMB, 'Die Hard - Duri a morire', '1 E 161st St, Bronx, NY 10451', 'Bronx (fuori zona)', 40.8296, -73.9262,
+    "Lo stadio compare nel film, ma quello di oggi è diverso: il vecchio impianto del 1995 è stato sostituito nel 2009.",
+    'Fuori zona: nessuna deviazione prevista.', { source: SRC_FR }],
+
+  // ---------- Spider-Man (2002) e Marvel ----------
+  ['p-columbia', 'Columbia University', 'marvel', SET, 'Spider-Man (2002)', 'Broadway & W 116th St, New York, NY 10027', 'Nord di Manhattan (fuori zona)', 40.8075, -73.9626,
+    "È la zona della gita scolastica in cui Peter Parker viene morso dal ragno.",
+    'Fuori zona. Le guide alle location non sono tutte concordi su questa scena.', { source: SRC_FR }],
+  ['p-oscorp', 'La sede della Oscorp', 'marvel', SET, 'Spider-Man (2002)', '135 E 57th St, New York, NY 10022', 'Midtown East', 40.7611, -73.969,
+    "Gli esterni della Oscorp di Norman Osborn sono quelli di questo palazzo con l'ingresso ad arco rientrante.",
+    "A dieci minuti a piedi dall'hotel, lungo Lexington Avenue.", { source: SRC_FR }],
+  ['p-casa-parker', 'La casa di Peter e zia May', 'marvel', SET, 'Spider-Man (2002)', '88-39 69th Rd, Forest Hills, NY 11375', 'Queens (fuori zona)', 40.7108, -73.856,
+    'Gli esterni della casa dei Parker sono in questa via di Forest Hills, nel Queens, lo stesso quartiere dove Peter abita nei fumetti.',
+    'Fuori zona, ed è una casa privata: nessuna deviazione prevista.', { source: SRC_FR }],
+  ['p-hawkeye', 'La pista di Hawkeye', 'marvel', AMB, 'Hawkeye', '30 Rockefeller Plaza, New York, NY 10112', 'Midtown', 40.7587, -73.9787,
+    "Il finale natalizio della serie Hawkeye è ambientato sulla pista di ghiaccio e attorno all'albero del Rockefeller Center. La scena fu ricostruita su un set.",
+    'Venerdì 4 e sabato 5.', { source: SRC_FR }],
 ];
 
 // Bozze Marvel già presenti: testo verificato e pubblicazione. Quella senza opera viene tolta.
@@ -245,6 +290,11 @@ const UPDATE = {
   'p-marvel-times-square': { linkType: SET, work: 'Captain America: Il primo Vendicatore', context: 'Nel finale del film Steve Rogers si risveglia dopo settant\'anni, scappa in strada e si ritrova in mezzo agli schermi di Times Square.', note: 'Martedì 8.' },
   'p-marvel-bleecker': { linkType: AMB, work: 'Doctor Strange', zone: 'Village e SoHo', context: "Nei fumetti e nei film il Sanctum Sanctorum di Doctor Strange si trova al 177A di Bleecker Street. È un indirizzo narrativo: il palazzo del film non esiste.", note: 'Curiosità facoltativa, non una tappa.' },
 };
+// Precisazioni a schede già presenti
+Object.assign(UPDATE, {
+  'p-dyker': { address: '83rd–84th St tra 11th e 13th Ave, Brooklyn, NY 11228', note: "Non è un indirizzo solo: le case decorate sono in questa zona. Il tour ha un suo punto di ritrovo, da verificare sul voucher." },
+  'p-brooklyn-bridge': { note: "Idea in più, non una tappa: da DUMBO la passerella pedonale si prende all'angolo tra Washington Street e Prospect Street." },
+});
 const DROP = new Set(['p-marvel-rockefeller']);
 const ZONE = { Chelsea: 'Chelsea e Flatiron', 'Greenwich Village': 'Village e SoHo', 'Downtown / Brooklyn': 'Downtown' };
 
@@ -255,11 +305,25 @@ const added = LIST.map(([id, name, category, linkType, work, address, zone, lat,
 const ids = new Set(added.map((p) => p.id));
 const kept = seed.pois.filter((p) => !ids.has(p.id) && !DROP.has(p.id)).map((p) => {
   const u = UPDATE[p.id];
-  const out = u ? { ...p, ...u, published: true, source: SRC } : { ...p };
+  const out = u ? { ...p, ...u, published: true, source: p.source || SRC } : { ...p };
   if (ZONE[out.zone]) out.zone = ZONE[out.zone];
   return out;
 });
 seed.pois = [...kept, ...added];
+
+// Ristoranti proposti dagli organizzatori, non prenotati: compaiono in TrovaCibo anche senza rete.
+const NOTE = 'Proposto, non prenotato: verificare apertura e posto.';
+seed.config.foodFallback = [
+  ['Carnegie Diner & Café, Times Square', '828 8th Ave, New York, NY 10019', 'Diner. Zona Times Square.'],
+  ["Rosie O'Grady's", '148 W 51st St, New York, NY 10019', 'Vicino al Rockefeller Center e a Times Square.'],
+  ['Revel & Rye', '1535 Broadway, New York, NY 10036', "All'ottavo piano del Marriott Marquis, a Times Square."],
+  ["Virgil's Real BBQ", '152 W 44th St, New York, NY 10036', 'Barbecue. Zona Times Square.'],
+  ['Bubba Gump Shrimp Co.', '1501 Broadway, New York, NY 10036', 'A Times Square.'],
+  ['Hard Rock Cafe Times Square', '1501 Broadway, New York, NY 10036', 'A Times Square.'],
+  ['Time Out Market New York', '55 Water St, Brooklyn, NY 11201', 'Mercato con tanti banchi: comodo per dividersi. A DUMBO, per la sera di lunedì 7.'],
+  ['Carnegie Diner & Café, Brooklyn', '445 Gold St, Brooklyn, NY 11201', 'Diner. Downtown Brooklyn.'],
+  ["Junior's", '386 Flatbush Ave Ext, Brooklyn, NY 11201', 'Famoso per la cheesecake. Downtown Brooklyn.'],
+].map(([name, address, note]) => ({ name, address, note: `${note} ${NOTE}` }));
 fs.writeFileSync(file, JSON.stringify(seed, null, 2) + '\n');
 const by = {};
 for (const p of seed.pois) by[p.category] = (by[p.category] || 0) + 1;
