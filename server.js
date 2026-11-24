@@ -1,6 +1,8 @@
 'use strict';
 // NYC in compagnia — server senza dipendenze (Node >= 20).
 // Serve la PWA, custodisce il programma, verifica il codice admin e fa da proxy a Google Places.
+// Archivio: Redis via REST (Upstash / Vercel KV) se configurato, altrimenti file in data/.
+// Su un hosting senza disco scrivibile e senza Redis parte in sola lettura dal seed.
 
 const http = require('http');
 const fs = require('fs');
@@ -10,43 +12,89 @@ const crypto = require('crypto');
 const ROOT = __dirname;
 try { process.loadEnvFile(path.join(ROOT, '.env')); } catch { /* .env facoltativo */ }
 
-const PUB = path.join(ROOT, 'public');
+const SEED = require('./data/seed.json');
 const DATA = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(ROOT, 'data');
 const PORT = Number(process.env.PORT) || 3000;
 const PLACES_KEY = process.env.GOOGLE_PLACES_API_KEY || '';
 const PLACES_DAILY_BUDGET = Number(process.env.PLACES_DAILY_BUDGET) || 150;
 const SESSION_MS = (Number(process.env.ADMIN_SESSION_MINUTES) || 120) * 60 * 1000;
-const TRUST_PROXY = process.env.TRUST_PROXY === '1';
+const TRUST_PROXY = process.env.TRUST_PROXY === '1' || Boolean(process.env.VERCEL);
+const KV_URL = (process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '').replace(/\/+$/, '');
+const KV_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
+const KV_PREFIX = process.env.KV_PREFIX || 'nyc:';
 
-const F = {
-  seed: path.join(ROOT, 'data', 'seed.json'),
-  state: path.join(DATA, 'state.json'),
-  snapshots: path.join(DATA, 'snapshots.json'),
-  admins: path.join(DATA, 'admins.json'),
-  usage: path.join(DATA, 'places-usage.json'),
+// File serviti: elenco esplicito, così ogni hosting li include nel pacchetto e non esistono percorsi arbitrari.
+const STATIC = {
+  '/index.html': path.join(__dirname, 'public', 'index.html'),
+  '/app.js': path.join(__dirname, 'public', 'app.js'),
+  '/styles.css': path.join(__dirname, 'public', 'styles.css'),
+  '/sw.js': path.join(__dirname, 'public', 'sw.js'),
+  '/manifest.webmanifest': path.join(__dirname, 'public', 'manifest.webmanifest'),
+  '/icon.svg': path.join(__dirname, 'public', 'icon.svg'),
+  '/icon-192.png': path.join(__dirname, 'public', 'icon-192.png'),
+  '/icon-512.png': path.join(__dirname, 'public', 'icon-512.png'),
 };
 
 // ---------- archiviazione ----------
-const readJson = (file, fallback) => {
-  try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return fallback; }
-};
-const writeJson = (file, value) => {
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  const tmp = file + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(value, null, 2));
-  fs.renameSync(tmp, file);
-};
 const clone = (v) => JSON.parse(JSON.stringify(v));
+const fileOf = (key) => path.join(DATA, key + '.json');
+let backend = KV_URL && KV_TOKEN ? 'kv' : 'file'; // 'kv' | 'file' | 'memory' (sola lettura)
+const memory = new Map();
 
-let state = readJson(F.state, null);
-if (!state) {
-  const seed = readJson(F.seed, null);
-  if (!seed) { console.error('Manca data/seed.json'); process.exit(1); }
-  state = { version: 1, updatedAt: new Date().toISOString(), changes: [], ...seed };
-  writeJson(F.state, state);
+async function kv(cmd) {
+  const res = await fetch(KV_URL, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${KV_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(cmd),
+    signal: AbortSignal.timeout(8000),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || json.error) throw new Error(`Archivio Redis: ${json.error || res.status}`);
+  return json.result;
 }
-let snapshots = readJson(F.snapshots, []);
-let admins = readJson(F.admins, []);
+const store = {
+  async get(key, fallback) {
+    if (backend === 'kv') { const v = await kv(['GET', KV_PREFIX + key]); return v == null ? fallback : JSON.parse(v); }
+    if (backend === 'memory') return memory.has(key) ? memory.get(key) : fallback;
+    try { return JSON.parse(fs.readFileSync(fileOf(key), 'utf8')); } catch { return fallback; }
+  },
+  async set(key, value) {
+    if (backend === 'kv') return void await kv(['SET', KV_PREFIX + key, JSON.stringify(value)]);
+    if (backend === 'memory') return void memory.set(key, value);
+    fs.mkdirSync(DATA, { recursive: true });
+    const tmp = fileOf(key) + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(value, null, 2));
+    fs.renameSync(tmp, fileOf(key));
+  },
+};
+const readOnly = () => backend === 'memory';
+
+let state = null;
+let stateAt = 0;
+let secret = '';
+let ready = null;
+function init() {
+  return ready ||= (async () => {
+    if (backend === 'file') {
+      try { fs.mkdirSync(DATA, { recursive: true }); fs.writeFileSync(path.join(DATA, '.probe'), ''); fs.unlinkSync(path.join(DATA, '.probe')); }
+      catch { backend = 'memory'; console.log('Disco non scrivibile e nessun archivio Redis configurato: avvio in sola lettura dal seed.'); }
+    }
+    await loadState(true);
+    secret = process.env.SESSION_SECRET || await store.get('secret', '');
+    if (!secret) { secret = crypto.randomBytes(32).toString('hex'); await store.set('secret', secret); }
+  })().catch((e) => { ready = null; throw e; });
+}
+// Ogni istanza rilegge l'archivio (al più ogni 3 secondi): su un hosting serverless le istanze sono tante e senza memoria comune.
+async function loadState(fresh) {
+  if (!fresh && state && Date.now() - stateAt < 3000) return state;
+  let s = await store.get('state', null);
+  if (!s) {
+    s = { version: 1, updatedAt: new Date().toISOString(), changes: [], ...clone(SEED) };
+    await store.set('state', s);
+  }
+  state = s; stateAt = Date.now();
+  return state;
+}
 
 // ---------- amministratori ----------
 const normCode = (c) => String(c || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -58,62 +106,48 @@ const newCode = () => {
   for (let i = 0; i < 12; i++) s += abc[b[i] % abc.length] + (i % 4 === 3 && i < 11 ? '-' : '');
   return s;
 };
-const setAdmin = (name) => {
+const getAdmins = () => store.get('admins', []);
+async function setAdmin(name) {
   const code = newCode();
   const salt = crypto.randomBytes(16).toString('hex');
   const rec = { name, salt, hash: hashCode(code, salt), createdAt: new Date().toISOString() };
-  admins = admins.filter((a) => a.name.toLowerCase() !== name.toLowerCase()).concat(rec);
-  writeJson(F.admins, admins);
-  return code;
-};
-const findAdminByCode = (code) => {
-  admins = readJson(F.admins, []); // riletto: i codici si aggiungono o revocano da riga di comando a server acceso
+  const admins = (await getAdmins()).filter((a) => a.name.toLowerCase() !== name.toLowerCase()).concat(rec);
+  await store.set('admins', admins);
+  return { code, rec };
+}
+async function findAdminByCode(code) {
   let found = null;
-  for (const a of admins) { // confronta sempre con tutti: tempo indipendente dall'esito
+  for (const a of await getAdmins()) { // confronta sempre con tutti: tempo indipendente dall'esito
     const h = Buffer.from(hashCode(code, a.salt), 'hex');
     if (crypto.timingSafeEqual(h, Buffer.from(a.hash, 'hex'))) found = a;
   }
   return found;
-};
-
-// CLI: node server.js admin add|revoke|list [nome]
-if (process.argv[2] === 'admin') {
-  const [, , , cmd, ...rest] = process.argv;
-  const name = rest.join(' ').trim();
-  if (cmd === 'add' && name) {
-    const code = setAdmin(name);
-    console.log(`Codice amministratore per "${name}" (mostrato una sola volta, non viene salvato in chiaro):\n\n   ${code}\n`);
-  } else if (cmd === 'revoke' && name) {
-    const before = admins.length;
-    admins = admins.filter((a) => a.name.toLowerCase() !== name.toLowerCase());
-    writeJson(F.admins, admins);
-    console.log(before === admins.length ? `Nessun amministratore "${name}".` : `Codice di "${name}" revocato. Le sue sessioni aperte smettono subito di funzionare.`);
-  } else if (cmd === 'list') {
-    console.log(admins.length ? admins.map((a) => `- ${a.name} (dal ${a.createdAt.slice(0, 10)})`).join('\n') : 'Nessun amministratore.');
-  } else {
-    console.log('Uso: node server.js admin add <nome> | revoke <nome> | list');
-  }
-  process.exit(0);
 }
 
-const sessions = new Map(); // token -> { name, exp }
-const loginFails = new Map(); // ip -> [timestamps]
+// Sessione = gettone firmato (nessuna memoria sul server). Decade alla scadenza, o se il codice viene cambiato o revocato.
+const sign = (body) => crypto.createHmac('sha256', secret).update(body).digest('hex');
+function newSession(a) {
+  const exp = Date.now() + SESSION_MS;
+  const body = Buffer.from(JSON.stringify({ n: a.name, e: exp, f: a.hash.slice(0, 16) })).toString('base64url');
+  return { token: `${body}.${sign(body)}`, name: a.name, exp };
+}
+async function sessionOf(req) {
+  const m = /^Bearer ([\w-]{10,400})\.([a-f0-9]{64})$/.exec(req.headers.authorization || '');
+  if (!m || !crypto.timingSafeEqual(Buffer.from(sign(m[1])), Buffer.from(m[2]))) return null;
+  let p;
+  try { p = JSON.parse(Buffer.from(m[1], 'base64url').toString('utf8')); } catch { return null; }
+  if (!(p.e > Date.now())) return null;
+  const a = (await getAdmins()).find((x) => x.name === p.n && x.hash.slice(0, 16) === p.f);
+  return a ? { name: a.name, exp: p.e } : null;
+}
+
 const FAIL_WINDOW = 15 * 60 * 1000;
 const FAIL_MAX = 5;
-const recentFails = (ip) => {
-  const list = (loginFails.get(ip) || []).filter((t) => Date.now() - t < FAIL_WINDOW);
-  loginFails.set(ip, list);
-  return list;
-};
-const sessionOf = (req) => {
-  const m = /^Bearer ([a-f0-9]{64})$/.exec(req.headers.authorization || '');
-  if (!m) return null;
-  const s = sessions.get(m[1]);
-  if (!s) return null;
-  admins = readJson(F.admins, admins);
-  if (s.exp < Date.now() || !admins.some((a) => a.name === s.name)) { sessions.delete(m[1]); return null; }
-  return { ...s, token: m[1] };
-};
+async function recentFails(ip) {
+  const all = await store.get('fails', {});
+  for (const k of Object.keys(all)) { all[k] = all[k].filter((t) => Date.now() - t < FAIL_WINDOW); if (!all[k].length) delete all[k]; }
+  return { all, list: all[ip] || [] };
+}
 
 // ---------- validazione ----------
 const ENUMS = {
@@ -263,7 +297,8 @@ function diffState(prev, next) {
 }
 const editable = (s) => ({ activities: s.activities, pois: s.pois, config: s.config });
 
-function mutate(author, fn) {
+async function mutate(author, fn) {
+  await loadState(true); // sempre dall'archivio: un altro admin (o un'altra istanza) può aver appena salvato
   const prev = clone(editable(state));
   const next = clone(prev);
   fn(next);
@@ -278,11 +313,11 @@ function mutate(author, fn) {
       if (item) item.updatedAt = at;
     }
   }
-  snapshots.push({ version: state.version, at, data: prev });
-  snapshots = snapshots.slice(-40);
-  state = { ...state, ...next, version: v, updatedAt: at, changes: state.changes.concat(entries).slice(-300) };
-  writeJson(F.snapshots, snapshots);
-  writeJson(F.state, state);
+  const snapshots = (await store.get('snapshots', [])).concat({ version: state.version, at, data: prev }).slice(-40);
+  const saved = { ...state, ...next, version: v, updatedAt: at, changes: state.changes.concat(entries).slice(-300) };
+  await store.set('snapshots', snapshots);
+  await store.set('state', saved);
+  state = saved; stateAt = Date.now();
   return true;
 }
 
@@ -296,6 +331,7 @@ const publicData = (isAdmin) => ({
   // ai lettori servono solo i cambi di programma; le bozze POI restano riservate agli admin
   changes: (isAdmin ? state.changes : state.changes.filter((c) => c.entity === 'activity')).slice(-80),
   foodSearch: Boolean(PLACES_KEY),
+  readOnly: readOnly(),
 });
 
 // ---------- TrovaCibo (proxy Google Places, API "New") ----------
@@ -347,10 +383,10 @@ async function foodSearch(q, ip) {
   if (hit && Date.now() - hit.at < 10 * 60 * 1000) return hit.payload;
 
   const today = new Date().toISOString().slice(0, 10);
-  let usage = readJson(F.usage, { date: today, count: 0 });
+  let usage = await store.get('usage', { date: today, count: 0 });
   if (usage.date !== today) usage = { date: today, count: 0 };
   if (usage.count >= PLACES_DAILY_BUDGET) throw new Bad('Limite giornaliero di ricerche raggiunto. Usa le opzioni salvate dal gruppo.', 429);
-  usage.count++; writeJson(F.usage, usage);
+  usage.count++; await store.set('usage', usage);
 
   let places;
   try {
@@ -358,7 +394,7 @@ async function foodSearch(q, ip) {
   } catch (e) {
     if (e.status !== 400) throw new Bad('Google Places non risponde: riprova o usa le opzioni salvate.', 502);
     // un nome di tipo non riconosciuto invalida l'intera richiesta: riprova in forma minima e filtra qui
-    usage.count++; writeJson(F.usage, usage);
+    usage.count++; await store.set('usage', usage);
     try { places = await placesNearby(lat, lng, radius, ['restaurant'], []); }
     catch { throw new Bad('Google Places ha rifiutato la richiesta: controlla chiave e tipi configurati.', 502); }
   }
@@ -383,7 +419,7 @@ async function foodSearch(q, ip) {
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8', '.webmanifest': 'application/manifest+json; charset=utf-8',
-  '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon',
+  '.svg': 'image/svg+xml', '.png': 'image/png',
 };
 const SEC = {
   'X-Content-Type-Options': 'nosniff',
@@ -409,11 +445,13 @@ const readBody = (req) => new Promise((resolve, reject) => {
 });
 const ipOf = (req) => (TRUST_PROXY && String(req.headers['x-forwarded-for'] || '').split(',')[0].trim()) || req.socket.remoteAddress || '?';
 const newId = (p) => p + '-' + crypto.randomBytes(4).toString('hex');
+const NO_STORE = 'Su questo server le modifiche non sono attive: manca un archivio (Redis o disco scrivibile).';
 
 async function api(req, res, url) {
   const p = url.pathname;
   const m = req.method;
-  const sess = sessionOf(req);
+  await loadState();
+  const sess = await sessionOf(req);
   const needAdmin = () => { if (!sess) throw new Bad('Sessione amministratore scaduta o assente.', 401); return sess; };
 
   if (m === 'GET' && p === '/api/data') return send(res, 200, { ...publicData(Boolean(sess)), admin: sess ? { name: sess.name, exp: sess.exp } : null });
@@ -421,40 +459,38 @@ async function api(req, res, url) {
   if (m === 'GET' && p === '/api/food') return send(res, 200, await foodSearch(url.searchParams, ipOf(req)));
 
   if (m === 'POST' && p === '/api/admin/login') {
+    if (readOnly()) throw new Bad(NO_STORE, 503);
     const ip = ipOf(req);
-    const fails = recentFails(ip);
-    if (fails.length >= FAIL_MAX) throw new Bad('Troppi tentativi: riprova tra 15 minuti.', 429);
+    const { all, list } = await recentFails(ip);
+    if (list.length >= FAIL_MAX) throw new Bad('Troppi tentativi: riprova tra 15 minuti.', 429);
     const { code } = await readBody(req);
-    const a = normCode(code).length >= 8 ? findAdminByCode(code) : null;
-    if (!a) { fails.push(Date.now()); throw new Bad('Codice non valido.', 401); }
-    const token = crypto.randomBytes(32).toString('hex');
-    const exp = Date.now() + SESSION_MS;
-    sessions.set(token, { name: a.name, exp });
-    return send(res, 200, { token, name: a.name, exp });
+    const a = normCode(code).length >= 8 ? await findAdminByCode(code) : null;
+    if (!a) { all[ip] = list.concat(Date.now()); await store.set('fails', all); throw new Bad('Codice non valido.', 401); }
+    return send(res, 200, newSession(a));
   }
-  if (m === 'POST' && p === '/api/admin/logout') { if (sess) sessions.delete(sess.token); return send(res, 200, { ok: true }); }
+  if (m === 'POST' && p === '/api/admin/logout') return send(res, 200, { ok: true }); // il gettone viene scartato dal telefono
   if (m === 'POST' && p === '/api/admin/rotate') {
     const s = needAdmin();
-    const code = setAdmin(s.name);
-    for (const [t, v] of sessions) if (v.name === s.name && t !== s.token) sessions.delete(t);
-    return send(res, 200, { code });
+    const { code, rec } = await setAdmin(s.name); // il vecchio codice e le vecchie sessioni decadono subito
+    return send(res, 200, { code, ...newSession(rec) });
   }
   if (m === 'GET' && p === '/api/admin/history') {
     needAdmin();
-    return send(res, 200, { changes: state.changes.slice(-150), snapshots: snapshots.map((s) => s.version), admins: admins.map((a) => a.name) });
+    const snapshots = await store.get('snapshots', []);
+    return send(res, 200, { changes: state.changes.slice(-150), snapshots: snapshots.map((s) => s.version), admins: (await getAdmins()).map((a) => a.name) });
   }
   if (m === 'POST' && p === '/api/admin/restore') {
     const s = needAdmin();
     const { version } = await readBody(req);
-    const snap = snapshots.find((x) => x.version === Number(version));
+    const snap = (await store.get('snapshots', [])).find((x) => x.version === Number(version));
     if (!snap) throw new Bad('Versione non più disponibile nella cronologia.', 404);
-    mutate(s.name, (next) => Object.assign(next, clone(snap.data)));
+    await mutate(s.name, (next) => Object.assign(next, clone(snap.data)));
     return send(res, 200, { ok: true, version: state.version });
   }
   if (m === 'PUT' && p === '/api/config') {
     const s = needAdmin();
     const patch = cleanConfig(await readBody(req));
-    mutate(s.name, (next) => Object.assign(next.config, patch));
+    await mutate(s.name, (next) => Object.assign(next.config, patch));
     return send(res, 200, { ok: true, version: state.version });
   }
 
@@ -465,17 +501,19 @@ async function api(req, res, url) {
     const id = r[2];
     if (m === 'POST' && !id) {
       const item = { id: newId(kind === 'activity' ? 'a' : 'p'), ...clean(kind, await readBody(req), false) };
-      mutate(s.name, (next) => next[r[1]].push(item));
+      await mutate(s.name, (next) => next[r[1]].push(item));
       return send(res, 201, { ok: true, id: item.id, version: state.version });
     }
-    if (!id || !state[r[1]].some((x) => x.id === id)) throw new Bad('Elemento non trovato.', 404);
+    const missing = () => new Bad('Elemento non trovato.', 404);
+    if (!id) throw missing();
     if (m === 'PUT') {
       const patch = clean(kind, await readBody(req), true);
-      mutate(s.name, (next) => Object.assign(next[r[1]].find((x) => x.id === id), patch));
+      await mutate(s.name, (next) => { const item = next[r[1]].find((x) => x.id === id); if (!item) throw missing(); Object.assign(item, patch); });
       return send(res, 200, { ok: true, version: state.version });
     }
     if (m === 'DELETE') {
-      mutate(s.name, (next) => {
+      await mutate(s.name, (next) => {
+        if (!next[r[1]].some((x) => x.id === id)) throw missing();
         next[r[1]] = next[r[1]].filter((x) => x.id !== id);
         if (kind === 'activity') next.pois.forEach((x) => { if (x.linkedActivityId === id) x.linkedActivityId = ''; });
       });
@@ -486,23 +524,25 @@ async function api(req, res, url) {
 }
 
 function serveStatic(req, res, url) {
-  let rel = decodeURIComponent(url.pathname);
-  if (rel === '/') rel = '/index.html';
-  const file = path.normalize(path.join(PUB, rel));
-  if (!file.startsWith(PUB + path.sep)) return send(res, 403, 'Vietato');
+  const rel = url.pathname === '/' ? '/index.html' : url.pathname;
+  const file = STATIC[rel];
+  if (!file) return send(res, 404, 'Non trovato');
   fs.readFile(file, (err, buf) => {
-    if (err) return send(res, 404, 'Non trovato');
-    const ext = path.extname(file).toLowerCase();
-    res.writeHead(200, { ...SEC, 'Content-Type': MIME[ext] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
+    if (err) {
+      // se l'hosting serve public/ per conto suo, la pagina è comunque raggiungibile come /index.html
+      if (url.pathname === '/') { res.writeHead(302, { ...SEC, Location: '/index.html' }); return res.end(); }
+      return send(res, 404, 'Non trovato');
+    }
+    res.writeHead(200, { ...SEC, 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
     res.end(req.method === 'HEAD' ? undefined : buf);
   });
 }
 
-const server = http.createServer(async (req, res) => {
+async function handle(req, res) {
   let url;
   try { url = new URL(req.url, 'http://localhost'); } catch { return send(res, 400, 'Richiesta non valida'); }
   if (url.pathname.startsWith('/api/')) {
-    try { await api(req, res, url); }
+    try { await init(); await api(req, res, url); }
     catch (e) {
       if (e instanceof Bad) return send(res, e.code, { error: e.message });
       console.error(e);
@@ -512,10 +552,34 @@ const server = http.createServer(async (req, res) => {
   }
   if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Metodo non ammesso');
   serveStatic(req, res, url);
-});
+}
 
-server.listen(PORT, () => {
-  console.log(`NYC in compagnia: http://localhost:${PORT}  (dati in ${DATA})`);
-  if (!admins.length) console.log('Nessun amministratore configurato. Crea il primo con:  node server.js admin add Francesco');
-  if (!PLACES_KEY) console.log('GOOGLE_PLACES_API_KEY assente: TrovaCibo mostra solo le opzioni salvate dal gruppo.');
-});
+// CLI: node server.js admin add|revoke|list [nome]   (usa lo stesso archivio del server: file locali o Redis se configurato in .env)
+async function cli() {
+  const [, , , cmd, ...rest] = process.argv;
+  const name = rest.join(' ').trim();
+  await init();
+  if (readOnly()) return console.log(NO_STORE);
+  const admins = await getAdmins();
+  if (cmd === 'add' && name) {
+    const { code } = await setAdmin(name);
+    console.log(`Codice amministratore per "${name}" (mostrato una sola volta, non viene salvato in chiaro):\n\n   ${code}\n\nArchivio: ${backend === 'kv' ? 'Redis' : DATA}`);
+  } else if (cmd === 'revoke' && name) {
+    const left = admins.filter((a) => a.name.toLowerCase() !== name.toLowerCase());
+    await store.set('admins', left);
+    console.log(left.length === admins.length ? `Nessun amministratore "${name}".` : `Codice di "${name}" revocato. Le sue sessioni aperte smettono subito di funzionare.`);
+  } else if (cmd === 'list') {
+    console.log(admins.length ? admins.map((a) => `- ${a.name} (dal ${a.createdAt.slice(0, 10)})`).join('\n') : 'Nessun amministratore.');
+  } else {
+    console.log('Uso: node server.js admin add <nome> | revoke <nome> | list');
+  }
+}
+
+if (process.argv[2] === 'admin') {
+  cli().catch((e) => { console.error(e.message); process.exitCode = 1; });
+} else {
+  http.createServer(handle).listen(PORT, () => {
+    console.log(`NYC in compagnia: http://localhost:${PORT}  (archivio: ${backend === 'kv' ? 'Redis' : DATA})`);
+    if (!PLACES_KEY) console.log('GOOGLE_PLACES_API_KEY assente: TrovaCibo mostra solo le opzioni salvate dal gruppo.');
+  });
+}

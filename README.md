@@ -35,7 +35,7 @@ Calendario: ogni scheda apre la creazione evento di Google Calendar (fuso `Ameri
 ## Dati
 
 - `data/seed.json`: contenuto iniziale. Alla prima partenza viene copiato in `data/state.json`, che da lì in poi è l'archivio vero (modificato dalla PWA).
-- `data/snapshots.json`: ultime 40 versioni, per il ripristino. `data/admins.json`: impronte dei codici.
+- `data/snapshots.json`: ultime 40 versioni, per il ripristino. `data/admins.json`: impronte dei codici. Con Redis le stesse voci sono chiavi `nyc:*`.
 - Per ripartire dal seed: ferma il server e cancella `data/state.json` e `data/snapshots.json`.
 
 Il programma nel seed viene dal memo «La Grande Mela in compagnia» (prima bozza, 26 ottobre 2026), convertito da `tools/import-memo.js`: 27 attività, con ritrovo distinto dall'orario della visita, e le schede «Due righe per orientarsi» come curiosità collegate alle tappe. La partita NFL del 6 non è nel memo: resta come attività di sottogruppo senza dettagli. Da qui in avanti il programma si modifica nella PWA, non nel seed.
@@ -55,7 +55,19 @@ Copia `.env.example` in `.env` e inserisci `GOOGLE_PLACES_API_KEY` (Places API �
 
 ## Pubblicazione
 
-Serve un hosting Node con **HTTPS** (obbligatorio per installare la PWA e per la posizione) e un **disco persistente** per `DATA_DIR`. Dietro un proxy imposta `TRUST_PROXY=1`.
+Serve **HTTPS** (obbligatorio per installare la PWA e per la posizione). L'archivio si sceglie da solo:
+
+| Dove gira | Archivio | Cosa fare |
+| --- | --- | --- |
+| Vercel o altro serverless | Redis via REST (Upstash) | Aggiungi al progetto un database Upstash Redis dal Marketplace di Vercel: le variabili `KV_REST_API_URL` e `KV_REST_API_TOKEN` (o `UPSTASH_REDIS_REST_URL` / `_TOKEN`) vengono lette da sole. Poi rifai il deploy. |
+| Server con disco (Render, Fly, VPS, PC) | File in `DATA_DIR` | Monta un disco persistente e imposta `DATA_DIR`. Dietro un proxy imposta `TRUST_PROXY=1`. |
+| Nessuno dei due | Sola lettura | Il sito mostra il programma del seed; l'accesso admin è spento e lo dichiara. |
+
+**Codice admin con Redis**: metti le stesse due variabili nel `.env` locale (da Vercel: Settings → Environment Variables, oppure `vercel env pull`) e lancia `node server.js admin add Francesco`. Il comando scrive nello stesso archivio del sito.
+
+Le sessioni admin sono gettoni firmati che durano 2 ore; decadono subito se il codice viene cambiato o revocato. «Esci» scarta il gettone dal telefono.
+
+Con Redis il programma **non** si aggiorna più da `data/seed.json` dopo il primo avvio: l'archivio vero è Redis. Per ripartire dal seed cancella la chiave `nyc:state`.
 
 ## Non incluso
 

@@ -483,6 +483,7 @@
       <p class="lead">Suggerimento: prima di partire apri l'app una volta con la rete e, in Google Maps, scarica l'area di New York.</p>
       <h2>Riservatezza</h2>
       <p class="lead">Chiunque abbia il link può leggere queste pagine: per questo non contengono biglietti, numeri di prenotazione o dati personali. La tua posizione non lascia il telefono, tranne le coordinate inviate quando premi «Cerca» in TrovaCibo.</p>
+      ${data.readOnly ? '<div class="alert plain">Su questo server il programma è in sola lettura: le modifiche degli amministratori non sono ancora attive.</div>' : ''}
       <p class="meta">Versione del programma: ${data.version} · aggiornato il ${esc(fmtInstant(data.updatedAt))}</p>
       <div class="actions">${admin ? '<a class="btn" href="#/admin">Pannello amministratore</a>' : '<button class="btn small" data-act="login">Accesso amministratori</button>'}
         <button class="btn small" data-act="reload">Aggiorna ora</button></div>`;
@@ -706,7 +707,7 @@
     async logout() { await api('/api/admin/logout', { method: 'POST' }).catch(() => {}); setAdmin(null); adminLog = null; location.hash = '#/info'; await refresh(); },
     async rotate() {
       if (!confirm('Generare un nuovo codice? Quello attuale smetterà subito di funzionare.')) return;
-      try { const r = await api('/api/admin/rotate', { method: 'POST' }); openSheet(`<h2>Il tuo nuovo codice</h2><p class="lead">Annotalo adesso: non verrà più mostrato.</p><p class="code">${esc(r.code)}</p><div class="foot"><button class="btn primary" data-act="close">L'ho annotato</button></div>`); }
+      try { const r = await api('/api/admin/rotate', { method: 'POST' }); setAdmin({ token: r.token, name: r.name, exp: r.exp }); openSheet(`<h2>Il tuo nuovo codice</h2><p class="lead">Annotalo adesso: non verrà più mostrato.</p><p class="code">${esc(r.code)}</p><div class="foot"><button class="btn primary" data-act="close">L'ho annotato</button></div>`); }
       catch (err) { toast(err.message); }
     },
     async restore(el) {
