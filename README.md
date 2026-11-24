@@ -55,19 +55,22 @@ Copia `.env.example` in `.env` e inserisci `GOOGLE_PLACES_API_KEY` (Places API �
 
 ## Pubblicazione
 
-Serve **HTTPS** (obbligatorio per installare la PWA e per la posizione). L'archivio si sceglie da solo:
+Serve **HTTPS** (obbligatorio per installare la PWA e per la posizione). L'archivio si sceglie da solo, in quest'ordine:
 
-| Dove gira | Archivio | Cosa fare |
+| Archivio | Variabili | Note |
 | --- | --- | --- |
-| Vercel o altro serverless | Redis via REST (Upstash) | Aggiungi al progetto un database Upstash Redis dal Marketplace di Vercel: le variabili `KV_REST_API_URL` e `KV_REST_API_TOKEN` (o `UPSTASH_REDIS_REST_URL` / `_TOKEN`) vengono lette da sole. Poi rifai il deploy. |
-| Server con disco (Render, Fly, VPS, PC) | File in `DATA_DIR` | Monta un disco persistente e imposta `DATA_DIR`. Dietro un proxy imposta `TRUST_PROXY=1`. |
-| Nessuno dei due | Sola lettura | Il sito mostra il programma del seed; l'accesso admin è spento e lo dichiara. |
+| Supabase | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (o `SUPABASE_SECRET_KEY`) | Crea prima la tabella con `supabase/schema.sql`. Una riga per chiave nella tabella `nyc_kv` (nome modificabile con `SUPABASE_TABLE`). |
+| Redis via REST (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (o `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | Chiavi `nyc:*`. |
+| File | `DATA_DIR` (facoltativa) | Solo dove il disco è scrivibile e persistente (PC, VPS, Render, Fly). Dietro un proxy imposta `TRUST_PROXY=1`. |
+| Nessuno | | Sola lettura: il sito mostra il programma del seed, l'accesso admin è spento e lo dichiara. È il caso di Vercel senza variabili. |
 
-**Codice admin con Redis**: metti le stesse due variabili nel `.env` locale (da Vercel: Settings → Environment Variables, oppure `vercel env pull`) e lancia `node server.js admin add Francesco`. Il comando scrive nello stesso archivio del sito.
+La chiave di servizio di Supabase dà accesso completo al progetto: va messa solo tra le variabili d'ambiente del server (su Vercel senza prefissi pubblici) e nel `.env` locale, mai nel repository.
+
+**Codice admin con archivio remoto**: metti le stesse variabili nel `.env` locale e lancia `node server.js admin add Francesco`. Il comando scrive nello stesso archivio del sito.
 
 Le sessioni admin sono gettoni firmati che durano 2 ore; decadono subito se il codice viene cambiato o revocato. «Esci» scarta il gettone dal telefono.
 
-Con Redis il programma **non** si aggiorna più da `data/seed.json` dopo il primo avvio: l'archivio vero è Redis. Per ripartire dal seed cancella la chiave `nyc:state`.
+Con un archivio remoto il programma **non** si aggiorna più da `data/seed.json` dopo il primo avvio. Per ripartire dal seed cancella la riga `state` (Supabase) o la chiave `nyc:state` (Redis).
 
 ## Non incluso
 

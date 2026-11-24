@@ -1,7 +1,7 @@
 'use strict';
 // NYC in compagnia — server senza dipendenze (Node >= 20).
 // Serve la PWA, custodisce il programma, verifica il codice admin e fa da proxy a Google Places.
-// Archivio: Redis via REST (Upstash / Vercel KV) se configurato, altrimenti file in data/.
+// Archivio: Supabase (tabella chiave/valore) o Redis via REST se configurati, altrimenti file in data/.
 // Su un hosting senza disco scrivibile e senza Redis parte in sola lettura dal seed.
 
 const http = require('http');
@@ -22,6 +22,9 @@ const TRUST_PROXY = process.env.TRUST_PROXY === '1' || Boolean(process.env.VERCE
 const KV_URL = (process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '').replace(/\/+$/, '');
 const KV_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
 const KV_PREFIX = process.env.KV_PREFIX || 'nyc:';
+const SB_URL = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
+const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || '';
+const SB_TABLE = /^[a-z_][a-z0-9_]{0,62}$/.test(process.env.SUPABASE_TABLE || '') ? process.env.SUPABASE_TABLE : 'nyc_kv';
 
 // File serviti: elenco esplicito, così ogni hosting li include nel pacchetto e non esistono percorsi arbitrari.
 const STATIC = {
@@ -38,7 +41,8 @@ const STATIC = {
 // ---------- archiviazione ----------
 const clone = (v) => JSON.parse(JSON.stringify(v));
 const fileOf = (key) => path.join(DATA, key + '.json');
-let backend = KV_URL && KV_TOKEN ? 'kv' : 'file'; // 'kv' | 'file' | 'memory' (sola lettura)
+let backend = SB_URL && SB_KEY ? 'supabase' : KV_URL && KV_TOKEN ? 'kv' : 'file'; // 'supabase' | 'kv' | 'file' | 'memory' (sola lettura)
+const backendName = () => ({ supabase: `Supabase, tabella ${SB_TABLE}`, kv: 'Redis', file: DATA, memory: 'nessuno (sola lettura)' }[backend]);
 const memory = new Map();
 
 async function kv(cmd) {
@@ -52,13 +56,26 @@ async function kv(cmd) {
   if (!res.ok || json.error) throw new Error(`Archivio Redis: ${json.error || res.status}`);
   return json.result;
 }
+// Supabase: una riga per chiave nella tabella SB_TABLE (vedi supabase/schema.sql), letta e scritta via REST con la chiave di servizio.
+async function sb(method, query, body) {
+  const res = await fetch(`${SB_URL}/rest/v1/${SB_TABLE}${query}`, {
+    method,
+    headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!res.ok) throw new Error(`Archivio Supabase: ${res.status} ${(await res.text()).slice(0, 200)}`);
+  return method === 'GET' ? res.json() : null;
+}
 const store = {
   async get(key, fallback) {
+    if (backend === 'supabase') { const rows = await sb('GET', `?key=eq.${encodeURIComponent(key)}&select=value`); return rows.length ? rows[0].value : fallback; }
     if (backend === 'kv') { const v = await kv(['GET', KV_PREFIX + key]); return v == null ? fallback : JSON.parse(v); }
     if (backend === 'memory') return memory.has(key) ? memory.get(key) : fallback;
     try { return JSON.parse(fs.readFileSync(fileOf(key), 'utf8')); } catch { return fallback; }
   },
   async set(key, value) {
+    if (backend === 'supabase') return void await sb('POST', '?on_conflict=key', { key, value, updated_at: new Date().toISOString() });
     if (backend === 'kv') return void await kv(['SET', KV_PREFIX + key, JSON.stringify(value)]);
     if (backend === 'memory') return void memory.set(key, value);
     fs.mkdirSync(DATA, { recursive: true });
@@ -445,7 +462,7 @@ const readBody = (req) => new Promise((resolve, reject) => {
 });
 const ipOf = (req) => (TRUST_PROXY && String(req.headers['x-forwarded-for'] || '').split(',')[0].trim()) || req.socket.remoteAddress || '?';
 const newId = (p) => p + '-' + crypto.randomBytes(4).toString('hex');
-const NO_STORE = 'Su questo server le modifiche non sono attive: manca un archivio (Redis o disco scrivibile).';
+const NO_STORE = 'Su questo server le modifiche non sono attive: manca un archivio (Supabase, Redis o disco scrivibile).';
 
 async function api(req, res, url) {
   const p = url.pathname;
@@ -554,7 +571,7 @@ async function handle(req, res) {
   serveStatic(req, res, url);
 }
 
-// CLI: node server.js admin add|revoke|list [nome]   (usa lo stesso archivio del server: file locali o Redis se configurato in .env)
+// CLI: node server.js admin add|revoke|list [nome]   (usa lo stesso archivio del server: file locali, oppure Supabase o Redis se configurati in .env)
 async function cli() {
   const [, , , cmd, ...rest] = process.argv;
   const name = rest.join(' ').trim();
@@ -563,7 +580,7 @@ async function cli() {
   const admins = await getAdmins();
   if (cmd === 'add' && name) {
     const { code } = await setAdmin(name);
-    console.log(`Codice amministratore per "${name}" (mostrato una sola volta, non viene salvato in chiaro):\n\n   ${code}\n\nArchivio: ${backend === 'kv' ? 'Redis' : DATA}`);
+    console.log(`Codice amministratore per "${name}" (mostrato una sola volta, non viene salvato in chiaro):\n\n   ${code}\n\nArchivio: ${backendName()}`);
   } else if (cmd === 'revoke' && name) {
     const left = admins.filter((a) => a.name.toLowerCase() !== name.toLowerCase());
     await store.set('admins', left);
@@ -579,7 +596,7 @@ if (process.argv[2] === 'admin') {
   cli().catch((e) => { console.error(e.message); process.exitCode = 1; });
 } else {
   http.createServer(handle).listen(PORT, () => {
-    console.log(`NYC in compagnia: http://localhost:${PORT}  (archivio: ${backend === 'kv' ? 'Redis' : DATA})`);
+    console.log(`NYC in compagnia: http://localhost:${PORT}  (archivio: ${backendName()})`);
     if (!PLACES_KEY) console.log('GOOGLE_PLACES_API_KEY assente: TrovaCibo mostra solo le opzioni salvate dal gruppo.');
   });
 }
