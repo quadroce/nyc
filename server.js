@@ -174,8 +174,8 @@ const ENUMS = {
   type: ['ritrovo', 'visita', 'pasto', 'spostamento'],
   status: ['prenotato', 'proposto', 'da_confermare', 'facoltativo'],
   audience: ['tutti', 'facoltativo', 'sottogruppo'],
-  category: ['film', 'marvel', 'storia', 'natale', 'ragazzi'],
-  linkType: ['set_verificato', 'ispirazione', 'ambientazione', 'luogo_storico'],
+  category: ['film', 'marvel', 'pop', 'curiosita', 'storia', 'natale', 'ragazzi'],
+  linkType: ['set_verificato', 'ispirazione', 'ambientazione', 'luogo_storico', 'curiosita'],
 };
 const SCHEMA = {
   activity: {

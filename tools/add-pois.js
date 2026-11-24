@@ -1,0 +1,266 @@
+// Aggiunge al seed le schede di film, Marvel, cultura pop e curiosità su New York.
+// Uso: node tools/add-pois.js   (si può rilanciare: le schede con lo stesso id vengono sostituite)
+// Le coordinate sono indicative (coordsVerified: false): Maps viene aperto per nome e indirizzo.
+const fs = require('fs');
+const path = require('path');
+
+const file = path.join(__dirname, '..', 'data', 'seed.json');
+const seed = JSON.parse(fs.readFileSync(file, 'utf8'));
+
+const SRC = 'Schede redatte a novembre 2026 da fonti pubbliche; da ricontrollare sul posto';
+const SRC_VIA = 'https://www.davinotti.com/forum/location-verificate/vacanze-in-america/50002211';
+const SET = 'set_verificato', AMB = 'ambientazione', ISP = 'ispirazione', STO = 'luogo_storico', CUR = 'curiosita';
+
+// [id, nome, categoria, legame, opera, indirizzo, zona, lat, lng, racconto, nota, extra]
+const LIST = [
+  // ---------- Midtown East: attorno all'hotel ----------
+  ['p-marilyn', 'La grata di Marilyn', 'film', SET, 'Quando la moglie è in vacanza', 'Lexington Ave & E 52nd St, New York, NY 10022', 'Midtown East', 40.7572, -73.9713,
+    "Su questa grata della metropolitana, una notte del 1954, Marilyn Monroe girò la scena del vestito bianco che si solleva. C'era così tanta folla che la scena fu poi rifatta in studio, ma le foto di quella notte hanno fatto il giro del mondo.",
+    "A due isolati dall'hotel: ci si passa a piedi in qualsiasi momento."],
+  ['p-citigroup', 'Il grattacielo che poteva cadere', 'curiosita', CUR, '', '601 Lexington Ave, New York, NY 10022', 'Midtown East', 40.7583, -73.9703,
+    "Il grattacielo col tetto inclinato poggia su quattro colonne messe a metà dei lati invece che agli angoli, per lasciare spazio a una chiesa. Nel 1978 la domanda di una studentessa fece scoprire all'ingegnere che un vento forte avrebbe potuto abbatterlo: fu rinforzato di notte, in segreto, e la storia uscì solo vent'anni dopo.",
+    "A un isolato dall'hotel, all'angolo con la 53rd Street."],
+  ['p-greenacre', 'Greenacre Park', 'curiosita', CUR, '', '217 E 51st St, New York, NY 10022', 'Midtown East', 40.7562, -73.9692,
+    "Un giardino grande come un campo da tennis con una cascata alta sette metri: il rumore dell'acqua copre quello del traffico.",
+    "A un isolato dall'hotel. In inverno può essere chiuso."],
+  ['p-track61', 'Il binario segreto del Waldorf', 'curiosita', CUR, '', '301 Park Ave, New York, NY 10022', 'Midtown East', 40.7565, -73.9738,
+    "Sotto l'hotel Waldorf Astoria c'è un binario ferroviario privato, il Track 61. Si racconta che il presidente Roosevelt lo usasse per arrivare in hotel senza farsi vedere, con l'auto caricata sul treno.",
+    'Il binario non si visita: è una storia da raccontare passando davanti.'],
+  ['p-palace', 'Lotte New York Palace', 'pop', SET, 'Gossip Girl', '455 Madison Ave, New York, NY 10022', 'Midtown East', 40.758, -73.9749,
+    "Nella serie è l'hotel dove vive la famiglia di Serena van der Woodsen. Il cortile d'ingresso è quello delle Villard Houses, palazzi dell'Ottocento, proprio di fronte a St Patrick.",
+    "Sulla 50th Street, lungo la strada dall'hotel al Rockefeller Center."],
+  ['p-chrysler', 'Chrysler Building', 'curiosita', CUR, '', '405 Lexington Ave, New York, NY 10174', 'Midtown East', 40.7516, -73.9755,
+    "Nel 1930 la guglia fu montata di nascosto dentro il palazzo e issata in un'ora e mezza per battere un grattacielo rivale. Fu il più alto del mondo per 11 mesi, finché arrivò l'Empire State. Le decorazioni d'acciaio ricordano le automobili Chrysler.",
+    'Domenica 6, accanto a Grand Central.'],
+  ['p-daily-news', 'Daily News Building', 'film', SET, 'Superman', '220 E 42nd St, New York, NY 10017', 'Midtown East', 40.7501, -73.9733,
+    "Nel Superman del 1978 è il Daily Planet, il giornale dove lavora Clark Kent. Nell'atrio c'è un enorme mappamondo che gira.",
+    'Domenica 6, a cinque minuti da Grand Central lungo la 42nd Street.'],
+  ['p-tudor-city', 'Tudor City', 'marvel', SET, 'Spider-Man (2002)', 'Tudor City Pl, New York, NY 10017', 'Midtown East', 40.7488, -73.9712,
+    "Tra questi palazzi in stile gotico c'è la casa di Norman Osborn, il Goblin, nel primo Spider-Man di Sam Raimi.",
+    'In fondo alla 42nd Street, verso il fiume.'],
+  ['p-onu', 'Palazzo delle Nazioni Unite', 'storia', STO, 'Intrigo internazionale', '405 E 42nd St, New York, NY 10017', 'Midtown East', 40.7489, -73.968,
+    "Il Palazzo di Vetro sorge su un terreno internazionale: oltre il cancello, tecnicamente, non si è negli Stati Uniti. Hitchcock ci ambientò una scena di Intrigo internazionale, ma dovette ricostruire l'atrio in studio perché non ottenne il permesso di girare.",
+    "Sulla First Avenue, dieci minuti a piedi dall'hotel."],
+  ['p-roosevelt-hotel', 'Hotel Roosevelt', 'film', SET, 'Vacanze in America', '45 E 45th St, New York, NY 10017', 'Midtown East', 40.7546, -73.9773,
+    "Nel film dei Vanzina del 1984 è l'albergo di New York dove alloggiano gli studenti del San Crispino con don Buro. Ha chiuso come albergo nel 2020, ma il palazzo è ancora al suo posto.",
+    'Domenica 6: è a un isolato da Grand Central, su Madison Avenue.', { source: SRC_VIA }],
+  ['p-metlife', 'MetLife Building', 'marvel', AMB, 'The Avengers', '200 Park Ave, New York, NY 10166', 'Midtown East', 40.7533, -73.9766,
+    'Nei film Marvel la Stark Tower, poi Torre degli Avengers, sorge esattamente al posto di questo grattacielo sopra Grand Central.',
+    'Domenica 6: si vede alzando gli occhi davanti a Grand Central.'],
+  ['p-baxter', 'Il Baxter Building', 'marvel', AMB, 'Fantastici Quattro', 'E 42nd St & Madison Ave, New York, NY 10017', 'Midtown East', 40.7527, -73.979,
+    "Nei fumetti il quartier generale dei Fantastici Quattro si trova a questo incrocio. Il palazzo non esiste: lo inventarono Stan Lee e Jack Kirby all'inizio degli anni Sessanta.",
+    'Domenica 6, tra Grand Central e Bryant Park.'],
+  ['p-gc-soffitto', 'Il cielo al contrario di Grand Central', 'curiosita', CUR, '', '89 E 42nd St, New York, NY 10017', 'Midtown East', 40.7527, -73.9772,
+    "Le costellazioni sul soffitto sono dipinte al contrario, come viste da fuori dell'universo. In un angolo è rimasto apposta un rettangolino scuro: mostra com'era il soffitto prima della pulizia, annerito da decenni di fumo.",
+    'Domenica 6, nel salone principale.', { linkedActivityId: 'a-0612-grand-central' }],
+  ['p-gc-film', 'Grand Central al cinema', 'film', SET, 'Intrigo internazionale · Madagascar', '89 E 42nd St, New York, NY 10017', 'Midtown East', 40.7527, -73.9772,
+    "Cary Grant scappa da qui in treno in Intrigo internazionale. In Madagascar è nell'atrio che vengono catturati Alex il leone e i suoi amici.",
+    'Domenica 6.'],
+
+  // ---------- Midtown: Rockefeller, Fifth Avenue ----------
+  ['p-st-regis', 'St. Regis Hotel', 'film', SET, 'Il Padrino', '2 E 55th St, New York, NY 10022', 'Midtown', 40.7614, -73.9748,
+    "Nel Padrino è l'albergo di New York dove alloggiano Michael e Kay.",
+    "Sulla Fifth Avenue, a dieci minuti dall'hotel."],
+  ['p-radio-city', 'Radio City Music Hall', 'film', SET, "Il Padrino · Mamma, ho riperso l'aereo", '1260 6th Ave, New York, NY 10020', 'Midtown', 40.76, -73.98,
+    "La sera di Natale Michael e Kay escono da questo cinema e scoprono dai giornali che hanno sparato a Don Vito. Anche Kevin lo vede nel suo giro per New York. Dal 1933 ospita lo spettacolo natalizio delle Rockettes.",
+    'Venerdì 4 e sabato 5: è accanto al Rockefeller Center.'],
+  ['p-albero', "L'albero del Rockefeller Center", 'natale', SET, "Mamma, ho riperso l'aereo", 'Rockefeller Plaza, New York, NY 10111', 'Midtown', 40.7587, -73.9787,
+    "Davanti a questo albero Kevin ritrova la mamma la notte di Natale. La tradizione è nata nel 1931, quando gli operai del cantiere ne addobbarono uno piccolo con ghirlande fatte a mano.",
+    'Venerdì 4, la prima sera.', { linkedActivityId: 'a-0412-rockefeller' }],
+  ['p-pranzo-trave', 'Il pranzo sulla trave', 'curiosita', CUR, '', '30 Rockefeller Plaza, New York, NY 10112', 'Midtown', 40.7593, -73.9794,
+    "La celebre foto degli undici operai che pranzano seduti su una trave sospesa nel vuoto fu scattata nel 1932 durante la costruzione di questo grattacielo. In cima c'è un'attrazione che permette di rifarla.",
+    'Sabato 5, al Top of the Rock.'],
+  ['p-fao', 'FAO Schwarz', 'ragazzi', ISP, "Big · Mamma, ho riperso l'aereo", '30 Rockefeller Plaza, New York, NY 10112', 'Midtown', 40.759, -73.9785,
+    "Il negozio di giocattoli col pianoforte gigante da suonare coi piedi, come Tom Hanks in Big (la scena fu girata nella vecchia sede sulla Fifth Avenue). È anche il negozio che ha ispirato il Duncan's Toy Chest di Kevin.",
+    'Venerdì 4 o sabato 5, al Rockefeller Center.'],
+  ['p-prada', 'La redazione di Runway', 'film', SET, 'Il diavolo veste Prada', '1221 6th Ave, New York, NY 10020', 'Midtown', 40.7596, -73.9823,
+    "L'ingresso della rivista di Miranda Priestly, dove Andy arriva di corsa con i caffè, è quello di questo grattacielo.",
+    'A un isolato dal Rockefeller Center.'],
+  ['p-moma', 'MoMA', 'pop', CUR, '', '11 W 53rd St, New York, NY 10019', 'Midtown', 40.7614, -73.9776,
+    'Qui è appesa la Notte stellata di Van Gogh, a pochi passi dalle lattine di zuppa di Andy Warhol.',
+    "A dieci minuti dall'hotel, per il pomeriggio libero di domenica 6."],
+  ['p-tiffany', 'Tiffany & Co.', 'film', SET, 'Colazione da Tiffany', '727 5th Ave, New York, NY 10022', 'Midtown', 40.7626, -73.9738,
+    "All'alba Audrey Hepburn scende dal taxi con un cornetto e un caffè e fa colazione davanti a queste vetrine.",
+    'Sabato 5, lungo la Fifth Avenue andando verso Central Park.'],
+  ['p-plaza', 'The Plaza', 'film', SET, "Mamma, ho riperso l'aereo · Vacanze in America", '768 5th Ave, New York, NY 10019', 'Midtown', 40.7645, -73.9744,
+    "L'hotel dove Kevin si prende una suite con la carta di credito del papà. Compare anche in Vacanze in America e nel Grande Gatsby. Nei libri per bambini ci abita la piccola Eloise.",
+    "Sabato 5: è all'angolo di Central Park, sulla strada per il Wollman Rink.", { source: SRC_VIA }],
+  ['p-carnegie', 'Carnegie Hall', 'film', AMB, "Mamma, ho riperso l'aereo", '881 7th Ave, New York, NY 10019', 'Midtown', 40.7651, -73.9799,
+    'La signora dei piccioni porta Kevin nel sottotetto sopra questa sala da concerto, ad ascoltare la musica di nascosto.',
+    'Sabato 5 sera: è accanto alla fermata 57 St–7 Av, sulla strada per il ristorante.'],
+  ['p-nypl-film', 'La biblioteca dei fantasmi', 'film', SET, 'Ghostbusters · The Day After Tomorrow', '476 5th Ave, New York, NY 10018', 'Midtown', 40.7532, -73.9822,
+    "La prima scena di Ghostbusters, col fantasma della bibliotecaria, è girata qui. In The Day After Tomorrow i sopravvissuti si rifugiano nella biblioteca e bruciano i libri per scaldarsi.",
+    'Domenica 6.', { linkedActivityId: 'a-0612-bryant-park' }],
+
+  // ---------- Times Square e dintorni ----------
+  ['p-times-nome', 'Perché si chiama Times Square', 'curiosita', CUR, '', 'Times Square, New York, NY 10036', 'Times Square e dintorni', 40.758, -73.9855,
+    'Prende il nome dal New York Times, che si trasferì qui nel 1904. La sfera luminosa di Capodanno scende dal tetto dello stesso palazzo dal 1907.',
+    'Martedì 8, prima del tour delle luci.', { linkedActivityId: 'a-0812-dyker' }],
+  ['p-macys', "Macy's Herald Square", 'natale', SET, 'Miracolo nella 34ª strada', '151 W 34th St, New York, NY 10001', 'Times Square e dintorni', 40.7508, -73.9887,
+    'Il grande magazzino del film dove lavora il vero Babbo Natale. Dentro funzionano ancora alcune scale mobili di legno di cento anni fa.',
+    'Per il pomeriggio libero di domenica 6.'],
+  ['p-empire', 'Empire State Building', 'film', AMB, "King Kong · Elf · Insonnia d'amore", '20 W 34th St, New York, NY 10001', 'Times Square e dintorni', 40.7484, -73.9857,
+    "Costruito in appena 410 giorni e aperto nel 1931. King Kong ci si arrampica dal 1933, in Elf ci lavora il papà di Buddy e in Insonnia d'amore è il luogo dell'appuntamento finale.",
+    'Si vede bene sabato 5 dal Top of the Rock.'],
+  ['p-timely', 'Dove è nata la Marvel', 'marvel', STO, 'Timely Comics', '20 W 34th St, New York, NY 10001', 'Times Square e dintorni', 40.7484, -73.9857,
+    "Dai primi anni Quaranta al 1951 la Timely Comics, la casa editrice che poi diventerà Marvel, aveva gli uffici al 14° piano dell'Empire State Building. Ci lavorava un giovanissimo Stan Lee.",
+    ''],
+  ['p-hells-kitchen', "Hell's Kitchen", 'marvel', AMB, 'Daredevil', '9th Ave & W 46th St, New York, NY 10036', 'Times Square e dintorni', 40.7614, -73.9905,
+    'È il quartiere che Matt Murdock, avvocato di giorno e Daredevil di notte, protegge nei fumetti e nella serie.',
+    'A ovest di Times Square.'],
+
+  // ---------- Central Park ----------
+  ['p-gapstow', 'Gapstow Bridge', 'film', SET, "Mamma, ho riperso l'aereo · Vacanze in America", 'Gapstow Bridge, Central Park, New York, NY 10019', 'Central Park', 40.7669, -73.9738,
+    'Il ponticello di pietra sul laghetto dove Kevin incontra la signora dei piccioni. Qui davanti sono state girate anche le scene a Central Park di Vacanze in America.',
+    'Sabato 5: è accanto al Wollman Rink.', { source: SRC_VIA, linkedActivityId: 'a-0512-central-park' }],
+  ['p-wollman-film', 'Il Wollman Rink al cinema', 'film', SET, "Mamma, ho riperso l'aereo · Serendipity", '830 5th Ave, New York, NY 10065', 'Central Park', 40.7679, -73.9743,
+    "La pista compare in Mamma, ho riperso l'aereo e in Serendipity, dove i due protagonisti pattinano sotto la neve.",
+    'Sabato 5.'],
+  ['p-zoo', 'Central Park Zoo', 'ragazzi', AMB, 'Madagascar', 'E 64th St & 5th Ave, New York, NY 10021', 'Central Park', 40.7678, -73.9718,
+    'Alex il leone, Marty la zebra e i pinguini scappano da questo zoo. Leoni e zebre veri qui non ci sono; i pinguini sì.',
+    'Sabato 5: è a cinque minuti dal Wollman Rink.'],
+  ['p-balto', 'La statua di Balto', 'ragazzi', STO, 'Balto', 'East Dr & E 67th St, Central Park, New York, NY 10065', 'Central Park', 40.77, -73.971,
+    "Il cane da slitta che nel 1925 guidò l'ultimo tratto della corsa per portare le medicine a Nome, in Alaska. La statua è lucida perché i bambini ci salgono sopra da cent'anni.",
+    'Sabato 5, dieci minuti a nord del Wollman Rink.'],
+  ['p-bethesda', 'Bethesda Terrace', 'marvel', SET, 'The Avengers', 'Bethesda Terrace, Central Park, New York, NY 10024', 'Central Park', 40.774, -73.9708,
+    "Alla fine del primo Avengers gli eroi si salutano qui e Thor riporta Loki ad Asgard. La fontana con l'angelo compare anche in Come d'incanto.",
+    'A metà del parco, all\'altezza della 72nd Street.'],
+  ['p-strawberry', 'Strawberry Fields', 'pop', STO, 'John Lennon', 'W 72nd St & Central Park West, New York, NY 10023', 'Central Park', 40.7757, -73.9752,
+    'Il mosaico con la scritta Imagine ricorda John Lennon, che abitava nel palazzo di fronte, il Dakota. Il mosaico è un dono della città di Napoli.',
+    'Mercoledì 9: è a cinque isolati dal museo, poco oltre il San Remo.'],
+  ['p-frick', 'La villa degli Avengers', 'marvel', ISP, 'Avengers', '1 E 70th St, New York, NY 10021', 'Central Park', 40.7712, -73.9673,
+    "Nei fumetti la Avengers Mansion si trova all'890 della Fifth Avenue. È ispirata a questo palazzo, oggi museo della Frick Collection.",
+    'Sul lato est di Central Park.'],
+
+  // ---------- Upper West Side ----------
+  ['p-san-remo', 'The San Remo', 'film', SET, 'Vacanze in America', '145 Central Park West, New York, NY 10023', 'Upper West Side', 40.7778, -73.9755,
+    'Il palazzo con le due torri gemelle affacciate su Central Park, costruito nel 1930. In Vacanze in America è il palazzo di New York che si vede nel film. Negli anni ci hanno abitato molte star del cinema e della musica.',
+    'Lo incontriamo mercoledì 9: è sulla stessa strada del Museo di Storia Naturale, tre isolati più a sud (tra la 74th e la 75th Street), cinque minuti a piedi. Le due torri si riconoscono anche sabato 5 dal Top of the Rock, sul lato sinistro di Central Park.',
+    { source: SRC_VIA, linkedActivityId: 'a-0912-museo' }],
+  ['p-dana', 'Il palazzo di Dana', 'film', SET, 'Ghostbusters', '55 Central Park West, New York, NY 10023', 'Upper West Side', 40.7728, -73.979,
+    "Il palazzo dove abita Dana e dove nel frigorifero compare Zuul. Nel film sembra più alto: i piani in cima furono aggiunti con un effetto speciale.",
+    'Sabato 5 sera: è a cinque minuti dal ristorante, sul lato del parco.'],
+  ['p-lincoln-center', 'Lincoln Center', 'film', SET, 'West Side Story · Ghostbusters', '10 Lincoln Center Plaza, New York, NY 10023', 'Upper West Side', 40.7725, -73.9835,
+    "Dove oggi c'è il Lincoln Center sorgeva il quartiere di San Juan Hill: prima di demolirlo ci girarono le scene di strada di West Side Story (1961). Attorno alla fontana Peter Venkman aspetta Dana in Ghostbusters.",
+    'Sabato 5 sera: è di fronte al ristorante.', { linkedActivityId: 'a-cena-messicana' }],
+  ['p-zabars', "Zabar's", 'film', SET, "C'è posta per te", '2245 Broadway, New York, NY 10024', 'Upper West Side', 40.7847, -73.9797,
+    'La gastronomia dove Tom Hanks salva Meg Ryan alla cassa «solo contanti».',
+    'Mercoledì 9: a cinque minuti dal museo, buona per il pranzo veloce.'],
+  ['p-serendipity', 'Serendipity 3', 'film', SET, 'Serendipity', '225 E 60th St, New York, NY 10022', 'Midtown East', 40.7618, -73.9649,
+    'Il caffè della cioccolata calda ghiacciata dove si incontrano i due protagonisti del film.',
+    'Sabato 5: è accanto alla stazione della funivia per Roosevelt Island.'],
+
+  // ---------- Chelsea e Flatiron ----------
+  ['p-flatiron', 'Flatiron Building', 'marvel', SET, 'Spider-Man', '175 5th Ave, New York, NY 10010', 'Chelsea e Flatiron', 40.7411, -73.9897,
+    'Nei film di Spider-Man è la sede del Daily Bugle, il giornale di J. Jonah Jameson. Il palazzo a forma di ferro da stiro è del 1902.',
+    ''],
+  ['p-oreo', "Dove è nato l'Oreo", 'ragazzi', CUR, '', '75 9th Ave, New York, NY 10011', 'Chelsea e Flatiron', 40.7424, -74.0061,
+    "Il Chelsea Market era la fabbrica dei biscotti Nabisco: qui nel 1912 è stato sfornato il primo Oreo.",
+    'Martedì 8.', { linkedActivityId: 'a-0812-chelsea' }],
+
+  // ---------- Village e SoHo ----------
+  ['p-friends', 'Il palazzo di Friends', 'pop', SET, 'Friends', '90 Bedford St, New York, NY 10014', 'Village e SoHo', 40.7325, -74.0053,
+    "L'esterno del palazzo di Monica e Rachel. Tutto il resto della serie fu girato in studio a Los Angeles, compresa la fontana della sigla.",
+    ''],
+  ['p-casa-stretta', 'La casa più stretta di New York', 'curiosita', CUR, '', '75 1/2 Bedford St, New York, NY 10014', 'Village e SoHo', 40.7313, -74.0049,
+    'È larga meno di tre metri.',
+    'A un minuto dal palazzo di Friends.'],
+  ['p-carrie', 'La scalinata di Carrie', 'pop', SET, 'Sex and the City', '66 Perry St, New York, NY 10014', 'Village e SoHo', 40.7354, -74.0037,
+    "L'ingresso di casa di Carrie Bradshaw nella serie.",
+    'È una casa privata: foto dal marciapiede.'],
+  ['p-washington-square', 'Washington Square Arch', 'film', SET, 'Harry ti presento Sally · Io sono leggenda', 'Washington Square N, New York, NY 10012', 'Village e SoHo', 40.7312, -73.9971,
+    "Sotto l'arco Sally lascia Harry al loro arrivo a New York. In Io sono leggenda Will Smith abita in una delle case sul lato nord della piazza.",
+    ''],
+
+  // ---------- Little Italy e Lower East Side ----------
+  ['p-katz', "Katz's Delicatessen", 'film', SET, 'Harry ti presento Sally', '205 E Houston St, New York, NY 10002', 'Little Italy e Lower East Side', 40.7223, -73.9874,
+    'La scena più famosa del film è stata girata a un tavolo di questa gastronomia: un cartello appeso al soffitto indica quale.',
+    ''],
+  ['p-old-st-patrick', "St. Patrick's Old Cathedral", 'film', SET, 'Il Padrino', '263 Mulberry St, New York, NY 10012', 'Little Italy e Lower East Side', 40.7237, -73.9954,
+    "L'interno è quello della scena del battesimo, mentre i rivali dei Corleone vengono eliminati uno dopo l'altro.",
+    ''],
+  ['p-mott', 'Mott Street', 'film', SET, 'Il Padrino', '128 Mott St, New York, NY 10013', 'Little Italy e Lower East Side', 40.7187, -73.997,
+    "In questa strada, davanti alla sede dell'olio Genco, Don Vito viene colpito mentre compra le arance.",
+    ''],
+  ['p-lombardis', "Lombardi's", 'curiosita', CUR, '', '32 Spring St, New York, NY 10012', 'Little Italy e Lower East Side', 40.7216, -73.9956,
+    'È considerata la prima pizzeria degli Stati Uniti: la licenza è del 1905 e il fondatore, Gennaro Lombardi, era napoletano.',
+    ''],
+  ['p-yancy', 'La vera Yancy Street', 'marvel', ISP, 'Fantastici Quattro', 'Delancey St & Essex St, New York, NY 10002', 'Little Italy e Lower East Side', 40.7187, -73.988,
+    'La Yancy Street dove è cresciuta la Cosa nasce da questa via: Jack Kirby, il disegnatore dei Fantastici Quattro, era cresciuto qui nel Lower East Side.',
+    ''],
+
+  // ---------- Downtown ----------
+  ['p-mib', 'La sede dei Men in Black', 'film', SET, 'Men in Black', '504 Battery Pl, New York, NY 10004', 'Downtown', 40.7045, -74.0167,
+    "L'edificio di ventilazione del tunnel per Brooklyn è l'ingresso del quartier generale degli agenti J e K.",
+    'Lunedì 7: è a pochi passi da Battery Park.'],
+  ['p-toro', 'Il toro di Wall Street', 'curiosita', CUR, '', 'Bowling Green, New York, NY 10004', 'Downtown', 40.7056, -74.0134,
+    "Il toro di bronzo è opera di uno scultore siciliano, Arturo Di Modica. Nel dicembre 1989 lo scaricò di notte davanti alla Borsa, senza permesso, come regalo di Natale alla città. Il giardinetto accanto, Bowling Green, è il parco pubblico più antico di New York.",
+    'Lunedì 7: è davanti all\'uscita della metropolitana di Bowling Green.'],
+  ['p-castle-clinton', 'Castle Clinton', 'storia', STO, '', 'Castle Clinton National Monument, Battery Park, New York, NY 10004', 'Downtown', 40.7035, -74.0168,
+    'Prima di Ellis Island gli immigrati sbarcavano in questo forte rotondo: tra il 1855 e il 1890 ne passarono circa otto milioni.',
+    'Lunedì 7: è il punto dei controlli per il traghetto.', { linkedActivityId: 'a-0712-isole' }],
+  ['p-wall-street', 'Wall Street', 'storia', STO, '', 'Wall St & Broad St, New York, NY 10005', 'Downtown', 40.7069, -74.0113,
+    'Si chiama «via del muro» per la palizzata di legno che gli olandesi costruirono nel Seicento per difendere Nuova Amsterdam.',
+    'Lunedì 7, cinque minuti da Bowling Green.'],
+  ['p-federal-hall', 'Federal Hall', 'storia', STO, '', '26 Wall St, New York, NY 10005', 'Downtown', 40.7074, -74.0102,
+    'Qui nel 1789 George Washington giurò come primo presidente degli Stati Uniti: la statua sulla scalinata indica il punto.',
+    'Lunedì 7.'],
+  ['p-trinity', 'Trinity Church', 'pop', STO, 'Hamilton · Il mistero dei Templari', '89 Broadway, New York, NY 10006', 'Downtown', 40.7081, -74.0121,
+    "Nel cimitero è sepolto Alexander Hamilton, quello del musical e della banconota da 10 dollari. Nel film Il mistero dei Templari il tesoro è nascosto proprio sotto la chiesa.",
+    'Lunedì 7, lungo la strada da Battery Park a Ground Zero.'],
+  ['p-continental', "L'hotel Continental", 'film', SET, 'John Wick', '1 Wall Street Ct, New York, NY 10005', 'Downtown', 40.7052, -74.0086,
+    "Questo palazzo a forma di cuneo è l'esterno dell'hotel Continental della saga di John Wick.",
+    ''],
+  ['p-poltrona', 'Una poltrona per due', 'film', AMB, 'Una poltrona per due', '180 Greenwich St, New York, NY 10007', 'Downtown', 40.7118, -74.0125,
+    "Il finale del film di Natale più visto in Italia, con il succo d'arancia in Borsa, fu girato nella sala delle contrattazioni del World Trade Center, che sorgeva qui.",
+    'Lunedì 7.', { linkedActivityId: 'a-0712-ground-zero' }],
+  ['p-one-wtc', 'One World Trade Center', 'curiosita', CUR, '', '285 Fulton St, New York, NY 10007', 'Downtown', 40.713, -74.0132,
+    "È alto 1776 piedi, 541 metri: il numero è l'anno dell'indipendenza americana.",
+    'Lunedì 7.'],
+  ['p-elefanti', 'Gli elefanti sul ponte', 'ragazzi', STO, '', 'Brooklyn Bridge, New York, NY 10038', 'Downtown', 40.7061, -73.9969,
+    'Nel 1884, per convincere tutti che il Ponte di Brooklyn era sicuro, il circo Barnum lo fece attraversare da 21 elefanti.',
+    'Lunedì 7: il ponte si vede bene da DUMBO.'],
+  ['p-gwen', 'Il ponte di Gwen Stacy', 'marvel', AMB, 'The Amazing Spider-Man', 'Brooklyn Bridge, New York, NY 10038', 'Downtown', 40.7061, -73.9969,
+    'Nel fumetto del 1973 con la sfida più drammatica tra Spider-Man e Goblin il testo parla del ponte George Washington, ma il disegno mostra il Ponte di Brooklyn: i lettori ne discutono ancora.',
+    'Lunedì 7.'],
+
+  // ---------- Baia e Brooklyn ----------
+  ['p-liberty-film', 'La Statua al cinema', 'film', AMB, 'Ghostbusters II · Il pianeta delle scimmie', 'Liberty Island, New York, NY 10004', 'Baia di New York', 40.6892, -74.0445,
+    'In Ghostbusters II la statua si mette a camminare per Manhattan; nel finale del Pianeta delle scimmie spunta dalla sabbia. È verde perché è di rame: appena costruita era color moneta.',
+    'Lunedì 7.'],
+  ['p-ellis-film', 'Ellis Island al cinema', 'film', AMB, 'Il Padrino - Parte II · Hitch', 'Ellis Island, New York Harbor', 'Baia di New York', 40.6995, -74.0396,
+    'Il piccolo Vito Andolini arriva qui dalla Sicilia e un impiegato lo registra col nome del suo paese: Corleone. In Hitch è il luogo del primo appuntamento.',
+    'Lunedì 7.'],
+  ['p-leone', "L'inquadratura di Sergio Leone", 'film', SET, "C'era una volta in America", 'Washington St & Water St, Brooklyn, NY 11201', 'Brooklyn', 40.7033, -73.9894,
+    "Il Manhattan Bridge incorniciato tra i palazzi di mattoni è l'immagine del manifesto di C'era una volta in America.",
+    'Lunedì 7.', { linkedActivityId: 'a-0712-dumbo' }],
+];
+
+// Bozze Marvel già presenti: testo verificato e pubblicazione. Quella senza opera viene tolta.
+const UPDATE = {
+  'p-marvel-grand-central': { linkType: AMB, work: 'The Avengers', zone: 'Midtown East', context: 'La battaglia di New York del primo Avengers è ambientata qui attorno, sul viadotto di Park Avenue davanti alla stazione. Molte scene furono in realtà girate a Cleveland.', note: 'Domenica 6.' },
+  'p-marvel-nypl': { linkType: SET, work: 'Spider-Man (2002)', context: 'Zio Ben accompagna Peter in auto davanti alla biblioteca e gli dice la frase famosa: da un grande potere derivano grandi responsabilità.', note: 'Domenica 6.' },
+  'p-marvel-tramway': { linkType: SET, work: 'Spider-Man (2002)', context: 'Nel finale del primo Spider-Man il Goblin costringe Peter a scegliere tra Mary Jane e una cabina della funivia piena di bambini, sospesa accanto al ponte di Queensboro.', note: 'Sabato 5.' },
+  'p-marvel-liberty': { linkType: AMB, work: 'Spider-Man: No Way Home · X-Men', context: 'Lo scontro finale di Spider-Man: No Way Home è ambientato sulla statua, come quello del primo film degli X-Men.', note: 'Lunedì 7.' },
+  'p-marvel-times-square': { linkType: SET, work: 'Captain America: Il primo Vendicatore', context: 'Nel finale del film Steve Rogers si risveglia dopo settant\'anni, scappa in strada e si ritrova in mezzo agli schermi di Times Square.', note: 'Martedì 8.' },
+  'p-marvel-bleecker': { linkType: AMB, work: 'Doctor Strange', zone: 'Village e SoHo', context: "Nei fumetti e nei film il Sanctum Sanctorum di Doctor Strange si trova al 177A di Bleecker Street. È un indirizzo narrativo: il palazzo del film non esiste.", note: 'Curiosità facoltativa, non una tappa.' },
+};
+const DROP = new Set(['p-marvel-rockefeller']);
+const ZONE = { Chelsea: 'Chelsea e Flatiron', 'Greenwich Village': 'Village e SoHo', 'Downtown / Brooklyn': 'Downtown' };
+
+const added = LIST.map(([id, name, category, linkType, work, address, zone, lat, lng, context, note, extra = {}]) => ({
+  id, name, category, linkType, work, address, zone, lat, lng, coordsVerified: false, placeId: '', radius: 250,
+  context, note, source: SRC, lastVerified: '', published: true, alertsEnabled: false, linkedActivityId: '', ...extra,
+}));
+const ids = new Set(added.map((p) => p.id));
+const kept = seed.pois.filter((p) => !ids.has(p.id) && !DROP.has(p.id)).map((p) => {
+  const u = UPDATE[p.id];
+  const out = u ? { ...p, ...u, published: true, source: SRC } : { ...p };
+  if (ZONE[out.zone]) out.zone = ZONE[out.zone];
+  return out;
+});
+seed.pois = [...kept, ...added];
+fs.writeFileSync(file, JSON.stringify(seed, null, 2) + '\n');
+const by = {};
+for (const p of seed.pois) by[p.category] = (by[p.category] || 0) + 1;
+console.log(`Curiosità nel seed: ${seed.pois.length} (${added.length} aggiunte o aggiornate).`, by);

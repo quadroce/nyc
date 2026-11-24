@@ -15,8 +15,9 @@
   const STATUS_L = { prenotato: 'Prenotato', proposto: 'Proposto', da_confermare: 'Da confermare', facoltativo: 'Facoltativo' };
   const AUD_L = { tutti: 'Tutti', facoltativo: 'Facoltativa', sottogruppo: 'Sottogruppo' };
   const TYPE_L = { ritrovo: 'Ritrovo', visita: 'Visita', pasto: 'Pasto', spostamento: 'Spostamento' };
-  const CAT_L = { film: 'Film e serie', marvel: 'Marvel', storia: 'Storia', natale: 'Natale', ragazzi: 'Per ragazzi' };
-  const LINK_L = { set_verificato: 'Set verificato', ispirazione: 'Luogo che ha ispirato la storia', ambientazione: 'Ambientazione narrativa', luogo_storico: 'Luogo storico' };
+  const CAT_L = { film: 'Film e serie', marvel: 'Marvel', pop: 'Cultura pop', curiosita: 'Curiosità', storia: 'Storia', natale: 'Natale', ragazzi: 'Per ragazzi' };
+  const ZONES = ['Midtown East', 'Midtown', 'Times Square e dintorni', 'Central Park', 'Upper West Side', 'Chelsea e Flatiron', 'Village e SoHo', 'Tribeca', 'Little Italy e Lower East Side', 'Downtown', 'Baia di New York', 'Brooklyn'];
+  const LINK_L = { set_verificato: 'Set verificato', ispirazione: 'Luogo che ha ispirato la storia', ambientazione: 'Ambientazione narrativa', luogo_storico: 'Luogo storico', curiosita: 'Curiosità' };
   const FIELD_L = {
     meetTime: 'Ritrovo', meetPlace: 'Punto di ritrovo', time: 'Inizio', endTime: 'Fine', date: 'Giorno',
     placeName: 'Luogo', address: 'Indirizzo', status: 'Stato', title: 'Titolo', audience: 'Destinatari',
@@ -36,6 +37,7 @@
   let muted = LS.get('muted', false);
   let geo = { pos: null, watch: null, err: '' };
   let near = []; // POI segnalati ora
+  let poiQuery = '';
   let food = { mode: 'pochi', origin: 'me', radius: 600, cat: 'tutte', open: true, price: true, kids: false, results: null, at: null, center: null, busy: false, err: '' };
   let adminLog = null;
 
@@ -428,11 +430,27 @@
       ${!p.coordsVerified && d != null ? '<p class="meta">Distanza indicativa: coordinate ancora da verificare.</p>' : ''}
     </article>`;
   }
+  // Lista delle curiosità: per distanza se la posizione è attiva, altrimenti raggruppata per zona.
+  function poiListHtml() {
+    const q = poiQuery.trim().toLowerCase();
+    const zoneRank = (p) => { const i = ZONES.indexOf(p.zone); return i < 0 ? ZONES.length : i; };
+    let list = data.pois.filter((p) => !hiddenCats.includes(p.category)
+      && (!q || [p.name, p.work, p.zone, p.context, p.address].some((t) => String(t || '').toLowerCase().includes(q))));
+    list = geo.pos
+      ? list.slice().sort((a, b) => (a.lat == null ? 1e9 : dist(geo.pos, a)) - (b.lat == null ? 1e9 : dist(geo.pos, b)))
+      : list.slice().sort((a, b) => zoneRank(a) - zoneRank(b));
+    const todo = list.filter((p) => !poiSeen[p.id]), seen = list.filter((p) => poiSeen[p.id]);
+    let html = '', last = null;
+    for (const p of todo) {
+      if (!geo.pos && p.zone !== last) { html += `<p class="fascia">${esc(p.zone || 'Altre zone')}</p>`; last = p.zone; }
+      html += poiCard(p);
+    }
+    return `<p class="lead">${todo.length + seen.length} ${todo.length + seen.length === 1 ? 'scheda' : 'schede'}${geo.pos ? ', dalla più vicina' : ', per zona'}.</p>`
+      + (html || '<p class="empty">Nessuna scheda trovata.</p>')
+      + (seen.length ? `<h2>Già visti</h2>${seen.map(poiCard).join('')}` : '');
+  }
   function viewVicino() {
     const cats = Object.keys(CAT_L).map((c) => `<button class="chip${hiddenCats.includes(c) ? ' off' : ' on'}" data-act="cat" data-cat="${c}" aria-pressed="${!hiddenCats.includes(c)}">${CAT_L[c]}</button>`).join('');
-    let list = data.pois.filter((p) => !hiddenCats.includes(p.category));
-    if (geo.pos) list = list.slice().sort((a, b) => (a.lat == null ? 1e9 : dist(geo.pos, a)) - (b.lat == null ? 1e9 : dist(geo.pos, b)));
-    const todo = list.filter((p) => !poiSeen[p.id]), seen = list.filter((p) => poiSeen[p.id]);
     const geoBar = geo.watch != null
       ? `<div class="alert plain">${geo.pos ? `Posizione attiva (precisione ≈ ${Math.round(geo.pos.acc)} m). I luoghi sono ordinati per distanza finché l'app resta aperta.` : 'Sto cercando la tua posizione…'}
           <div class="actions"><button class="btn small" data-act="geo-stop">Ferma la posizione</button><button class="btn small${muted ? ' on' : ''}" data-act="mute">${muted ? 'Segnalazioni silenziate' : 'Silenzia le segnalazioni'}</button></div></div>`
@@ -440,8 +458,8 @@
           <div class="actions"><button class="btn primary" data-act="geo-start">Usa la mia posizione</button></div></div>`;
     return `<div class="hero"><h1>Vicino a me</h1><p>Curiosità da scoprire se si passa già in zona. Non cambiano il programma.</p></div>
       ${nearHtml()}${geoBar}<div class="chips">${cats}</div>
-      ${todo.map(poiCard).join('') || '<p class="empty">Nessuna scheda in queste categorie.</p>'}
-      ${seen.length ? `<h2>Già visti</h2>${seen.map(poiCard).join('')}` : ''}
+      <label class="field"><span>Cerca un film, un personaggio o un luogo</span><input id="poi-q" type="search" value="${esc(poiQuery)}" placeholder="es. Padrino, Spider-Man, Central Park" autocomplete="off"></label>
+      <div id="poi-list">${poiListHtml()}</div>
       ${admin ? '<div class="actions"><button class="btn" data-act="new-poi">+ Nuovo punto di interesse</button></div>' : ''}`;
   }
 
@@ -556,10 +574,12 @@
     const v = view();
     const views = { oggi: viewOggi, programma: viewProgramma, vicino: viewVicino, cibo: viewCibo, info: viewInfo, admin: viewAdmin };
     const y = window.scrollY;
+    const typing = document.activeElement && document.activeElement.id === 'poi-q';
     const simBar = sim() ? `<div class="sim"><span>Simulazione: a New York è ${esc(sim().replace('T', ' '))}</span><button data-act="sim-off">Esci</button></div>` : '';
     main.innerHTML = simBar + (views[v.name] || viewOggi)(v);
     if (render.last === location.hash) window.scrollTo(0, y); else window.scrollTo(0, 0);
     render.last = location.hash;
+    if (typing && $('#poi-q')) { const el = $('#poi-q'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
     const target = v.name === 'programma' && v.b ? $('#act-' + CSS.escape(v.b)) : v.name === 'vicino' && v.a ? $('#poi-' + CSS.escape(v.a)) : null;
     if (target && render.flashed !== location.hash) { render.flashed = location.hash; target.scrollIntoView({ block: 'center' }); target.classList.add('flash'); }
     if (v.name === 'admin' && admin && !adminLog) loadHistory();
@@ -762,6 +782,11 @@
   document.addEventListener('click', (e) => {
     const el = e.target.closest('[data-act]');
     if (el && ACTIONS[el.dataset.act]) { e.preventDefault(); ACTIONS[el.dataset.act](el); }
+  });
+  document.addEventListener('input', (e) => {
+    if (e.target.id !== 'poi-q') return;
+    poiQuery = e.target.value;
+    $('#poi-list').innerHTML = poiListHtml();
   });
   document.addEventListener('change', (e) => {
     const t = e.target;

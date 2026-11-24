@@ -16,8 +16,8 @@ const ENUM = {
   type: ['ritrovo', 'visita', 'pasto', 'spostamento'],
   status: ['prenotato', 'proposto', 'da_confermare', 'facoltativo'],
   audience: ['tutti', 'facoltativo', 'sottogruppo'],
-  category: ['film', 'marvel', 'storia', 'natale', 'ragazzi'],
-  linkType: ['set_verificato', 'ispirazione', 'ambientazione', 'luogo_storico'],
+  category: ['film', 'marvel', 'pop', 'curiosita', 'storia', 'natale', 'ragazzi'],
+  linkType: ['set_verificato', 'ispirazione', 'ambientazione', 'luogo_storico', 'curiosita'],
 };
 const err = (where, msg) => errors.push(`${where}: ${msg}`);
 const text = (o, k, where, max) => { if (o[k] != null && (typeof o[k] !== 'string' || o[k].length > max)) err(where, `"${k}" deve essere un testo di al massimo ${max} caratteri`); };
