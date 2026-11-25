@@ -1,0 +1,279 @@
+/* Mockup grafica "NYC in compagnia": tre direzioni scelte con i radio #dA #dB #dC (niente JavaScript). */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: #26282c; color: #f2f2f2; font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+h1, h2, h3, p, ul, figure { margin: 0; padding: 0; }
+ul { list-style: none; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.sprite { position: absolute; width: 0; height: 0; }
+.pick { position: absolute; opacity: 0; pointer-events: none; }
+
+/* ---------- cornice del mockup ---------- */
+.bar { position: sticky; top: 0; z-index: 30; background: #17181b; padding: 10px 14px 12px; border-bottom: 1px solid #3a3d44; }
+.bar-title { font-size: .82rem; color: #b9bdc6; margin-bottom: 8px; text-align: center; }
+.switch { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.switch label { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 99px; border: 2px solid #5a5e68; font-weight: 600; cursor: pointer; }
+.switch label b { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #5a5e68; color: #fff; font-size: .85rem; }
+#dA:checked ~ .page label[for=dA], #dB:checked ~ .page label[for=dB], #dC:checked ~ .page label[for=dC] { background: #fff; color: #111; border-color: #fff; }
+#dA:checked ~ .page label[for=dA] b, #dB:checked ~ .page label[for=dB] b, #dC:checked ~ .page label[for=dC] b { background: #111; }
+#dA:focus-visible ~ .page label[for=dA], #dB:focus-visible ~ .page label[for=dB], #dC:focus-visible ~ .page label[for=dC] { outline: 3px solid #7fb2ff; outline-offset: 2px; }
+
+.spec { max-width: 1240px; margin: 0 auto; padding: 16px 16px 0; }
+.spec-x { display: none; }
+#dA:checked ~ .page .spec-a, #dB:checked ~ .page .spec-b, #dC:checked ~ .page .spec-c { display: block; }
+.spec h2 { font-size: 1.3rem; margin-bottom: 4px; }
+.spec p { color: #d5d8de; max-width: 78ch; }
+.spec .fonts { font-size: .88rem; margin-top: 6px; color: #b9bdc6; }
+.spec .fonts b { color: #fff; }
+.sw { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 6px; }
+.sw li { font-size: .74rem; padding: 26px 10px 6px; min-width: 96px; border-radius: 8px; border: 1px solid #555; font-weight: 600; }
+.a1 { background: #111; color: #fff; } .a2 { background: #fccc0a; color: #111; } .a3 { background: #00933c; color: #fff; }
+.a4 { background: #0039a6; color: #fff; } .a5 { background: #ee352e; color: #111; } .a6 { background: #fff; color: #111; }
+.b1 { background: #f7b500; color: #111; } .b2 { background: #111; color: #f7b500; } .b3 { background: #fbf6e6; color: #111; }
+.b4 { background: #0b6b35; color: #fff; } .b5 { background: #1c4fa0; color: #fff; } .b6 { background: #fff; color: #111; }
+.c1 { background: #0f2b22; color: #f6ecd6; } .c2 { background: #8c1525; color: #fff; } .c3 { background: #f3d27a; color: #1d1612; }
+.c4 { background: #fbf4e2; color: #1d1612; } .c5 { background: #170d0e; color: #f3d27a; } .c6 { background: #8a6a1f; color: #fff; }
+
+.stage { display: flex; gap: 28px; justify-content: center; align-items: flex-start; flex-wrap: wrap; padding: 20px 16px 10px; }
+.phone > figcaption { text-align: center; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: #b9bdc6; margin-bottom: 8px; }
+.screen { width: 390px; height: 800px; border-radius: 34px; border: 8px solid #0b0b0c; overflow: hidden; display: flex; flex-direction: column;
+  background: var(--bg); color: var(--ink); font-family: var(--font); box-shadow: 0 18px 40px rgba(0, 0, 0, .45); }
+.scroll { flex: 1; overflow-y: auto; padding: 12px 14px 22px; scrollbar-width: none; }
+.scroll::-webkit-scrollbar { display: none; }
+.foot { text-align: center; font-size: .8rem; color: #9da2ad; padding: 6px 16px 28px; }
+
+/* ---------- componenti dell'app (comuni) ---------- */
+.apphead { background: var(--head-bg); color: var(--head-fg); padding: 12px 14px 10px; position: relative; flex: none; }
+.brand { display: flex; align-items: center; gap: 8px; }
+.brand strong { font-family: var(--font-h); font-size: 1.05rem; flex: 1; white-space: nowrap; }
+.clock { font-size: .82rem; color: var(--head-sub); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.netline { font-size: .76rem; color: var(--head-sub); margin-top: 3px; }
+.netline.off { color: var(--head-off); font-weight: 700; }
+.logo { display: none; }
+
+.dayhead { padding: 4px 2px 6px; color: var(--on-bg); }
+.dayhead h1 { font-family: var(--font-h); font-size: 1.55rem; line-height: 1.15; }
+.dayhead p { color: var(--on-bg-muted); font-size: .92rem; }
+.dayhead.small h1 { font-size: 1.3rem; }
+h2 { font-family: var(--font-h); font-size: 1.08rem; margin: 22px 0 8px; color: var(--on-bg); }
+h3 { font-family: var(--font-h); font-size: 1.12rem; line-height: 1.22; }
+.row { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; }
+.badges { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.badge { flex: none; font-size: .7rem; font-weight: 700; padding: 4px 9px; border-radius: var(--badge-r); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap;
+  background: var(--tag-bg); color: var(--tag-fg); border: var(--tag-bd); }
+.badge.ok { background: var(--ok-bg); color: var(--ok-fg); border-color: transparent; }
+.badge.prop { background: var(--prop-bg); color: var(--prop-fg); border-color: transparent; }
+.badge.warn { background: var(--warn-bg); color: var(--warn-fg); border: var(--warn-bd); }
+.badge.upd { background: var(--upd-bg); color: var(--upd-fg); border-color: transparent; }
+
+.card { position: relative; background: var(--card); border: var(--card-bd); border-radius: var(--radius); box-shadow: var(--card-sh); padding: 14px; margin: 12px 0; }
+.card h3 { margin: 6px 0 4px; }
+.times { font-size: .9rem; color: var(--muted); line-height: 1.2; }
+.times b { color: var(--ink); font-family: var(--font-h); font-size: 1.65rem; font-variant-numeric: tabular-nums; letter-spacing: -.01em; margin: 0 2px; }
+.times span { display: block; margin-top: 2px; }
+.place, .kicker, .work { font-size: .9rem; color: var(--muted); }
+.place b { color: var(--ink); }
+.kicker { text-transform: uppercase; letter-spacing: .06em; font-size: .74rem; font-weight: 700; padding-top: 3px; }
+.work { color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+.desc { margin-top: 8px; font-size: .95rem; }
+.fascia { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin: 18px 0 0; color: var(--on-bg-muted); }
+.bul { display: none; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; padding: 8px 15px; border-radius: var(--btn-r); text-decoration: none; font-weight: 700; font-size: .93rem;
+  background: var(--btn-bg); color: var(--btn-fg); border: var(--btn-bd); }
+.btn.primary { background: var(--pri-bg); color: var(--pri-fg); border-color: var(--pri-bg); }
+.btn.on { background: var(--ok-bg); color: var(--ok-fg); border-color: var(--ok-bg); }
+
+.meet { background: var(--meet-bg); color: var(--meet-fg); border: var(--meet-bd); border-radius: var(--radius); padding: 16px 14px 14px; margin: 10px 0 12px; position: relative; }
+.meet .label { font-size: .76rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--meet-accent); padding-top: 4px; }
+.meet .when { font-family: var(--font-h); font-size: 3.5rem; font-weight: 800; line-height: 1; margin-top: 8px; color: var(--meet-time); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.meet .when small { font-family: var(--font); font-size: .95rem; font-weight: 600; letter-spacing: 0; color: var(--meet-sub); display: block; margin-top: 6px; text-shadow: none; }
+.meet h3 { margin-top: 10px; font-size: 1.2rem; }
+.meet .where { font-weight: 700; margin-top: 4px; }
+.meet .sub { font-size: .92rem; color: var(--meet-sub); }
+.meet .btn { background: transparent; color: var(--meet-fg); border: 2px solid var(--meet-fg); }
+.meet .btn.primary { background: var(--meet-pri-bg); color: var(--meet-pri-fg); border-color: var(--meet-pri-bg); flex: 1; font-size: 1.05rem; }
+.meet .hotel { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--meet-rule); font-size: .84rem; color: var(--meet-sub); display: flex; gap: 8px; justify-content: space-between; align-items: center; }
+.meet .hotel a { color: var(--meet-fg); font-weight: 700; white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; }
+
+.alert { background: var(--al-bg); color: var(--al-fg); border: var(--al-bd); border-radius: var(--radius); padding: 12px 14px 14px; margin: 12px 0; overflow: hidden; }
+.alert h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.alert li { padding: 9px 0; border-top: 1px solid var(--al-rule); font-size: .93rem; }
+.alert li:first-child { border-top: 0; }
+.alert li b { display: block; }
+.alert .chg { display: block; font-size: 1.25rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.alert .chg s { font-weight: 500; color: var(--al-sub); }
+.alert .who { font-size: .78rem; color: var(--al-sub); }
+.alert .btn { background: transparent; color: var(--al-fg); border: 2px solid var(--al-fg); }
+
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-width: 48px; min-height: 48px; padding: 5px 13px; border-radius: var(--chip-r); border: var(--chip-bd); background: var(--chip-bg); color: var(--chip-fg); font-weight: 700; font-size: .9rem; line-height: 1.1; text-align: center; }
+.chip b { display: block; font-family: var(--font-h); font-size: 1.25rem; }
+.chip small { display: block; font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.chip.on { background: var(--chip-on-bg); color: var(--chip-on-fg); border-color: var(--chip-on-bg); }
+
+.photo { margin: -14px -14px 12px; position: relative; }
+.photo img { display: block; width: 100%; height: 190px; object-fit: cover; background: #8a8a86; border-radius: var(--photo-r); }
+.photo figcaption { font-size: .68rem; color: var(--muted); padding: 4px 14px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dist { position: absolute; left: 12px; top: 148px; background: var(--meet-bg); color: var(--meet-time); font-family: var(--font-h); font-weight: 800; font-size: 1.05rem; padding: 4px 10px; border-radius: var(--badge-r); font-variant-numeric: tabular-nums; }
+
+.tabs { flex: none; display: flex; background: var(--tab-bg); border-top: var(--tab-bd); }
+.tabs a { flex: 1; min-width: 0; min-height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font-size: .68rem; color: var(--tab-fg); }
+.tabs svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tabs a[aria-current=page] { color: var(--tab-on); font-weight: 700; box-shadow: inset 0 4px 0 var(--tab-mark); }
+
+/* =====================================================================
+   A · SUBWAY — segnaletica della metropolitana
+   ===================================================================== */
+#dA:checked ~ .page .screen {
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif; --font-h: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --bg: #efefec; --card: #fff; --ink: #111; --muted: #4d5258; --on-bg: #111; --on-bg-muted: #4d5258;
+  --radius: 4px; --badge-r: 3px; --btn-r: 4px; --chip-r: 4px; --photo-r: 0;
+  --card-bd: 1px solid #bdbdb8; --card-sh: none;
+  --head-bg: #111; --head-fg: #fff; --head-sub: #d2d2d2; --head-off: #fccc0a;
+  --meet-bg: #111; --meet-fg: #fff; --meet-sub: #d6d6d6; --meet-accent: #fccc0a; --meet-time: #fff; --meet-bd: 0; --meet-rule: #4a4a4a;
+  --meet-pri-bg: #fccc0a; --meet-pri-fg: #111;
+  --pri-bg: #111; --pri-fg: #fff; --btn-bg: #fff; --btn-fg: #111; --btn-bd: 2px solid #111;
+  --ok-bg: #00702e; --ok-fg: #fff; --prop-bg: #0039a6; --prop-fg: #fff; --warn-bg: #fccc0a; --warn-fg: #111; --warn-bd: 1px solid transparent;
+  --upd-bg: #c8201a; --upd-fg: #fff; --tag-bg: #e2e2de; --tag-fg: #111; --tag-bd: 1px solid transparent;
+  --al-bg: #fff; --al-fg: #111; --al-sub: #4d5258; --al-bd: 3px solid #111; --al-rule: #cfcfca;
+  --chip-bg: #fff; --chip-fg: #111; --chip-bd: 2px solid #111; --chip-on-bg: #111; --chip-on-fg: #fff;
+  --tab-bg: #111; --tab-fg: #cfcfcf; --tab-on: #fff; --tab-mark: #fccc0a; --tab-bd: 0;
+}
+/* il filo bianco in alto, come sui cartelli delle stazioni */
+#dA:checked ~ .page .apphead { padding-top: 18px; }
+#dA:checked ~ .page .apphead::before, #dA:checked ~ .page .meet::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 2px; background: #fff; }
+#dA:checked ~ .page .meet { padding-top: 22px; }
+#dA:checked ~ .page .logo { display: inline-flex; gap: 3px; }
+#dA:checked ~ .page .logo i { font-style: normal; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: .82rem; background: #fccc0a; color: #111; }
+#dA:checked ~ .page .logo i:nth-child(2) { background: #ee352e; }
+#dA:checked ~ .page .logo i:nth-child(3) { background: #0039a6; color: #fff; }
+#dA:checked ~ .page .brand strong { letter-spacing: -.01em; }
+#dA:checked ~ .page h1, #dA:checked ~ .page h3 { letter-spacing: -.015em; }
+#dA:checked ~ .page .card { border-top: 5px solid #111; }
+#dA:checked ~ .page .card.next { border-top-color: #fccc0a; box-shadow: 0 0 0 2px #111; }
+#dA:checked ~ .page .alert { padding-top: 0; }
+#dA:checked ~ .page .alert h3 { background: #fccc0a; margin: 0 -14px 4px; padding: 9px 14px; border-bottom: 3px solid #111; }
+#dA:checked ~ .page .alert h3::before { content: "!"; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #111; color: #fccc0a; margin-right: 8px; font-size: .9rem; }
+/* giorni come bollini delle linee: 4·5·6 verdi, 7 viola */
+#dA:checked ~ .page .chip[class*=" d"], #dA:checked ~ .page .chip[class^="chip d"] { background: none; border: 0; padding: 0; min-width: 46px; color: #111; }
+#dA:checked ~ .page .chip b { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 4px; font-size: 1.4rem; background: #00933c; color: #fff; }
+#dA:checked ~ .page .chip.d7 b { background: #b933ad; }
+#dA:checked ~ .page .chip.d8 b { background: #0039a6; }
+#dA:checked ~ .page .chip.d9 b { background: #ff6319; color: #111; }
+#dA:checked ~ .page .chip.on b { box-shadow: 0 0 0 3px #efefec, 0 0 0 6px #111; }
+#dA:checked ~ .page .chip.on small { font-weight: 800; }
+#dA:checked ~ .page .chips { padding: 8px 6px 10px; gap: 7px; justify-content: space-between; }
+/* il giorno come una linea con le fermate */
+#dA:checked ~ .page .sched { position: relative; padding-left: 44px; }
+#dA:checked ~ .page .sched::before { content: ""; position: absolute; left: 13px; top: 6px; bottom: 6px; width: 8px; border-radius: 4px; background: #00933c; }
+#dA:checked ~ .page .bul { display: grid; place-items: center; position: absolute; left: -46px; top: 12px; width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 4px solid #111; font-weight: 700; font-size: .95rem; color: #111; }
+#dA:checked ~ .page .fascia { color: #111; }
+#dA:checked ~ .page .dist { background: #111; color: #fff; }
+
+/* =====================================================================
+   B · YELLOW CAB — taxi giallo e scacchi
+   ===================================================================== */
+#dB:checked ~ .page .screen {
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-h: "Avenir Next Condensed", "Roboto Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --bg: #fbf6e6; --card: #fff; --ink: #111; --muted: #544f45; --on-bg: #111; --on-bg-muted: #544f45;
+  --radius: 12px; --badge-r: 5px; --btn-r: 10px; --chip-r: 10px; --photo-r: 10px 10px 0 0;
+  --card-bd: 2px solid #111; --card-sh: 0 4px 0 #111;
+  --head-bg: #f7b500; --head-fg: #111; --head-sub: #3a2d00; --head-off: #7a0f0f;
+  --meet-bg: #f7b500; --meet-fg: #111; --meet-sub: #33290a; --meet-accent: #111; --meet-time: #111; --meet-bd: 2px solid #111; --meet-rule: #111;
+  --meet-pri-bg: #111; --meet-pri-fg: #f7b500;
+  --pri-bg: #111; --pri-fg: #f7b500; --btn-bg: #fff; --btn-fg: #111; --btn-bd: 2px solid #111;
+  --ok-bg: #0b6b35; --ok-fg: #fff; --prop-bg: #1c4fa0; --prop-fg: #fff; --warn-bg: #fff3c4; --warn-fg: #111; --warn-bd: 2px dashed #111;
+  --upd-bg: #111; --upd-fg: #f7b500; --tag-bg: #fff; --tag-fg: #111; --tag-bd: 2px solid #111;
+  --al-bg: #111; --al-fg: #fff; --al-sub: #cfcfcf; --al-bd: 0; --al-rule: #444;
+  --chip-bg: #fff; --chip-fg: #111; --chip-bd: 2px solid #111; --chip-on-bg: #111; --chip-on-fg: #f7b500;
+  --tab-bg: #111; --tab-fg: #d0d0d0; --tab-on: #f7b500; --tab-mark: #f7b500; --tab-bd: 0;
+}
+#dB:checked ~ .page .brand strong, #dB:checked ~ .page h1, #dB:checked ~ .page h2, #dB:checked ~ .page h3 { text-transform: uppercase; font-stretch: condensed; font-weight: 800; letter-spacing: .01em; }
+#dB:checked ~ .page .brand strong { font-size: 1.25rem; }
+#dB:checked ~ .page .dayhead h1 { font-size: 1.8rem; }
+#dB:checked ~ .page h3 { font-size: 1.3rem; line-height: 1.1; }
+#dB:checked ~ .page .times b, #dB:checked ~ .page .meet .when { font-stretch: condensed; }
+#dB:checked ~ .page .times b { font-size: 1.9rem; }
+#dB:checked ~ .page .meet .when { font-size: 4rem; }
+/* fascia a scacchi */
+#dB:checked ~ .page .apphead { padding-bottom: 22px; }
+#dB:checked ~ .page .apphead::after, #dB:checked ~ .page .meet::before { content: ""; position: absolute; left: 0; right: 0; height: 12px;
+  background: repeating-conic-gradient(#111 0 25%, #f7b500 0 50%) 0 0 / 12px 12px; }
+#dB:checked ~ .page .apphead::after { bottom: 0; }
+#dB:checked ~ .page .meet { padding-top: 26px; box-shadow: 0 4px 0 #111; overflow: hidden; }
+#dB:checked ~ .page .meet::before { top: 0; border-bottom: 2px solid #111; }
+#dB:checked ~ .page .meet .badge.ok { border: 2px solid #111; }
+#dB:checked ~ .page .logo { display: inline-grid; place-items: center; background: #111; color: #f7b500; border-radius: 6px; padding: 2px 7px; font-family: var(--font-h); font-weight: 800; font-stretch: condensed; letter-spacing: .06em; font-size: .95rem; grid-auto-flow: column; }
+#dB:checked ~ .page .logo i { font-style: normal; }
+#dB:checked ~ .page .brand strong { font-size: 0; flex: 1; }
+#dB:checked ~ .page .brand strong::after { content: "in compagnia"; font-size: 1.25rem; }
+#dB:checked ~ .page .card.next { background: #fff3c4; }
+#dB:checked ~ .page .alert h3 { display: inline-block; background: #f7b500; color: #111; padding: 5px 12px; border-radius: 6px; font-size: 1.05rem; margin: 2px 0 6px; }
+#dB:checked ~ .page .alert .chg { color: #f7b500; font-family: var(--font-h); font-stretch: condensed; font-size: 1.5rem; }
+#dB:checked ~ .page .alert .btn { border-color: #f7b500; color: #f7b500; }
+#dB:checked ~ .page .fascia { display: flex; align-items: center; gap: 8px; color: #111; }
+#dB:checked ~ .page .fascia::after { content: ""; flex: 1; height: 8px; background: repeating-conic-gradient(#111 0 25%, transparent 0 50%) 0 0 / 8px 8px; opacity: .55; }
+#dB:checked ~ .page .dist { top: 144px; border: 2px solid #111; }
+
+/* =====================================================================
+   C · BROADWAY A NATALE — insegne, Art Déco, oro e abete
+   ===================================================================== */
+#dC:checked ~ .page .screen {
+  --font: "Avenir Next", "Century Gothic", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-h: Didot, "Bodoni 72", "Bodoni MT", "Playfair Display", Georgia, "Times New Roman", serif;
+  --bg: #0f2b22; --card: #fbf4e2; --ink: #1d1612; --muted: #5a4c3a; --on-bg: #f6ecd6; --on-bg-muted: #d6c9a8;
+  --radius: 4px; --badge-r: 2px; --btn-r: 2px; --chip-r: 26px 26px 3px 3px; --photo-r: 2px 2px 0 0;
+  --card-bd: 1px solid #b8923a; --card-sh: inset 0 0 0 3px #fbf4e2, inset 0 0 0 4px #b8923a;
+  --head-bg: #8c1525; --head-fg: #fdf3d7; --head-sub: #f3d9b0; --head-off: #ffe08a;
+  --meet-bg: #170d0e; --meet-fg: #fdf3d7; --meet-sub: #e2d3b0; --meet-accent: #f3d27a; --meet-time: #f3d27a; --meet-bd: 0; --meet-rule: #5c4a2a;
+  --meet-pri-bg: #f3d27a; --meet-pri-fg: #1d1612;
+  --pri-bg: #8c1525; --pri-fg: #fff; --btn-bg: transparent; --btn-fg: #1d1612; --btn-bd: 2px solid #8a6a1f;
+  --ok-bg: #0f5a3c; --ok-fg: #fff; --prop-bg: #ecd9a4; --prop-fg: #43330c; --warn-bg: #fbe1dc; --warn-fg: #8c1525; --warn-bd: 1px solid #8c1525;
+  --upd-bg: #8c1525; --upd-fg: #fff; --tag-bg: #ece0bf; --tag-fg: #3b2f1a; --tag-bd: 1px solid transparent;
+  --al-bg: #8c1525; --al-fg: #fff; --al-sub: #f6d3d7; --al-bd: 0; --al-rule: #b04a57;
+  --chip-bg: transparent; --chip-fg: #f6ecd6; --chip-bd: 2px solid #b8923a; --chip-on-bg: #f3d27a; --chip-on-fg: #1d1612;
+  --tab-bg: #120b0c; --tab-fg: #d6c9a8; --tab-on: #f3d27a; --tab-mark: #f3d27a; --tab-bd: 1px solid #5c4a2a;
+}
+#dC:checked ~ .page .brand strong { font-size: 1.2rem; letter-spacing: .02em; font-weight: 700; }
+#dC:checked ~ .page .dayhead h1 { font-size: 1.75rem; font-weight: 700; }
+#dC:checked ~ .page h3 { font-size: 1.25rem; font-weight: 700; }
+#dC:checked ~ .page h2, #dC:checked ~ .page .fascia { color: #f3d27a; display: flex; align-items: center; gap: 10px; }
+#dC:checked ~ .page h2::before, #dC:checked ~ .page .fascia::before { content: "✦"; font-size: .8em; }
+#dC:checked ~ .page h2::after, #dC:checked ~ .page .fascia::after { content: ""; flex: 1; height: 5px; border-top: 1px solid #b8923a; border-bottom: 1px solid #b8923a; }
+#dC:checked ~ .page .badge, #dC:checked ~ .page .kicker, #dC:checked ~ .page .meet .label, #dC:checked ~ .page .btn { letter-spacing: .09em; }
+#dC:checked ~ .page .btn { text-transform: uppercase; font-size: .8rem; }
+/* fila di lampadine sotto la testata e attorno al punto di incontro */
+#dC:checked ~ .page .apphead { padding-bottom: 22px; }
+#dC:checked ~ .page .apphead::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 14px;
+  background: radial-gradient(circle, #ffe9a8 0 3px, rgba(255, 233, 168, .35) 3.500px 5px, transparent 5.500px) 0 0 / 14px 14px, #5d0d18; }
+#dC:checked ~ .page .meet { border: 13px solid transparent; padding: 14px 12px 12px;
+  background: linear-gradient(#170d0e, #170d0e) padding-box, radial-gradient(circle, #ffe9a8 0 3px, rgba(255, 233, 168, .3) 3.500px 5px, transparent 5.500px) 0 0 / 13px 13px border-box, #5d0d18 border-box; }
+#dC:checked ~ .page .meet .when { font-size: 3.9rem; font-weight: 700; text-shadow: 0 0 18px rgba(243, 210, 122, .45); }
+#dC:checked ~ .page .meet .btn { border-color: #f3d27a; }
+#dC:checked ~ .page .card.next { box-shadow: inset 0 0 0 3px #fbf4e2, inset 0 0 0 4px #b8923a, 0 0 0 3px #f3d27a; }
+#dC:checked ~ .page .alert h3 { font-size: 1.15rem; text-transform: none; letter-spacing: .01em; }
+#dC:checked ~ .page .alert h3::before { content: "✦ "; color: #f3d27a; }
+#dC:checked ~ .page .alert .chg { font-family: var(--font-h); font-size: 1.45rem; }
+#dC:checked ~ .page .chip { padding-top: 9px; }
+#dC:checked ~ .page .chips.cats .chip { border-radius: 2px; padding-top: 5px; font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; }
+#dC:checked ~ .page .photo { margin: -10px -10px 12px; }
+#dC:checked ~ .page .photo img { border-bottom: 3px double #b8923a; }
+#dC:checked ~ .page .dist { top: 146px; font-family: var(--font); font-size: .95rem; }
+
+/* ---------- su un telefono vero: una schermata sotto l'altra, senza cornice ---------- */
+@media (max-width: 480px) {
+  .stage { padding: 14px 0 0; gap: 22px; }
+  .screen { width: 100vw; height: auto; border: 0; border-radius: 0; box-shadow: none; }
+  .scroll { overflow: visible; }
+  .spec { padding: 12px 14px 0; }
+  .switch label { padding: 6px 11px; font-size: .88rem; }
+}
+
+/* ritocchi: i sei giorni stanno in una riga, i pulsanti non vanno a capo */
+.chips:not(.cats) .chip { flex: 1; min-width: 44px; padding-left: 4px; padding-right: 4px; }
+.btn { white-space: nowrap; }
+#dC:checked ~ .page .btn { padding-left: 12px; padding-right: 12px; }

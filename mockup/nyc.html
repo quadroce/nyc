@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>NYC in compagnia · mockup grafica</title>
+  <link rel="stylesheet" href="nyc.css">
+</head>
+<body>
+<!-- Mockup statico: nessuno script, nessuna risorsa da CDN. Le foto arrivano da Wikimedia come nell'app. -->
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-oggi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-prog" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-vicino" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.800 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+  <symbol id="i-cibo" viewBox="0 0 24 24"><path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 3c-2 2-3 4-3 7h3v11"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.500v.010"/></symbol>
+</svg>
+
+<input class="pick" type="radio" name="dir" id="dA" checked>
+<input class="pick" type="radio" name="dir" id="dB">
+<input class="pick" type="radio" name="dir" id="dC">
+
+<div class="page">
+  <header class="bar">
+    <p class="bar-title">NYC in compagnia · proposte di grafica</p>
+    <div class="switch" role="group" aria-label="Direzione visiva">
+      <label for="dA"><b>A</b> Subway</label>
+      <label for="dB"><b>B</b> Yellow Cab</label>
+      <label for="dC"><b>C</b> Broadway a Natale</label>
+    </div>
+  </header>
+
+  <section class="spec">
+    <div class="spec-x spec-a">
+      <h2>A · Subway</h2>
+      <p>La segnaletica della metropolitana: cartelli neri con il filo bianco, bollini colorati delle linee, il programma del giorno disegnato come una linea con le fermate.</p>
+      <ul class="sw"><li class="a1">Nero cartello</li><li class="a2">Giallo N·Q·R</li><li class="a3">Verde 4·5·6</li><li class="a4">Blu A·C·E</li><li class="a5">Rosso 1·2·3</li><li class="a6">Bianco</li></ul>
+      <p class="fonts"><b>Caratteri:</b> Helvetica / Arial in grassetto, già presenti su ogni telefono: nessun file da scaricare.</p>
+      <p class="fonts"><b>Componenti:</b> angoli quasi vivi, bordi netti, bollino numerato per ogni tappa, avviso in stile «service change».</p>
+    </div>
+    <div class="spec-x spec-b">
+      <h2>B · Yellow Cab</h2>
+      <p>Il taxi giallo: testata gialla con la fascia a scacchi, titoli stretti in maiuscolo, schede con bordo nero spesso come una ricevuta del tassametro.</p>
+      <ul class="sw"><li class="b1">Giallo taxi</li><li class="b2">Nero</li><li class="b3">Carta</li><li class="b4">Verde ok</li><li class="b5">Blu proposto</li><li class="b6">Bianco</li></ul>
+      <p class="fonts"><b>Caratteri:</b> sans stretto di sistema (Avenir Next Condensed, Roboto Condensed, Arial Narrow) per i titoli, testo normale di sistema.</p>
+      <p class="fonts"><b>Componenti:</b> bordi neri da 2 px con ombra piena, punto di incontro su fondo giallo, avviso nero come l'insegna sul tetto.</p>
+    </div>
+    <div class="spec-x spec-c">
+      <h2>C · Broadway a Natale</h2>
+      <p>Le insegne dei teatri e l'Art Déco del Rockefeller Center a dicembre: cornice di lampadine, oro su verde abete e rosso sipario, schede color crema.</p>
+      <ul class="sw"><li class="c1">Verde abete</li><li class="c2">Rosso sipario</li><li class="c3">Oro</li><li class="c4">Crema</li><li class="c5">Notte</li><li class="c6">Oro scuro</li></ul>
+      <p class="fonts"><b>Caratteri:</b> titoli con grazie (Didot / Bodoni / Georgia), etichette in maiuscoletto spaziato. Per un vero carattere Déco servirebbe un file font dentro l'app (circa 20–30 kB).</p>
+      <p class="fonts"><b>Componenti:</b> doppio filo dorato, giorni a forma di arco, punto di incontro come un'insegna illuminata.</p>
+    </div>
+  </section>
+
+  <main class="stage">
+
+    <!-- ============ OGGI ============ -->
+    <figure class="phone">
+      <figcaption>Oggi</figcaption>
+      <div class="screen">
+        <header class="apphead">
+          <div class="brand"><span class="logo" aria-hidden="true"><i>N</i><i>Y</i><i>C</i></span><strong>NYC in compagnia</strong><span class="clock">sab 5 dic · 16:00</span></div>
+          <p class="netline">Programma aggiornato il 5 dic, 13:05</p>
+        </header>
+        <div class="scroll">
+          <div class="dayhead">
+            <h1>sabato 5 dicembre</h1>
+            <p>Giorno 2 di 6 · a New York sono le 16:00</p>
+          </div>
+
+          <section class="meet">
+            <div class="row"><span class="label">Prossimo punto di incontro</span><span class="badge ok">Prenotato</span></div>
+            <p class="when">18:15 <small>oggi · tra 2 h 15 min</small></p>
+            <h3>Cena al Rosa Mexicano Lincoln Center</h3>
+            <p class="where">Sotto l'hotel, davanti all'ingresso</p>
+            <p class="sub">La cena inizia alle 19:15</p>
+            <div class="actions"><a class="btn primary" href="#">Portami qui <span aria-hidden="true">→</span></a><a class="btn" href="#">Apri la scheda</a></div>
+            <p class="hotel"><span>Hotel: San Carlos Hotel, 150 East 50th Street</span><a href="#">Portami in hotel</a></p>
+          </section>
+
+          <section class="alert">
+            <h3>Cambio di programma</h3>
+            <ul>
+              <li><b>Roosevelt Island Tramway</b><span class="chg">Orario <s>15:00</s> → 14:30</span><span class="who">Aggiornato oggi alle 13:05</span></li>
+              <li><b>Cena al Rosa Mexicano</b><span class="chg">Ritrovo <s>18:30</s> → 18:15</span><span class="who">Aggiornato oggi alle 13:05</span></li>
+            </ul>
+            <div class="actions"><button class="btn" type="button">Ho visto</button></div>
+          </section>
+
+          <h2>Oggi in programma</h2>
+          <article class="card">
+            <div class="row"><p class="times"><b>14:30</b></p><span class="badge prop">Proposto</span></div>
+            <h3>Roosevelt Island Tramway</h3>
+            <p class="place">E 60th St &amp; 2nd Ave, New York, NY 10022</p>
+            <div class="actions"><a class="btn primary" href="#">Portami qui <span aria-hidden="true">→</span></a><button class="btn" type="button">Calendario</button></div>
+          </article>
+        </div>
+        <nav class="tabs" aria-label="Sezioni">
+          <a href="#" aria-current="page"><svg><use href="#i-oggi"/></svg>Oggi</a>
+          <a href="#"><svg><use href="#i-prog"/></svg>Programma</a>
+          <a href="#"><svg><use href="#i-vicino"/></svg>Vicino a me</a>
+          <a href="#"><svg><use href="#i-cibo"/></svg>TrovaCibo</a>
+          <a href="#"><svg><use href="#i-info"/></svg>Info</a>
+        </nav>
+      </div>
+    </figure>
+
+    <!-- ============ PROGRAMMA ============ -->
+    <figure class="phone">
+      <figcaption>Programma</figcaption>
+      <div class="screen">
+        <header class="apphead">
+          <div class="brand"><span class="logo" aria-hidden="true"><i>N</i><i>Y</i><i>C</i></span><strong>NYC in compagnia</strong><span class="clock">sab 5 dic · 16:00</span></div>
+          <p class="netline off">Senza rete · copia salvata il 5 dic, 13:05</p>
+        </header>
+        <div class="scroll">
+          <div class="chips" role="group" aria-label="Giorni">
+            <button class="chip d4" type="button"><b>4</b><small>ven</small></button>
+            <button class="chip d5 on" type="button" aria-pressed="true"><b>5</b><small>sab</small></button>
+            <button class="chip d6" type="button"><b>6</b><small>dom</small></button>
+            <button class="chip d7" type="button"><b>7</b><small>lun</small></button>
+            <button class="chip d8" type="button"><b>8</b><small>mar</small></button>
+            <button class="chip d9" type="button"><b>9</b><small>mer</small></button>
+          </div>
+          <div class="dayhead small">
+            <h1>sabato 5 dicembre</h1>
+            <p>4 tappe · 2 prenotate</p>
+          </div>
+
+          <div class="sched">
+            <p class="fascia">Mattina</p>
+            <article class="card">
+              <span class="bul s-ok" aria-hidden="true">1</span>
+              <div class="row"><p class="times">Ritrovo <b>08:40</b> <span>inizio 09:30–11:00</span></p><span class="badge ok">Prenotato</span></div>
+              <h3>Top of the Rock</h3>
+              <p class="place">30 Rockefeller Plaza · ritrovo <b>sotto l'hotel, davanti all'ingresso</b></p>
+              <p class="desc">Visita prenotata, biglietti già pronti. Ingresso su 50th Street tra Fifth e Sixth Avenue.</p>
+              <div class="actions"><a class="btn primary" href="#">Portami qui <span aria-hidden="true">→</span></a><button class="btn" type="button">Calendario</button></div>
+            </article>
+            <article class="card">
+              <span class="bul s-warn" aria-hidden="true">2</span>
+              <div class="row"><p class="times"><b>11:00</b></p><span class="badge warn">Da confermare</span></div>
+              <h3>Central Park e pattinaggio</h3>
+              <p class="place">Wollman Rink, Central Park · 830 5th Ave</p>
+              <p class="desc">Passeggiata nel settore sud e Wollman Rink. Per i pattini: calze comode e guanti.</p>
+              <div class="actions"><a class="btn primary" href="#">Portami qui <span aria-hidden="true">→</span></a><button class="btn" type="button">Calendario</button></div>
+            </article>
+
+            <p class="fascia">Pomeriggio</p>
+            <article class="card">
+              <span class="bul s-prop" aria-hidden="true">3</span>
+              <div class="row"><p class="times"><b>14:30</b></p><span class="badges"><span class="badge upd">Aggiornato</span><span class="badge prop">Proposto</span></span></div>
+              <h3>Roosevelt Island Tramway</h3>
+              <p class="place">E 60th St &amp; 2nd Ave</p>
+              <p class="desc">Tram per Roosevelt Island, breve passeggiata e ritorno. In 23 potremmo salire su cabine diverse.</p>
+              <div class="actions"><a class="btn primary" href="#">Portami qui <span aria-hidden="true">→</span></a><button class="btn" type="button">Calendario</button></div>
+            </article>
+
+            <p class="fascia">Sera</p>
+            <article class="card next">
+              <span class="bul s-ok" aria-hidden="true">4</span>
+              <div class="row"><p class="times">Ritrovo <b>18:15</b> <span>inizio 19:15</span></p><span class="badge ok">Prenotato</span></div>
+              <h3>Cena al Rosa Mexicano Lincoln Center</h3>
+              <p class="place">Empire Hotel, secondo piano · 44 W 63rd St · ritrovo <b>sotto l'hotel</b></p>
+              <div class="actions"><a class="btn primary" href="#">Portami qui <span aria-hidden="true">→</span></a><button class="btn" type="button">Calendario</button></div>
+            </article>
+          </div>
+        </div>
+        <nav class="tabs" aria-label="Sezioni">
+          <a href="#"><svg><use href="#i-oggi"/></svg>Oggi</a>
+          <a href="#" aria-current="page"><svg><use href="#i-prog"/></svg>Programma</a>
+          <a href="#"><svg><use href="#i-vicino"/></svg>Vicino a me</a>
+          <a href="#"><svg><use href="#i-cibo"/></svg>TrovaCibo</a>
+          <a href="#"><svg><use href="#i-info"/></svg>Info</a>
+        </nav>
+      </div>
+    </figure>
+
+    <!-- ============ VICINO A ME ============ -->
+    <figure class="phone">
+      <figcaption>Vicino a me</figcaption>
+      <div class="screen">
+        <header class="apphead">
+          <div class="brand"><span class="logo" aria-hidden="true"><i>N</i><i>Y</i><i>C</i></span><strong>NYC in compagnia</strong><span class="clock">sab 5 dic · 16:00</span></div>
+          <p class="netline">Programma aggiornato il 5 dic, 13:05</p>
+        </header>
+        <div class="scroll">
+          <div class="dayhead small">
+            <h1>Vicino a me</h1>
+            <p>Posizione attiva · luoghi ordinati per distanza</p>
+          </div>
+          <div class="chips cats" role="group" aria-label="Categorie">
+            <button class="chip on" type="button" aria-pressed="true">Tutte</button>
+            <button class="chip" type="button">Film e serie</button>
+            <button class="chip" type="button">Marvel</button>
+            <button class="chip" type="button">Natale</button>
+            <button class="chip" type="button">Storia</button>
+          </div>
+
+          <article class="card poi">
+            <figure class="photo">
+              <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/New_York_-_Manhattan_-_Plaza_Hotel.jpg/500px-New_York_-_Manhattan_-_Plaza_Hotel.jpg" alt="La facciata dell'hotel Plaza" loading="lazy">
+              <span class="dist">350 m</span>
+              <figcaption>Foto: Yarl, CC BY-SA 3.0, Wikimedia Commons</figcaption>
+            </figure>
+            <div class="row"><p class="kicker">Film e serie · Midtown</p><span class="badge">Set verificato</span></div>
+            <h3>The Plaza</h3>
+            <p class="work">Mamma, ho riperso l'aereo · Vacanze in America</p>
+            <p class="place">768 5th Ave, New York, NY 10019</p>
+            <p class="desc">L'hotel dove Kevin si prende una suite con la carta di credito del papà. Compare anche in Vacanze in America e nel Grande Gatsby. Nei libri per bambini ci abita la piccola Eloise.</p>
+            <div class="actions"><a class="btn primary" href="#">Apri in Maps <span aria-hidden="true">→</span></a><a class="btn" href="#">▶ Scena su YouTube</a><button class="btn" type="button">Segna come visto</button></div>
+          </article>
+
+          <article class="card poi">
+            <figure class="photo">
+              <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/Rockefeller_Christmas_Tree.jpg/500px-Rockefeller_Christmas_Tree.jpg" alt="L'albero di Natale del Rockefeller Center illuminato" loading="lazy">
+              <span class="dist">800 m</span>
+              <figcaption>Foto: Praneeth Thalla, CC BY-SA 4.0, Wikimedia Commons</figcaption>
+            </figure>
+            <div class="row"><p class="kicker">Natale · Midtown</p><span class="badge">Set verificato</span></div>
+            <h3>L'albero del Rockefeller Center</h3>
+            <p class="work">Mamma, ho riperso l'aereo</p>
+            <p class="place">Rockefeller Plaza, New York, NY 10111</p>
+            <p class="desc">Davanti a questo albero Kevin ritrova la mamma la notte di Natale. La tradizione è nata nel 1931, quando gli operai del cantiere ne addobbarono uno piccolo con ghirlande fatte a mano.</p>
+            <div class="actions"><a class="btn primary" href="#">Apri in Maps <span aria-hidden="true">→</span></a><a class="btn" href="#">▶ Scena su YouTube</a><button class="btn on" type="button">✓ Visto</button></div>
+          </article>
+        </div>
+        <nav class="tabs" aria-label="Sezioni">
+          <a href="#"><svg><use href="#i-oggi"/></svg>Oggi</a>
+          <a href="#"><svg><use href="#i-prog"/></svg>Programma</a>
+          <a href="#" aria-current="page"><svg><use href="#i-vicino"/></svg>Vicino a me</a>
+          <a href="#"><svg><use href="#i-cibo"/></svg>TrovaCibo</a>
+          <a href="#"><svg><use href="#i-info"/></svg>Info</a>
+        </nav>
+      </div>
+    </figure>
+
+  </main>
+  <p class="foot">Mockup: contenuti reali da <code>data/seed.json</code>; il «cambio di programma» è un esempio inventato per mostrare l'avviso.</p>
+</div>
+</body>
+</html>
