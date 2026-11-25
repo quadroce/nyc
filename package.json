@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "check": "node tools/check-seed.js",
+    "test": "node tools/test-admin.js",
     "build": "node tools/check-seed.js --stamp",
     "admin": "node server.js admin",
     "icons": "node tools/make-icons.js"

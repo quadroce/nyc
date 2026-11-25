@@ -57,6 +57,8 @@ main { max-width: 640px; margin: 0 auto; padding: 12px 14px 24px; outline: none;
 .badge.prenotato { background: var(--ok-soft); color: var(--ok); }
 .badge.proposto { background: var(--info-soft); color: var(--info); }
 .badge.da_confermare { background: var(--warn-soft); color: var(--warn); }
+.badge.annullato { background: #f6dedc; color: var(--danger); }
+.act.cancelled h3, .act.cancelled .times { text-decoration: line-through; color: var(--muted); }
 .badge.upd { background: var(--taxi); color: var(--navy); }
 .badge.draft { background: #f6dedc; color: var(--danger); }
 .card h3 { margin: 6px 0 4px; }

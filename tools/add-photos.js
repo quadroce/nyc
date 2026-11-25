@@ -38,6 +38,13 @@ const MAP = {
   'p-met': 'Metropolitan Museum of Art', 'p-guggenheim': 'Solomon R. Guggenheim Museum', 'p-copa': 'Copacabana (nightclub)',
   'p-panchina': 'Queensboro Bridge', 'p-tavern': 'Tavern on the Green', 'p-columbus-circle': 'Columbus Circle', 'p-joker': 'Joker Stairs',
   'p-barchette': 'Conservatory Water', 'p-macusa': 'Woolworth Building', 'p-joes': "Joe's Pizza", 'p-infinity': 'Washington Square Park',
+  'p-seagram': 'Seagram Building', 'p-smith-wollensky': 'Smith & Wollensky', 'p-birdman': 'St. James Theatre', 'p-sardis': "Sardi's",
+  'p-saranno-famosi': 'Church of St. Mary the Virgin (Manhattan)', 'p-tootsie': 'Russian Tea Room', 'p-pierre': 'The Pierre',
+  'p-maisel': 'B. Altman and Company Building', 'p-empire-hotel': 'The Empire Hotel (New York City)', 'p-fontana-friends': 'Cherry Hill Fountain',
+  'p-bow-bridge': 'Bow Bridge (Central Park)', 'p-mall': 'Central Park Mall', 'p-belvedere': 'Belvedere Castle', 'p-suits': 'Citigroup Center', 'p-ponte-film': 'Brooklyn Bridge',
+  'p-dakota': 'The Dakota', 'p-reggio': 'Caffe Reggio', 'p-ferry': 'Staten Island Ferry', 'p-succession': '28 Liberty Street', 'p-gotham': '23 Wall Street',
+  'p-vigo': 'Alexander Hamilton U.S. Custom House', 'p-barnum': "Barnum's American Museum",
+  'p-twa': 'TWA Flight Center', 'p-mib-dischi': 'New York State Pavilion', 'p-guerrieri': 'Wonder Wheel', 'p-elf-tunnel': 'Lincoln Tunnel',
 };
 
 // id della scheda -> ricerca diretta su Wikimedia Commons (quando la voce di Wikipedia non ha un'immagine adatta)
@@ -53,11 +60,16 @@ const SEARCH = {
   'p-friends': '90 Bedford Street Friends building',
   'p-carrie': '66 Perry Street',
   'p-marilyn': 'Lexington Avenue 52nd Street subway grate Marilyn',
+  'p-boathouse': 'Loeb Boathouse Central Park',
+  'p-posta-giardino': '91st Street Garden Riverside Park',
+  'p-tata': '7 East 75th Street Manhattan',
+  'p-robinson': "St. Luke's Place Manhattan",
 };
 
 // id della scheda -> file preciso di Commons (controllato a vista)
 const FILES = {
   'p-chrysler': 'File:Chrysler Building by David Shankbone Retouched.jpg',
+  'p-five-points': 'File:Five Points - George Catlin - 1827.jpg',
 };
 
 const api = async (host, params) => {

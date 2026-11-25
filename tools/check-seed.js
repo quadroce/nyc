@@ -5,20 +5,20 @@ const fs = require('fs');
 const path = require('path');
 
 const file = path.join(__dirname, '..', 'data', 'seed.json');
-const errors = [];
-let seed;
-try { seed = JSON.parse(fs.readFileSync(file, 'utf8')); }
-catch (e) { console.error(`data/seed.json non è un JSON valido: ${e.message}`); process.exit(1); }
 
 const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const ENUM = {
   type: ['ritrovo', 'visita', 'pasto', 'spostamento'],
-  status: ['prenotato', 'proposto', 'da_confermare', 'facoltativo'],
+  status: ['prenotato', 'proposto', 'da_confermare', 'facoltativo', 'annullato'],
   audience: ['tutti', 'facoltativo', 'sottogruppo'],
   category: ['film', 'marvel', 'pop', 'curiosita', 'storia', 'natale', 'ragazzi'],
   linkType: ['set_verificato', 'ispirazione', 'ambientazione', 'luogo_storico', 'curiosita'],
 };
+// Restituisce l'elenco degli errori (vuoto se il programma è valido). Lo usa anche il server prima di salvare su GitHub.
+function validate(seed) {
+const errors = [];
+if (!seed || typeof seed !== 'object') return ['il programma deve essere un oggetto JSON'];
 const err = (where, msg) => errors.push(`${where}: ${msg}`);
 const text = (o, k, where, max) => { if (o[k] != null && (typeof o[k] !== 'string' || o[k].length > max)) err(where, `"${k}" deve essere un testo di al massimo ${max} caratteri`); };
 const coord = (o, where) => { for (const k of ['lat', 'lng']) if (o[k] != null && typeof o[k] !== 'number') err(where, `"${k}" deve essere un numero oppure null`); };
@@ -57,7 +57,15 @@ for (const p of seed.pois || []) {
   if (p.photoUrl && (!/^https:\/\/(upload|thumb)\.wikimedia\.org\//.test(p.photoUrl) || !p.photoCredit)) err(where, 'la foto deve venire da Wikimedia (upload o thumb.wikimedia.org) e avere "photoCredit" (autore e licenza)');
   coord(p, where);
 }
+return errors;
+}
+module.exports = { validate, ENUM };
+if (require.main !== module) return;
 
+let seed;
+try { seed = JSON.parse(fs.readFileSync(file, 'utf8')); }
+catch (e) { console.error(`data/seed.json non è un JSON valido: ${e.message}`); process.exit(1); }
+const errors = validate(seed);
 if (errors.length) {
   console.error(`data/seed.json ha ${errors.length} ${errors.length === 1 ? 'errore' : 'errori'}:\n- ` + errors.join('\n- '));
   process.exit(1);

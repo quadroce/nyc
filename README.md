@@ -31,7 +31,29 @@ Le curiosità stanno in `pois`: `published: false` le nasconde, `linkedActivityI
 
 La pagina è pubblica, come il repository: niente numeri di prenotazione, biglietti o dati personali.
 
-In questa modalità il pannello Admin è spento. Per riaccenderlo basta collegare un archivio (vedi Pubblicazione).
+In questa modalità il pannello Admin è spento. Per riaccenderlo senza database vedi qui sotto; per un database vedi Pubblicazione.
+
+## Admin con PIN (salva su GitHub)
+
+Durante il viaggio il programma si cambia dall'app: **Info → Accesso amministratori**, si inserisce il PIN e compare la sezione Admin. Si possono modificare, aggiungere, annullare (stato «Annullata») ed eliminare le tappe, le curiosità, i ristoranti proposti e le note di Info.
+
+Ogni «Salva» diventa un commit di `data/seed.json` sul ramo `main`, quindi Vercel ripubblica: chi ha fatto la modifica la vede subito, gli altri dopo circa un minuto. Finché la pubblicazione è in corso il pannello mostra «Pubblicazione in corso». Prima di salvare il server fa lo stesso controllo di `npm run check`: una modifica che fermerebbe la pubblicazione viene rifiutata con il motivo. Lo storico è la storia del file su GitHub (c'è il link nel pannello); per tornare indietro si ripristina da lì.
+
+Variabili da impostare su Vercel (Settings → Environment Variables, ambiente Production), poi **Redeploy**:
+
+| Variabile | Valore |
+| --- | --- |
+| `ADMIN_PIN` | Il PIN degli organizzatori, almeno 6 caratteri. |
+| `GITHUB_TOKEN` | Token GitHub «fine-grained» limitato a questo solo repository, con permesso **Contents: Read and write**. Mettigli una scadenza poco dopo il viaggio. |
+| `GITHUB_REPO` | `proprietario/repository`, per esempio `quadroce/nyc`. |
+| `GITHUB_BRANCH` | Facoltativa, `main` se manca. |
+| `ADMIN_NAME` | Facoltativa: nome mostrato nel pannello (se manca, «Organizzatori»). |
+
+**Il PIN e il token non vanno mai scritti nel repository**, che è pubblico: né nel codice, né nei test, né nei commit, né qui. Stanno solo nelle variabili di Vercel e, in locale, nel file `.env` (ignorato da git).
+
+Protezioni: dopo 5 PIN sbagliati dallo stesso indirizzo l'accesso si blocca per 15 minuti; la sessione dura 2 ore (`ADMIN_SESSION_MINUTES`) e decade subito se il PIN cambia. Su Vercel il conteggio degli errori vive nella memoria di ogni istanza, quindi è un freno e non una garanzia: un PIN facile da indovinare, come una data, resta debole. Per chiudere l'accesso basta togliere `ADMIN_PIN` e ripubblicare.
+
+In locale, senza `GITHUB_TOKEN`, lo stesso PIN apre l'admin sull'archivio a file (`data/state.json`).
 
 ## Avvio
 
@@ -80,6 +102,8 @@ Copia `.env.example` in `.env` e inserisci `GOOGLE_PLACES_API_KEY` (Places API �
 
 ## Prova
 
+- `npm test` prova l'area admin con un finto GitHub in locale e un PIN generato a caso: non tocca il repository vero.
+
 - `http://localhost:3000/?ora=2026-12-05T16:00` simula quell'ora di New York (banner rosso, «Esci» per tornare all'ora reale).
 - Senza rete: apri l'app una volta online, poi attiva la modalità aereo e riaprila.
 
@@ -91,6 +115,7 @@ Serve **HTTPS** (obbligatorio per installare la PWA e per la posizione). L'archi
 | --- | --- | --- |
 | Supabase | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (o `SUPABASE_SECRET_KEY`) | Crea prima la tabella con `supabase/schema.sql`. Una riga per chiave nella tabella `nyc_kv` (nome modificabile con `SUPABASE_TABLE`). |
 | Redis via REST (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (o `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | Chiavi `nyc:*`. |
+| GitHub | `GITHUB_TOKEN`, `GITHUB_REPO` (e `ADMIN_PIN` per entrare) | Nessun database: ogni salvataggio è un commit di `data/seed.json` e una nuova pubblicazione. Vedi «Admin con PIN». |
 | File | `DATA_DIR` (facoltativa) | Solo dove il disco è scrivibile e persistente (PC, VPS, Render, Fly). Dietro un proxy imposta `TRUST_PROXY=1`. |
 | Nessuno | | Il programma è `data/seed.json` e si modifica su GitHub (vedi sopra); il pannello Admin è spento. È la configurazione attuale su Vercel. |
 
