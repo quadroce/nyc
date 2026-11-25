@@ -470,7 +470,7 @@
       ${admin ? '<div class="actions"><button class="btn" data-act="new-poi">+ Nuovo punto di interesse</button></div>' : ''}`;
   }
 
-  const FOOD_TYPE_L = { diner: 'Diner', hamburger_restaurant: 'Hamburger', barbecue_restaurant: 'Barbecue', sandwich_shop: 'Sandwich', deli: 'Deli', fast_food_restaurant: 'Street food / fast food', food_court: 'Food court', american_restaurant: 'Cucina americana', steak_house: 'Steakhouse', breakfast_restaurant: 'Colazione e brunch', mexican_restaurant: 'Messicano' };
+  const FOOD_TYPE_L = { diner: 'Diner', hamburger_restaurant: 'Hamburger', barbecue_restaurant: 'Barbecue', sandwich_shop: 'Sandwich', deli: 'Deli', fast_food_restaurant: 'Street food / fast food', food_court: 'Food court', american_restaurant: 'Cucina americana', steak_house: 'Steakhouse', breakfast_restaurant: 'Colazione e brunch', mexican_restaurant: 'Messicano', italian_restaurant: 'Cucina italiana', pizza_restaurant: 'Pizzeria', bakery: 'Panetteria / pasticceria' };
   const FOOD_RANK = Object.keys(FOOD_TYPE_L);
   const PRICE_L = { PRICE_LEVEL_FREE: 'Gratis', PRICE_LEVEL_INEXPENSIVE: '$', PRICE_LEVEL_MODERATE: '$$', PRICE_LEVEL_EXPENSIVE: '$$$', PRICE_LEVEL_VERY_EXPENSIVE: '$$$$' };
   function foodType(r) { return FOOD_RANK.find((t) => t === r.primaryType) || FOOD_RANK.find((t) => (r.types || []).includes(t)) || ''; }
@@ -500,7 +500,7 @@
     const offline = net === 'offline';
     const cant = offline ? 'Senza rete non posso cercare locali aperti adesso: orari e disponibilità richiedono la connessione.'
       : !data.foodSearch ? 'La ricerca dal vivo non è ancora attiva su questo server (manca la chiave Google Places).' : '';
-    return `<div class="hero"><h1>TrovaCibo</h1><p>Cucina americana e street food nei dintorni, intorno ai 30–40 $ a persona. Tasse, mancia e bevande possono essere escluse.</p></div>
+    return `<div class="hero"><h1>TrovaCibo</h1><p>Locali nei dintorni: a New York cucina americana e street food (30–40 $ a persona, tasse, mancia e bevande escluse), a Milano cucina italiana e pizza. La ricerca funziona a New York e a Milano.</p></div>
       <div class="seg" role="group" aria-label="Quanti siete"><button class="${food.mode === 'pochi' ? 'on' : ''}" data-act="food-mode" data-mode="pochi">Siamo pochi</button><button class="${food.mode === 'tutti' ? 'on' : ''}" data-act="food-mode" data-mode="tutti">Siamo in 23</button></div>
       ${food.mode === 'tutti' ? '<div class="alert plain"><b>In 23 è un\'altra storia.</b> Vicinanza e prezzo non garantiscono un tavolo per tutti: chiamate prima, oppure dividetevi per famiglie in locali vicini.</div>' : ''}
       ${booked.length ? `<h2>Già prenotato nel programma</h2>${booked.map((a) => actCard(a, { showDay: true })).join('')}` : ''}
@@ -509,11 +509,11 @@
       <div class="filters">
         <label class="field"><span>Partendo da</span>${sel('origin', [['me', 'La mia posizione'], ['hotel', 'Hotel']])}</label>
         <label class="field"><span>Raggio</span>${sel('radius', [[300, '300 m'], [600, '600 m'], [1000, '1 km'], [2000, '2 km']])}</label>
-        <label class="field"><span>Categoria</span>${sel('cat', [['tutte', 'Tutte le preferite'], ['diner', 'Diner'], ['burger', 'Hamburger'], ['bbq', 'Barbecue'], ['sandwich', 'Sandwich e deli'], ['street', 'Street food']])}</label>
+        <label class="field"><span>Categoria</span>${sel('cat', [['tutte', 'Tutte le preferite'], ['diner', 'Diner'], ['burger', 'Hamburger'], ['bbq', 'Barbecue'], ['sandwich', 'Sandwich e deli'], ['street', 'Street food'], ['italiana', 'Italiana (solo Milano)'], ['pizza', 'Pizza (solo Milano)']])}</label>
         <div>${chk('open', 'Aperto ora')}${chk('price', 'Fino a $$')}${chk('kids', 'Adatto ai ragazzi')}</div>
       </div>
       <button class="btn primary block" data-act="food-go"${food.busy ? ' disabled' : ''}>Cerca</button>
-      <p class="meta">La posizione viene usata solo quando premi «Cerca». Escluse cucina italiana e cucine orientali; il messicano resta.</p>
+      <p class="meta">La posizione viene usata solo quando premi «Cerca». A New York sono escluse cucina italiana e cucine orientali; il messicano resta. A Milano nessuna esclusione.</p>
       <div id="food-results">${foodResultsHtml()}</div>`}
       <h2>Opzioni salvate dal gruppo</h2>
       ${fb.length ? `<p class="lead">Scelte in anticipo, consultabili anche senza rete. Verificate apertura e posto al momento.</p>${fb.map((r) => `<article class="card"><h3>${esc(r.name)}</h3><p class="place">${esc(r.address)}</p>${r.note ? `<p class="note">${esc(r.note)}</p>` : ''}

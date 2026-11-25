@@ -100,6 +100,8 @@ Le coordinate delle curiosità sono indicative e marcate «non verificate»: fin
 
 Copia `.env.example` in `.env` e inserisci `GOOGLE_PLACES_API_KEY` (Places API «New» abilitata). La chiave resta sul server. Limiti: `PLACES_DAILY_BUDGET` ricerche al giorno, 8 al minuto per dispositivo, risultati tenuti in memoria 10 minuti e mai salvati su disco. I campi richiesti (adatto ai bambini, gruppi, prenotabile) ricadono nella fascia di prezzo più alta di Nearby Search: controlla i costi prima del viaggio.
 
+Aree supportate: New York (lat 40.45–41.0, lng −74.3/−73.65) e Milano (lat 45.35–45.58, lng 9.05–9.30); fuori da questi riquadri il server risponde 422. A Milano le categorie sono italiana e pizza (le «cucine escluse» degli admin valgono solo a New York). Per aggiungere una città: voce in `FOOD_AREAS` e `FOOD_CATS_BY_AREA` in `server.js`.
+
 ## Prova
 
 - `npm test` prova l'area admin con un finto GitHub in locale e un PIN generato a caso: non tocca il repository vero.

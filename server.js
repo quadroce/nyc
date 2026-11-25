@@ -461,13 +461,29 @@ const publicData = (s, isAdmin) => ({
 });
 
 // ---------- TrovaCibo (proxy Google Places, API "New") ----------
-const FOOD_CATS = {
-  tutte: ['american_restaurant', 'hamburger_restaurant', 'barbecue_restaurant', 'sandwich_shop', 'diner', 'deli', 'steak_house', 'fast_food_restaurant', 'breakfast_restaurant', 'mexican_restaurant'],
-  diner: ['diner', 'american_restaurant', 'breakfast_restaurant'],
-  burger: ['hamburger_restaurant'],
-  bbq: ['barbecue_restaurant', 'steak_house'],
-  sandwich: ['sandwich_shop', 'deli'],
-  street: ['fast_food_restaurant', 'food_court'],
+// Aree consentite: il server non è un proxy generico, accetta solo coordinate dentro questi riquadri.
+const FOOD_AREAS = [
+  { id: 'nyc', name: 'New York', box: { latMin: 40.45, latMax: 41.0, lngMin: -74.3, lngMax: -73.65 }, useExcluded: true },
+  { id: 'milano', name: 'Milano', box: { latMin: 45.35, latMax: 45.58, lngMin: 9.05, lngMax: 9.30 }, useExcluded: false },
+];
+const areaOf = (lat, lng) => FOOD_AREAS.find(({ box: b }) => lat > b.latMin && lat < b.latMax && lng > b.lngMin && lng < b.lngMax);
+const FOOD_CATS_BY_AREA = {
+  nyc: {
+    tutte: ['american_restaurant', 'hamburger_restaurant', 'barbecue_restaurant', 'sandwich_shop', 'diner', 'deli', 'steak_house', 'fast_food_restaurant', 'breakfast_restaurant', 'mexican_restaurant'],
+    diner: ['diner', 'american_restaurant', 'breakfast_restaurant'],
+    burger: ['hamburger_restaurant'],
+    bbq: ['barbecue_restaurant', 'steak_house'],
+    sandwich: ['sandwich_shop', 'deli'],
+    street: ['fast_food_restaurant', 'food_court'],
+  },
+  milano: {
+    tutte: ['italian_restaurant', 'pizza_restaurant', 'hamburger_restaurant', 'sandwich_shop', 'deli', 'steak_house', 'fast_food_restaurant', 'breakfast_restaurant', 'bakery'],
+    italiana: ['italian_restaurant'],
+    pizza: ['pizza_restaurant'],
+    burger: ['hamburger_restaurant'],
+    sandwich: ['sandwich_shop', 'deli'],
+    street: ['fast_food_restaurant', 'food_court'],
+  },
 };
 const PLACES_FIELDS = [
   'id', 'displayName', 'formattedAddress', 'location', 'primaryType', 'types', 'priceLevel',
@@ -495,16 +511,18 @@ async function foodSearch(q, ip) {
   if (!PLACES_KEY) throw new Bad('Ricerca ristoranti non configurata sul server.', 503);
   const lat = Number(q.get('lat')), lng = Number(q.get('lng'));
   const radius = Math.min(3000, Math.max(200, Number(q.get('radius')) || 600));
-  const cat = FOOD_CATS[q.get('cat')] ? q.get('cat') : 'tutte';
-  // solo area di New York: il server non è un proxy generico
-  if (!(lat > 40.45 && lat < 41.0 && lng > -74.3 && lng < -73.65)) throw new Bad('La ricerca funziona solo nell\'area di New York.', 422);
+  // solo aree consentite (New York, Milano): il server non è un proxy generico
+  const area = areaOf(lat, lng);
+  if (!area) throw new Bad('La ricerca funziona solo a New York e a Milano.', 422);
+  const cats = FOOD_CATS_BY_AREA[area.id];
+  const cat = cats[q.get('cat')] ? q.get('cat') : 'tutte';
 
   const hits = (foodHits.get(ip) || []).filter((t) => Date.now() - t < 60000);
   if (hits.length >= 8) throw new Bad('Troppe ricerche ravvicinate: riprova tra un minuto.', 429);
   hits.push(Date.now()); foodHits.set(ip, hits);
 
-  const excluded = state.config.excludedTypes || [];
-  const key = [lat.toFixed(3), lng.toFixed(3), radius, cat, excluded.join('+')].join('|');
+  const excluded = area.useExcluded ? state.config.excludedTypes || [] : []; // le cucine escluse valgono per New York: a Milano l'italiano è il punto
+  const key = [area.id, lat.toFixed(3), lng.toFixed(3), radius, cat, excluded.join('+')].join('|');
   const hit = foodCache.get(key);
   if (hit && Date.now() - hit.at < 10 * 60 * 1000) return hit.payload;
 
@@ -516,7 +534,7 @@ async function foodSearch(q, ip) {
 
   let places;
   try {
-    places = await placesNearby(lat, lng, radius, FOOD_CATS[cat], excluded);
+    places = await placesNearby(lat, lng, radius, cats[cat], excluded);
   } catch (e) {
     if (e.status !== 400) throw new Bad('Google Places non risponde: riprova o usa le opzioni salvate.', 502);
     // un nome di tipo non riconosciuto invalida l'intera richiesta: riprova in forma minima e filtra qui
