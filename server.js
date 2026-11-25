@@ -207,6 +207,7 @@ const SCHEMA = {
     source: { t: 'str', max: 300 }, lastVerified: { t: 'date' },
     published: { t: 'bool' }, alertsEnabled: { t: 'bool' },
     linkedActivityId: { t: 'str', max: 40 },
+    videoQuery: { t: 'str', max: 140 },
   },
 };
 class Bad extends Error { constructor(msg, code = 400) { super(msg); this.code = code; } }

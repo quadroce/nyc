@@ -16,7 +16,7 @@
   const AUD_L = { tutti: 'Tutti', facoltativo: 'Facoltativa', sottogruppo: 'Sottogruppo' };
   const TYPE_L = { ritrovo: 'Ritrovo', visita: 'Visita', pasto: 'Pasto', spostamento: 'Spostamento' };
   const CAT_L = { film: 'Film e serie', marvel: 'Marvel', pop: 'Cultura pop', curiosita: 'Curiosità', storia: 'Storia', natale: 'Natale', ragazzi: 'Per ragazzi' };
-  const ZONES = ['Midtown East', 'Midtown', 'Times Square e dintorni', 'Central Park', 'Upper West Side', 'Chelsea e Flatiron', 'Village e SoHo', 'Tribeca', 'Little Italy e Lower East Side', 'Downtown', 'Baia di New York', 'Brooklyn'];
+  const ZONES = ['Midtown East', 'Midtown', 'Times Square e dintorni', 'Central Park', 'Upper East Side', 'Upper West Side', 'Chelsea e Flatiron', 'Village e SoHo', 'Tribeca', 'Little Italy e Lower East Side', 'Downtown', 'Baia di New York', 'Brooklyn'];
   const LINK_L = { set_verificato: 'Set verificato', ispirazione: 'Luogo che ha ispirato la storia', ambientazione: 'Ambientazione narrativa', luogo_storico: 'Luogo storico', curiosita: 'Curiosità' };
   const FIELD_L = {
     meetTime: 'Ritrovo', meetPlace: 'Punto di ritrovo', time: 'Inizio', endTime: 'Fine', date: 'Giorno',
@@ -414,6 +414,11 @@
         ${admin ? `<button class="btn" data-act="new-activity" data-day="${esc(day)}">+ Nuova attività</button>` : ''}</div>`;
   }
 
+  function videoUrl(p) {
+    if (!p.work || !['set_verificato', 'ambientazione', 'ispirazione'].includes(p.linkType)) return '';
+    const q = p.videoQuery || `${p.work.split(' · ')[0]} scena ${p.name}`;
+    return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
+  }
   function poiCard(p) {
     const d = geo.pos && p.lat != null ? dist(geo.pos, p) : null;
     return `<article class="card" id="poi-${esc(p.id)}">
@@ -424,7 +429,7 @@
       <p class="desc">${esc(p.context)}</p>
       ${p.note ? `<p class="note">${esc(p.note)}</p>` : ''}
       ${p.linkedActivityId ? '<p class="note">Fa già parte del programma.</p>' : '<p class="note">Curiosità: non è una tappa del programma.</p>'}
-      <div class="actions">${extLink(mapsPlace(p), 'Apri in Maps')}
+      <div class="actions">${extLink(mapsPlace(p), 'Apri in Maps')}${videoUrl(p) ? extLink(videoUrl(p), '▶ Cerca la scena su YouTube') : ''}
         <button class="btn${poiSeen[p.id] ? ' on' : ''}" data-act="poi-seen" data-id="${esc(p.id)}" aria-pressed="${Boolean(poiSeen[p.id])}">${poiSeen[p.id] ? '✓ Visto' : 'Segna come visto'}</button>
         ${admin ? `<button class="btn small" data-act="edit-poi" data-id="${esc(p.id)}">✎ Modifica</button>` : ''}</div>
       ${!p.coordsVerified && d != null ? '<p class="meta">Distanza indicativa: coordinate ancora da verificare.</p>' : ''}
@@ -658,6 +663,7 @@
       ['context', 'Racconto breve', 'area'], ['note', 'Nota pratica', 'text'],
       ['source', 'Fonte', 'text'], ['lastVerified', 'Ultima verifica', 'date'],
       ['published', 'Pubblicata (visibile a tutti)', 'bool'], ['alertsEnabled', 'Segnala quando si è vicini', 'bool', null, 'Vale solo con coordinate verificate.'],
+      ['videoQuery', 'Ricerca YouTube (facoltativa)', 'text', null, 'Parole da cercare; se vuoto si usano opera e nome.'],
       ['linkedActivityId', 'Arricchisce la tappa', 'select', [['', '— nessuna —'], ...sortActs(data.activities).map((a) => [a.id, `${a.date.slice(8)} dic · ${a.title}`])]],
     ],
   };
