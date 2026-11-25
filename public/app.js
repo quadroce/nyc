@@ -303,7 +303,7 @@
   }
   function renderTop() {
     const n = nowNY();
-    $('#clock').textContent = `New York · ${fmtDay(n.date, { weekday: 'short', day: 'numeric', month: 'short' })} · ${n.time}`;
+    $('#clock').textContent = `NY · ${fmtDay(n.date, { weekday: 'short', day: 'numeric', month: 'short' })} · ${n.time}`;
     const el = $('#netline');
     const copy = fetchedAt ? fmtInstant(fetchedAt) : 'mai';
     el.className = net === 'offline' ? 'off' : '';
@@ -398,18 +398,18 @@
     const day = days.includes(v.a) ? v.a : (days.includes(now.date) ? now.date : days[0]);
     const all = dayActs(day);
     const acts = all.filter((a) => !onlyMine || included(a));
-    const chips = days.map((d) => `<button class="chip${d === day ? ' on' : ''}${d === now.date ? ' today' : ''}" data-act="day" data-day="${d}"><small>${esc(fmtDay(d, { weekday: 'short' }))}</small>${Number(d.slice(8))} dic</button>`).join('');
+    const chips = days.map((d) => `<button class="chip day d${Number(d.slice(8))}${d === day ? ' on' : ''}${d === now.date ? ' today' : ''}" data-act="day" data-day="${d}" aria-label="${esc(fmtDay(d))}" aria-pressed="${d === day}"><b>${Number(d.slice(8))}</b><small>${esc(fmtDay(d, { weekday: 'short' }))}</small></button>`).join('');
     let html = '', last = '';
     for (const a of acts) {
       const f = fascia(a);
       if (f !== last) { html += `<p class="fascia">${f}</p>`; last = f; }
       html += actCard(a);
     }
-    return `<div class="chips" role="tablist" aria-label="Giorni">${chips}</div>${changesHtml()}
+    return `<div class="chips days" role="group" aria-label="Giorni">${chips}</div>${changesHtml()}
       <div class="row"><h2>${esc(fmtDay(day))}</h2>
         <button class="btn small${onlyMine ? ' on' : ''}" data-act="only-mine" aria-pressed="${onlyMine}">${onlyMine ? '★ Solo le mie' : 'Mostra solo le mie'}</button></div>
       ${onlyMine ? '<p class="lead">Vedi le attività per tutti e quelle facoltative segnate con «Mi interessa». È un filtro personale, non una conferma di presenza.</p>' : ''}
-      ${html || `<p class="empty">${all.length ? 'Nessuna attività tra le tue per questo giorno.' : 'Nessuna attività inserita per questo giorno.'}</p>`}
+      ${html ? `<div class="sched d${Number(day.slice(8))}">${html}</div>` : `<p class="empty">${all.length ? 'Nessuna attività tra le tue per questo giorno.' : 'Nessuna attività inserita per questo giorno.'}</p>`}
       <div class="actions"><button class="btn" data-act="route" data-day="${esc(day)}">Percorso del giorno in Maps</button>
         ${admin ? `<button class="btn" data-act="new-activity" data-day="${esc(day)}">+ Nuova attività</button>` : ''}</div>`;
   }
