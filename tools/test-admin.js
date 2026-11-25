@@ -42,7 +42,7 @@ const current = () => JSON.parse(fake.file.toString('utf8'));
 // ---------- server in prova ----------
 const children = [];
 async function startServer(port, env) {
-  const blank = Object.fromEntries(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SECRET_KEY', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN', 'GITHUB_TOKEN', 'GITHUB_REPO', 'GITHUB_BRANCH', 'SESSION_SECRET', 'ADMIN_NAME', 'GOOGLE_PLACES_API_KEY', 'DATA_DIR', 'VERCEL'].map((k) => [k, '']));
+  const blank = Object.fromEntries(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_SECRET_KEY', 'KV_REST_API_URL', 'KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN', 'GITHUB_TOKEN', 'GITHUB_REPO', 'GITHUB_BRANCH', 'SESSION_SECRET', 'ADMIN_NAME', 'GOOGLE_PLACES_API_KEY', 'DATA_DIR', 'VERCEL', 'PLACES_API_URL'].map((k) => [k, '']));
   const child = spawn(process.execPath, ['server.js'], { cwd: ROOT, env: { ...process.env, ...blank, PORT: String(port), TRUST_PROXY: '1', ADMIN_PIN: PIN, ...env }, stdio: ['ignore', 'pipe', 'inherit'] });
   children.push(child);
   const base = `http://127.0.0.1:${port}`;
@@ -136,6 +136,20 @@ test('curiosità, ristoranti proposti e note Info', async () => {
   assert.equal(current().config.foodFallback.length, 1);
   assert.match(fake.commits.at(-1).message, /^Admin: impostazioni$/);
 });
+test('interruttore Milano: si salva nel seed e accetta solo vero o falso', async () => {
+  assert.equal(current().config.milanoEnabled, true);
+  assert.equal((await api('PUT', '/api/config', { token, body: { milanoEnabled: 'no' } })).status, 400);
+  assert.equal((await api('PUT', '/api/config', { body: { milanoEnabled: false } })).status, 401);
+  assert.equal((await api('PUT', '/api/config', { token, body: { milanoEnabled: false } })).status, 200);
+  assert.equal(current().config.milanoEnabled, false);
+  assert.equal(current().config.infoNotes, 'Nota di prova'); // le altre impostazioni restano
+  assert.deepEqual(require('./check-seed.js').validate(current()), []);
+  assert.ok(require('./check-seed.js').validate({ ...current(), config: { ...current().config, milanoEnabled: 'si' } }).length);
+  // l'admin vede ancora la scheda di Milano (per modificarla); chi legge vede il seed pubblicato, dove Milano è ancora accesa
+  assert.ok((await api('GET', '/api/data', { token })).json.pois.some((p) => p.zone === 'Milano'));
+  assert.equal((await api('PUT', '/api/config', { token, body: { milanoEnabled: true } })).status, 200);
+  assert.equal(current().config.milanoEnabled, true);
+});
 test('se il file cambia su GitHub nel frattempo, la modifica viene riapplicata senza perdere quella altrui', async () => {
   fake.beforePut = () => { const s = current(); s.activities[0].description = 'Cambiata da un\'altra sessione'; fake.file = Buffer.from(JSON.stringify(s, null, 2) + '\n'); };
   const r = await api('PUT', `/api/activities/${ACT}`, { token, body: { time: '20:00' } });
@@ -158,7 +172,7 @@ test('token GitHub rifiutato: errore chiaro al salvataggio, il programma pubblic
 test('archivio su file: stesso PIN, modifiche visibili subito a tutti', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nyc-test-'));
   try {
-    const local = await startServer(await freePort(), { DATA_DIR: dir });
+    const local = await startServer(await freePort(), { DATA_DIR: dir, GOOGLE_PLACES_API_KEY: 'chiave-finta', PLACES_API_URL: 'http://127.0.0.1:9/' });
     const pub = (await local('GET', '/api/data')).json;
     assert.equal(pub.readOnly, false);
     assert.equal(pub.canLogin, true);
@@ -169,6 +183,22 @@ test('archivio su file: stesso PIN, modifiche visibili subito a tutti', async ()
     assert.equal(after.activities.find((a) => a.id === ACT).time, '19:45');
     assert.equal(after.changes.at(-1).author, 'Organizzatori');
     assert.equal((await local('GET', '/api/admin/history', { token: s.json.token })).status, 200);
+    // Milano accesa: scheda di prova visibile e ricerca ammessa (qui Places è un indirizzo finto che non risponde: 502, non 422)
+    const milan = '/api/food?lat=45.5022&lng=9.1593', nyc = '/api/food?lat=40.7527&lng=-73.9772';
+    assert.equal(after.config.milanoEnabled, true);
+    assert.ok(after.pois.some((p) => p.zone === 'Milano'));
+    assert.equal((await local('GET', milan)).status, 502);
+    // Milano spenta: il server rifiuta la ricerca a Milano e non manda più le schede della zona a chi legge
+    assert.equal((await local('PUT', '/api/config', { token: s.json.token, body: { milanoEnabled: false } })).status, 200);
+    const off = (await local('GET', '/api/data')).json;
+    assert.equal(off.config.milanoEnabled, false);
+    assert.ok(!off.pois.some((p) => p.zone === 'Milano'));
+    assert.ok(off.pois.length > 100);
+    assert.ok((await local('GET', '/api/data', { token: s.json.token })).json.pois.some((p) => p.zone === 'Milano'));
+    const refused = await local('GET', milan);
+    assert.equal(refused.status, 422);
+    assert.match(refused.json.error, /solo a New York\.$/);
+    assert.equal((await local('GET', nyc)).status, 502);
   } finally { children.at(-1).kill(); await new Promise((r) => setTimeout(r, 200)); fs.rmSync(dir, { recursive: true, force: true }); }
 });
 test('senza ADMIN_PIN l\'accesso con PIN è spento', async () => {
@@ -178,6 +208,14 @@ test('senza ADMIN_PIN l\'accesso con PIN è spento', async () => {
     assert.equal((await local('POST', '/api/admin/login', { body: { code: PIN } })).status, 401);
     assert.equal((await local('POST', '/api/admin/login', { body: { code: '' } })).status, 401);
   } finally { children.at(-1).kill(); await new Promise((r) => setTimeout(r, 200)); fs.rmSync(dir, { recursive: true, force: true }); }
+});
+test('il sito dice cosa manca all\'area Admin: PIN con GitHub, oppure l\'archivio', async () => {
+  assert.equal((await api('GET', '/api/data')).json.adminMissing, '');
+  const noPin = await startServer(await freePort(), { GITHUB_API_URL: `http://127.0.0.1:${github.address().port}`, GITHUB_TOKEN: TOKEN, GITHUB_REPO: 'prova/nyc', ADMIN_PIN: '' });
+  const d = (await noPin('GET', '/api/data')).json;
+  assert.equal(d.canLogin, false);
+  assert.equal(d.adminMissing, 'pin');
+  children.at(-1).kill();
 });
 
 (async () => {

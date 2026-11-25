@@ -23,7 +23,7 @@
     placeName: 'Luogo', address: 'Indirizzo', status: 'Stato', title: 'Titolo', audience: 'Destinatari',
   };
   const KEY_FIELDS = Object.keys(FIELD_L);
-  const ADMIN_FIELD_L = { ...FIELD_L, excludedTypes: 'Cucine escluse', foodFallback: 'Opzioni cibo di emergenza', infoNotes: 'Note del gruppo', packing: 'Cosa portare', description: 'Descrizione', transportNote: 'Trasporti', type: 'Tipo', audienceNote: 'Nota destinatari', published: 'Pubblicata', alertsEnabled: 'Segnalazione', coordsVerified: 'Coordinate verificate', context: 'Racconto', category: 'Categoria', linkType: 'Legame' };
+  const ADMIN_FIELD_L = { ...FIELD_L, excludedTypes: 'Cucine escluse', foodFallback: 'Opzioni cibo di emergenza', infoNotes: 'Note del gruppo', packing: 'Cosa portare', milanoEnabled: 'Milano accesa', description: 'Descrizione', transportNote: 'Trasporti', type: 'Tipo', audienceNote: 'Nota destinatari', published: 'Pubblicata', alertsEnabled: 'Segnalazione', coordsVerified: 'Coordinate verificate', context: 'Racconto', category: 'Categoria', linkType: 'Legame' };
 
   // ---------- stato ----------
   let data = LS.get('data', null);
@@ -231,21 +231,26 @@
     if (geo.watch != null) navigator.geolocation.clearWatch(geo.watch);
     geo.watch = null; render();
   }
+  // Milano serve solo per le prove da casa: da spenta (impostazione dell'Admin) le schede della zona «Milano» spariscono
+  // dall'elenco e dalle segnalazioni. Il server non le manda già a chi legge; qui vale anche per la copia salvata e per l'admin.
+  const milanoOn = () => data.config.milanoEnabled !== false;
+  const milanoOff = (p) => !milanoOn() && String(p.zone || '').trim().toLowerCase() === 'milano';
   // Una segnalazione per luogo al giorno, al massimo tre alla volta, solo per schede con coordinate verificate.
   function checkNear() {
+    near = near.filter((id) => { const p = data.pois.find((x) => x.id === id); return p && !milanoOff(p); });
     if (muted || !geo.pos) return;
     const today = new Date().toISOString().slice(0, 10);
     const alerted = LS.get('alerted', {});
     for (const p of data.pois) {
       if (near.length >= 3) break;
-      if (!p.published || !p.alertsEnabled || !p.coordsVerified || p.lat == null || poiSeen[p.id] || hiddenCats.includes(p.category)) continue;
+      if (milanoOff(p) || !p.published || !p.alertsEnabled || !p.coordsVerified || p.lat == null || poiSeen[p.id] || hiddenCats.includes(p.category)) continue;
       if (alerted[p.id] === today || near.includes(p.id)) continue;
       if (dist(geo.pos, p) <= (p.radius || 250)) { near.push(p.id); alerted[p.id] = today; }
     }
     LS.set('alerted', alerted);
   }
   function nearHtml() {
-    const list = near.map((id) => data.pois.find((p) => p.id === id)).filter(Boolean);
+    const list = near.map((id) => data.pois.find((p) => p.id === id)).filter((p) => p && !milanoOff(p));
     if (!list.length) return '';
     return `<section class="alert near"><h3>Sei vicino a…</h3><ul>${list.map((p) => `<li><b>${esc(p.name)}</b>${p.work ? ` · ${esc(p.work)}` : ''}
       <span class="who">${esc(CAT_L[p.category])} · ${esc(fmtDist(dist(geo.pos, p)))} · <a href="#/vicino/${esc(p.id)}">Leggi la scheda</a></span></li>`).join('')}</ul>
@@ -425,7 +430,7 @@
     const photo = p.photoUrl ? `<figure class="photo"><img src="${esc(p.photoUrl)}" alt="${esc(p.name)}" loading="lazy" referrerpolicy="no-referrer"><figcaption>${p.photoPage ? `<a href="${esc(p.photoPage)}" target="_blank" rel="noopener noreferrer">${esc(p.photoCredit)}</a>` : esc(p.photoCredit)}</figcaption></figure>` : '';
     return `<article class="card" id="poi-${esc(p.id)}">${photo}
       <div class="row"><div class="times">${esc(CAT_L[p.category])}${p.zone ? ' · ' + esc(p.zone) : ''}</div>
-        <div class="badges">${p.published ? '' : badge('draft', 'Bozza non pubblicata')}${badge('', LINK_L[p.linkType])}</div></div>
+        <div class="badges">${p.published ? '' : badge('draft', 'Bozza non pubblicata')}${milanoOff(p) ? badge('draft', 'Nascosta: Milano è spenta') : ''}${badge('', LINK_L[p.linkType])}</div></div>
       <h3>${esc(p.name)}${p.work ? ` <span class="place">· ${esc(p.work)}</span>` : ''}</h3>
       <p class="place">${esc(p.address)}${d != null ? ` · <b>${esc(fmtDist(d))}</b>` : ''}</p>
       <p class="desc">${esc(p.context)}</p>
@@ -441,7 +446,7 @@
   function poiListHtml() {
     const q = poiQuery.trim().toLowerCase();
     const zoneRank = (p) => { const i = ZONES.indexOf(p.zone); return i < 0 ? ZONES.length : i; };
-    let list = data.pois.filter((p) => !hiddenCats.includes(p.category)
+    let list = data.pois.filter((p) => !hiddenCats.includes(p.category) && (admin || !milanoOff(p)) // l'admin la vede ancora, per poterla modificare
       && (!q || [p.name, p.work, p.zone, p.context, p.address].some((t) => String(t || '').toLowerCase().includes(q))));
     list = geo.pos
       ? list.slice().sort((a, b) => (a.lat == null ? 1e9 : dist(geo.pos, a)) - (b.lat == null ? 1e9 : dist(geo.pos, b)))
@@ -500,7 +505,10 @@
     const offline = net === 'offline';
     const cant = offline ? 'Senza rete non posso cercare locali aperti adesso: orari e disponibilità richiedono la connessione.'
       : !data.foodSearch ? 'La ricerca dal vivo non è ancora attiva su questo server (manca la chiave Google Places).' : '';
-    return `<div class="hero"><h1>TrovaCibo</h1><p>Locali nei dintorni: a New York cucina americana e street food (30–40 $ a persona, tasse, mancia e bevande escluse), a Milano cucina italiana e pizza. La ricerca funziona a New York e a Milano.</p></div>
+    const mi = milanoOn();
+    const catOpts = [['tutte', 'Tutte le preferite'], ['diner', 'Diner'], ['burger', 'Hamburger'], ['bbq', 'Barbecue'], ['sandwich', 'Sandwich e deli'], ['street', 'Street food'], ...(mi ? [['italiana', 'Italiana (solo Milano)'], ['pizza', 'Pizza (solo Milano)']] : [])];
+    if (!catOpts.some(([v]) => v === food.cat)) food.cat = 'tutte';
+    return `<div class="hero"><h1>TrovaCibo</h1><p>Locali nei dintorni: ${mi ? 'a New York ' : ''}cucina americana e street food (30–40 $ a persona, tasse, mancia e bevande escluse)${mi ? ', a Milano cucina italiana e pizza' : ''}. La ricerca funziona ${mi ? 'a New York e a Milano' : 'solo a New York'}.</p></div>
       <div class="seg" role="group" aria-label="Quanti siete"><button class="${food.mode === 'pochi' ? 'on' : ''}" data-act="food-mode" data-mode="pochi">Siamo pochi</button><button class="${food.mode === 'tutti' ? 'on' : ''}" data-act="food-mode" data-mode="tutti">Siamo in 23</button></div>
       ${food.mode === 'tutti' ? '<div class="alert plain"><b>In 23 è un\'altra storia.</b> Vicinanza e prezzo non garantiscono un tavolo per tutti: chiamate prima, oppure dividetevi per famiglie in locali vicini.</div>' : ''}
       ${booked.length ? `<h2>Già prenotato nel programma</h2>${booked.map((a) => actCard(a, { showDay: true })).join('')}` : ''}
@@ -509,11 +517,11 @@
       <div class="filters">
         <label class="field"><span>Partendo da</span>${sel('origin', [['me', 'La mia posizione'], ['hotel', 'Hotel']])}</label>
         <label class="field"><span>Raggio</span>${sel('radius', [[300, '300 m'], [600, '600 m'], [1000, '1 km'], [2000, '2 km']])}</label>
-        <label class="field"><span>Categoria</span>${sel('cat', [['tutte', 'Tutte le preferite'], ['diner', 'Diner'], ['burger', 'Hamburger'], ['bbq', 'Barbecue'], ['sandwich', 'Sandwich e deli'], ['street', 'Street food'], ['italiana', 'Italiana (solo Milano)'], ['pizza', 'Pizza (solo Milano)']])}</label>
+        <label class="field"><span>Categoria</span>${sel('cat', catOpts)}</label>
         <div>${chk('open', 'Aperto ora')}${chk('price', 'Fino a $$')}${chk('kids', 'Adatto ai ragazzi')}</div>
       </div>
       <button class="btn primary block" data-act="food-go"${food.busy ? ' disabled' : ''}>Cerca</button>
-      <p class="meta">La posizione viene usata solo quando premi «Cerca». A New York sono escluse cucina italiana e cucine orientali; il messicano resta. A Milano nessuna esclusione.</p>
+      <p class="meta">La posizione viene usata solo quando premi «Cerca». ${mi ? 'A New York sono' : 'Sono'} escluse cucina italiana e cucine orientali; il messicano resta.${mi ? ' A Milano nessuna esclusione.' : ''}</p>
       <div id="food-results">${foodResultsHtml()}</div>`}
       <h2>Opzioni salvate dal gruppo</h2>
       ${fb.length ? `<p class="lead">Scelte in anticipo, consultabili anche senza rete. Verificate apertura e posto al momento.</p>${fb.map((r) => `<article class="card"><h3>${esc(r.name)}</h3><p class="place">${esc(r.address)}</p>${r.note ? `<p class="note">${esc(r.note)}</p>` : ''}
@@ -565,13 +573,23 @@
       <h2>Riservatezza</h2>
       <p class="lead">Chiunque abbia il link può leggere queste pagine: per questo non contengono biglietti, numeri di prenotazione o dati personali. La tua posizione non lascia il telefono, tranne le coordinate inviate quando premi «Cerca» in TrovaCibo.</p>
       <p class="meta">${data.readOnly ? (data.updatedAt ? `Programma pubblicato il ${esc(fmtInstant(data.updatedAt))}` : 'Programma pubblicato dagli organizzatori') : `Versione del programma: ${data.version} · aggiornato il ${esc(fmtInstant(data.updatedAt))}`}</p>
-      <div class="actions">${admin ? '<a class="btn" href="#/admin">Pannello amministratore</a>' : data.canLogin ? '<button class="btn small" data-act="login">Accesso amministratori</button>' : ''}
-        <button class="btn small" data-act="reload">Aggiorna ora</button></div>`;
+      <div class="actions"><button class="btn small" data-act="reload">Aggiorna ora</button></div>
+      <p class="meta admin-link"><a href="#/admin">${admin ? 'Pannello amministratore' : 'Area amministratori'}</a></p>`;
   }
 
   function viewAdmin() {
-    if (!admin) return `<div class="hero"><h1>Amministrazione</h1><p>Serve il PIN degli organizzatori.</p></div><div class="actions"><button class="btn primary" data-act="login">Inserisci il PIN</button></div>`;
+    if (!admin) {
+      // l'area Admin funziona solo se il server ha dove salvare e un PIN: altrimenti si spiega cosa manca, senza un modulo inutile
+      const missing = data.adminMissing || (data.canLogin === false ? 'store' : '');
+      const why = missing === 'pin' ? 'Su questo server non è impostato il PIN degli organizzatori: manca la variabile <code>ADMIN_PIN</code> (almeno 6 caratteri tra lettere e cifre).'
+        : missing ? 'Su questo server le modifiche non sono attive: manca un archivio dove salvarle. Per il sito pubblicato servono le variabili <code>GITHUB_TOKEN</code> e <code>GITHUB_REPO</code>, più <code>ADMIN_PIN</code>.'
+        : net === 'offline' ? 'Sei senza rete: per entrare serve la connessione, il PIN viene verificato sul server.' : '';
+      return `<div class="hero"><h1>Amministrazione</h1><p>${missing ? 'L\'area riservata agli organizzatori non è attiva su questo sito.' : 'Serve il PIN degli organizzatori.'}</p></div>
+        ${why ? `<div class="alert plain">${why}</div>` : ''}
+        <div class="actions">${missing ? '' : '<button class="btn primary" data-act="login">Inserisci il PIN</button>'}<a class="btn" href="#/info">← Info pratiche</a></div>`;
+    }
     const cfg = data.config;
+    const mi = milanoOn();
     const drafts = data.pois.filter((p) => !p.published).length;
     const hist = !adminLog ? '<p class="lead">Carico la cronologia…</p>' : adminLog.changes.length ? `<ul class="hist">${adminLog.changes.slice().reverse().map((c) => {
       const what = c.action === 'create' ? 'creato' : c.action === 'delete' ? 'eliminato' : (c.fields || []).map((f) => `${ADMIN_FIELD_L[f.f] || f.f}: ${String(f.before).slice(0, 60) || '—'} → ${String(f.after).slice(0, 60) || '—'}`).join(' · ');
@@ -586,6 +604,10 @@
       ${publish}
       <div class="actions"><button class="btn primary" data-act="new-activity">+ Nuova attività</button><button class="btn" data-act="new-poi">+ Nuovo punto di interesse</button></div>
       <p class="lead">Per modificare una tappa o una curiosità usa «✎ Modifica» sulla sua scheda. ${drafts ? `Ci sono ${drafts} schede in bozza, visibili solo a voi in «Vicino a me».` : ''}</p>
+      <h2>Milano</h2>
+      <article class="card"><p class="place">Serve per provare l'app da casa: TrovaCibo cerca anche a Milano e le schede della zona «Milano» compaiono in «Vicino a me» e nelle segnalazioni di vicinanza. Da spenta resta solo New York.</p>
+        <div class="seg" role="group" aria-label="Milano"><button class="${mi ? 'on' : ''}" data-act="milano" data-on="1" aria-pressed="${mi}">ON</button><button class="${mi ? '' : 'on'}" data-act="milano" data-on="0" aria-pressed="${!mi}">OFF</button></div>
+        <p class="meta">Milano è ${mi ? 'accesa' : 'spenta'}. Il cambio si salva subito${data.readOnly ? ' e vale per tutti dopo la pubblicazione, tra circa un minuto' : ''}.</p></article>
       <h2>TrovaCibo e note</h2>
       <form class="card" data-form="config">
         <label class="field"><span>Tipi di cucina esclusi (nomi Google Places, separati da virgola)</span><textarea name="excludedTypes">${esc((cfg.excludedTypes || []).join(', '))}</textarea></label>
@@ -810,6 +832,15 @@
       if (!Object.keys(packed).length) return toast('Nessuna spunta da azzerare.');
       if (!confirm('Togliere tutte le spunte dalla lista su questo telefono?')) return;
       packed = {}; LS.set('packed', packed); render(); toast('Lista azzerata.');
+    },
+    async milano(el) {
+      const on = el.dataset.on === '1';
+      if (on === milanoOn()) return;
+      try {
+        await api('/api/config', { method: 'PUT', body: { milanoEnabled: on } });
+        await saved(`Milano ${on ? 'accesa' : 'spenta'}.${data.readOnly ? ' Online tra circa un minuto.' : ''}`);
+        checkNear(); render();
+      } catch (err) { toast(err.message); }
     },
     login: loginSheet,
     async logout() { await api('/api/admin/logout', { method: 'POST' }).catch(() => {}); setAdmin(null); adminLog = null; location.hash = '#/info'; await refresh(); },

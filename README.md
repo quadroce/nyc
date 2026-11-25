@@ -35,7 +35,7 @@ In questa modalità il pannello Admin è spento. Per riaccenderlo senza database
 
 ## Admin con PIN (salva su GitHub)
 
-Durante il viaggio il programma si cambia dall'app: **Info → Accesso amministratori**, si inserisce il PIN e compare la sezione Admin. Si possono modificare, aggiungere, annullare (stato «Annullata») ed eliminare le tappe, le curiosità, i ristoranti proposti e le note di Info.
+Durante il viaggio il programma si cambia dall'app: **Info → Area amministratori** (in fondo alla pagina), si inserisce il PIN e compare la sezione Admin. Si possono modificare, aggiungere, annullare (stato «Annullata») ed eliminare le tappe, le curiosità, i ristoranti proposti e le note di Info.
 
 Ogni «Salva» diventa un commit di `data/seed.json` sul ramo `main`, quindi Vercel ripubblica: chi ha fatto la modifica la vede subito, gli altri dopo circa un minuto. Finché la pubblicazione è in corso il pannello mostra «Pubblicazione in corso». Prima di salvare il server fa lo stesso controllo di `npm run check`: una modifica che fermerebbe la pubblicazione viene rifiutata con il motivo. Lo storico è la storia del file su GitHub (c'è il link nel pannello); per tornare indietro si ripristina da lì.
 
@@ -67,7 +67,7 @@ Stampa una sola volta il codice amministratore (sul server resta solo l'impronta
 node server.js
 ```
 
-e apri <http://localhost:3000>. L'accesso admin è in **Info → Accesso amministratori**.
+e apri <http://localhost:3000>. L'accesso admin è in **Info → Area amministratori**, in fondo alla pagina.
 
 Secondo amministratore: `node server.js admin add <nome>`; per toglierlo dopo il viaggio `node server.js admin revoke <nome>`; elenco con `admin list`. Ognuno può rigenerare il proprio codice dal pannello Admin.
 
@@ -100,7 +100,7 @@ Le coordinate delle curiosità sono indicative e marcate «non verificate»: fin
 
 Copia `.env.example` in `.env` e inserisci `GOOGLE_PLACES_API_KEY` (Places API «New» abilitata). La chiave resta sul server. Limiti: `PLACES_DAILY_BUDGET` ricerche al giorno, 8 al minuto per dispositivo, risultati tenuti in memoria 10 minuti e mai salvati su disco. I campi richiesti (adatto ai bambini, gruppi, prenotabile) ricadono nella fascia di prezzo più alta di Nearby Search: controlla i costi prima del viaggio.
 
-Aree supportate: New York (lat 40.45–41.0, lng −74.3/−73.65) e Milano (lat 45.35–45.58, lng 9.05–9.30); fuori da questi riquadri il server risponde 422. A Milano le categorie sono italiana e pizza (le «cucine escluse» degli admin valgono solo a New York). Per aggiungere una città: voce in `FOOD_AREAS` e `FOOD_CATS_BY_AREA` in `server.js`.
+Aree supportate: New York (lat 40.45–41.0, lng −74.3/−73.65) e Milano (lat 45.35–45.58, lng 9.05–9.30); fuori da questi riquadri il server risponde 422. A Milano le categorie sono italiana e pizza (le «cucine escluse» degli admin valgono solo a New York). Milano serve per provare l'app da casa e si spegne da **Admin → Milano → OFF** (`config.milanoEnabled` nel seed, acceso se assente): da spenta il server rifiuta le ricerche a Milano e non manda più a chi legge le schede della zona «Milano», che quindi non compaiono in «Vicino a me» e non generano segnalazioni. Per aggiungere una città: voce in `FOOD_AREAS` e `FOOD_CATS_BY_AREA` in `server.js`.
 
 ## Prova
 

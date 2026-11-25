@@ -20,6 +20,7 @@ try { BUILT_AT = require('./data/build.json').builtAt || null; } catch { /* in l
 const DATA = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(ROOT, 'data');
 const PORT = Number(process.env.PORT) || 3000;
 const PLACES_KEY = process.env.GOOGLE_PLACES_API_KEY || '';
+const PLACES_API = (process.env.PLACES_API_URL || 'https://places.googleapis.com').replace(/\/+$/, ''); // si cambia solo nelle prove
 const PLACES_DAILY_BUDGET = Number(process.env.PLACES_DAILY_BUDGET) || 150;
 const SESSION_MS = (Number(process.env.ADMIN_SESSION_MINUTES) || 120) * 60 * 1000;
 const TRUST_PROXY = process.env.TRUST_PROXY === '1' || Boolean(process.env.VERCEL);
@@ -362,6 +363,10 @@ function cleanConfig(input) {
     if (typeof input.infoNotes !== 'string' || input.infoNotes.length > 4000) throw new Bad('Note troppo lunghe.');
     out.infoNotes = input.infoNotes.trim();
   }
+  if ('milanoEnabled' in input) {
+    if (typeof input.milanoEnabled !== 'boolean') throw new Bad('Interruttore Milano non valido.');
+    out.milanoEnabled = input.milanoEnabled;
+  }
   if ('packing' in input) {
     if (!Array.isArray(input.packing) || input.packing.length > 20) throw new Bad('Lista «Cosa portare» non valida.');
     const used = new Set();
@@ -410,7 +415,7 @@ function diffState(prev, next) {
     ...diffList('poi', prev.pois, next.pois, SCHEMA.poi),
   ];
   const fields = [];
-  for (const k of ['excludedTypes', 'foodFallback', 'infoNotes', 'packing']) {
+  for (const k of ['excludedTypes', 'foodFallback', 'infoNotes', 'packing', 'milanoEnabled']) {
     const a = JSON.stringify(prev.config[k] ?? null), b = JSON.stringify(next.config[k] ?? null);
     if (a !== b) fields.push({ f: k, before: a, after: b });
   }
@@ -446,18 +451,25 @@ async function mutate(author, fn) {
   return true;
 }
 
+// Milano serve solo per provare l'app da casa: si spegne dalle impostazioni dell'Admin (config.milanoEnabled, acceso se assente).
+// Da spento TrovaCibo accetta solo New York e le schede della zona «Milano» non vengono date a chi legge.
+const milanoOn = (s) => (s.config || {}).milanoEnabled !== false;
+const isMilanoPoi = (p) => String(p.zone || '').trim().toLowerCase() === 'milano';
+// '' | 'store' | 'pin': cosa manca perché l'area Admin funzioni
+const adminMissing = () => (readOnly() ? 'store' : backend === 'github' && !PIN_OK ? 'pin' : '');
 const publicData = (s, isAdmin) => ({
   version: s.version,
   updatedAt: s.updatedAt,
   trip: s.trip,
   activities: s.activities,
-  pois: isAdmin ? s.pois : s.pois.filter((p) => p.published),
+  pois: isAdmin ? s.pois : s.pois.filter((p) => p.published && (milanoOn(s) || !isMilanoPoi(p))), // l'admin le vede comunque, per poterle modificare
   config: s.config,
   // ai lettori servono solo i cambi di programma; le bozze POI restano riservate agli admin
   changes: (isAdmin ? s.changes : s.changes.filter((c) => c.entity === 'activity')).slice(-80),
   foodSearch: Boolean(PLACES_KEY),
   readOnly: fromSeed(), // il programma è il file pubblicato: i cambi «prima → dopo» li calcola il telefono
-  canLogin: !readOnly(),
+  canLogin: !adminMissing(),
+  adminMissing: adminMissing(),
 });
 
 // ---------- TrovaCibo (proxy Google Places, API "New") ----------
@@ -497,7 +509,7 @@ async function placesNearby(lat, lng, radius, includedTypes, excludedTypes) {
     includedTypes, excludedTypes, maxResultCount: 20, rankPreference: 'DISTANCE', languageCode: 'it',
     locationRestriction: { circle: { center: { latitude: lat, longitude: lng }, radius } },
   };
-  const res = await fetch('https://places.googleapis.com/v1/places:searchNearby', {
+  const res = await fetch(`${PLACES_API}/v1/places:searchNearby`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': PLACES_KEY, 'X-Goog-FieldMask': PLACES_FIELDS },
     body: JSON.stringify(body),
@@ -511,9 +523,10 @@ async function foodSearch(q, ip) {
   if (!PLACES_KEY) throw new Bad('Ricerca ristoranti non configurata sul server.', 503);
   const lat = Number(q.get('lat')), lng = Number(q.get('lng'));
   const radius = Math.min(3000, Math.max(200, Number(q.get('radius')) || 600));
-  // solo aree consentite (New York, Milano): il server non è un proxy generico
+  // solo aree consentite (New York e, finché è accesa, Milano): il server non è un proxy generico
+  const withMilano = milanoOn(state);
   const area = areaOf(lat, lng);
-  if (!area) throw new Bad('La ricerca funziona solo a New York e a Milano.', 422);
+  if (!area || (area.id === 'milano' && !withMilano)) throw new Bad(withMilano ? 'La ricerca funziona solo a New York e a Milano.' : 'La ricerca funziona solo a New York.', 422);
   const cats = FOOD_CATS_BY_AREA[area.id];
   const cat = cats[q.get('cat')] ? q.get('cat') : 'tutte';
 

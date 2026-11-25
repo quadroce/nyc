@@ -29,6 +29,9 @@ if (!t.hotel || !t.hotel.name || !t.hotel.address) err('trip.hotel', 'servono "n
 if (!seed.config || !Array.isArray(seed.config.excludedTypes) || !Array.isArray(seed.config.foodFallback)) err('config', 'servono le liste "excludedTypes" e "foodFallback"');
 if (!Array.isArray(seed.activities) || !Array.isArray(seed.pois)) err('seed', 'servono le liste "activities" e "pois"');
 
+// interruttore «Milano» (prove da casa): se manca vale acceso
+if (seed.config && seed.config.milanoEnabled != null && typeof seed.config.milanoEnabled !== 'boolean') err('config.milanoEnabled', 'deve essere true o false');
+
 // lista «Cosa portare»: gruppi con titolo e voci; l'id di ogni voce resta stabile perché le spunte sui telefoni lo usano come chiave
 const packing = (seed.config || {}).packing;
 if (packing != null) {
