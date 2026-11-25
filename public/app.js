@@ -12,7 +12,7 @@
     clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 3200);
   };
 
-  const STATUS_L = { prenotato: 'Prenotato', proposto: 'Proposto', da_confermare: 'Da confermare', facoltativo: 'Facoltativo' };
+  const STATUS_L = { prenotato: 'Prenotato', proposto: 'Proposto', da_confermare: 'Da confermare', facoltativo: 'Facoltativo', annullato: 'Annullata' };
   const AUD_L = { tutti: 'Tutti', facoltativo: 'Facoltativa', sottogruppo: 'Sottogruppo' };
   const TYPE_L = { ritrovo: 'Ritrovo', visita: 'Visita', pasto: 'Pasto', spostamento: 'Spostamento' };
   const CAT_L = { film: 'Film e serie', marvel: 'Marvel', pop: 'Cultura pop', curiosita: 'Curiosità', storia: 'Storia', natale: 'Natale', ragazzi: 'Per ragazzi' };
@@ -65,7 +65,7 @@
   const dayActs = (date) => sortActs(data.activities.filter((a) => a.date === date));
   const included = (a) => a.audience === 'tutti' || Boolean(interest[a.id]);
   const isUpcoming = (a, now) => a.date > now.date || (a.date === now.date && (!startOf(a) || startOf(a) >= now.time));
-  const isMeeting = (a) => Boolean(a.meetTime || a.meetPlace || a.type === 'ritrovo');
+  const isMeeting = (a) => a.status !== 'annullato' && Boolean(a.meetTime || a.meetPlace || a.type === 'ritrovo');
   const fascia = (a) => { const t = startOf(a); return !t ? 'Orario da definire' : t < '12:00' ? 'Mattina' : t < '18:00' ? 'Pomeriggio' : 'Sera'; };
   function nextMeeting() {
     const now = nowNY();
@@ -75,7 +75,7 @@
   // ---------- cambi di programma ----------
   function pendingChanges() {
     if (!data) return [];
-    if (data.readOnly) return localChanges();
+    if (data.readOnly) return admin ? [] : localChanges();
     const seen = LS.get('seenVersion', null);
     if (seen == null) return [];
     return (data.changes || []).filter((c) => c.entity === 'activity' && c.v > seen);
@@ -104,7 +104,7 @@
     return list;
   }
   function trackBaseline() {
-    if (!data.readOnly) return;
+    if (!data.readOnly || admin) return; // l'admin vede il file sul ramo, non ancora pubblicato: non è il riferimento per i cambi
     if (!LS.get('baseline', null)) return LS.set('baseline', data.activities); // prima visita: niente da segnalare
     const changed = localChanges().length > 0;
     if (changed && !LS.get('changedAt', null)) LS.set('changedAt', new Date().toISOString());
@@ -266,7 +266,7 @@
     renderTabs();
   }
   async function refresh(silent) {
-    const sig = () => `${data && data.version}|${net}|${Boolean(admin)}`;
+    const sig = () => `${data && [data.version, data.rev, data.pending, data.storeError]}|${net}|${Boolean(admin)}`;
     const before = sig();
     try {
       const d = await api('/api/data');
@@ -323,7 +323,7 @@
     const changed = pendingChanges().some((c) => c.entityId === a.id);
     const place = hasPlace(a) ? `<p class="place"><b>${esc(a.placeName)}</b>${a.placeName && a.address ? ' · ' : ''}${esc(a.address)}</p>` : a.meetPlace ? '' : '<p class="place">Luogo da confermare</p>';
     const target = stopOf(a);
-    return `<article class="card act${o.next ? ' next' : ''}" id="act-${esc(a.id)}">
+    return `<article class="card act${o.next ? ' next' : ''}${a.status === 'annullato' ? ' cancelled' : ''}" id="act-${esc(a.id)}">
       <div class="row"><div class="times">${o.showDay ? esc(fmtDay(a.date, { weekday: 'short', day: 'numeric', month: 'short' })) + ' · ' : ''}${timesHtml(a)}</div>
         <div class="badges">${changed ? badge('upd', 'Aggiornato') : ''}${badge(a.status, STATUS_L[a.status])}${a.audience !== 'tutti' ? badge('', AUD_L[a.audience] + (a.audienceNote ? ' · ' + a.audienceNote : '')) : ''}</div></div>
       <h3>${esc(a.title)}</h3>${place}
@@ -542,12 +542,12 @@
       <h2>Riservatezza</h2>
       <p class="lead">Chiunque abbia il link può leggere queste pagine: per questo non contengono biglietti, numeri di prenotazione o dati personali. La tua posizione non lascia il telefono, tranne le coordinate inviate quando premi «Cerca» in TrovaCibo.</p>
       <p class="meta">${data.readOnly ? (data.updatedAt ? `Programma pubblicato il ${esc(fmtInstant(data.updatedAt))}` : 'Programma pubblicato dagli organizzatori') : `Versione del programma: ${data.version} · aggiornato il ${esc(fmtInstant(data.updatedAt))}`}</p>
-      <div class="actions">${admin ? '<a class="btn" href="#/admin">Pannello amministratore</a>' : data.readOnly ? '' : '<button class="btn small" data-act="login">Accesso amministratori</button>'}
+      <div class="actions">${admin ? '<a class="btn" href="#/admin">Pannello amministratore</a>' : data.canLogin ? '<button class="btn small" data-act="login">Accesso amministratori</button>' : ''}
         <button class="btn small" data-act="reload">Aggiorna ora</button></div>`;
   }
 
   function viewAdmin() {
-    if (!admin) return `<div class="hero"><h1>Amministrazione</h1><p>Serve il codice amministratore.</p></div><div class="actions"><button class="btn primary" data-act="login">Inserisci il codice</button></div>`;
+    if (!admin) return `<div class="hero"><h1>Amministrazione</h1><p>Serve il PIN degli organizzatori.</p></div><div class="actions"><button class="btn primary" data-act="login">Inserisci il PIN</button></div>`;
     const cfg = data.config;
     const drafts = data.pois.filter((p) => !p.published).length;
     const hist = !adminLog ? '<p class="lead">Carico la cronologia…</p>' : adminLog.changes.length ? `<ul class="hist">${adminLog.changes.slice().reverse().map((c) => {
@@ -555,7 +555,12 @@
       return `<li><b>${esc(c.title)}</b> — ${esc(what)}<br><span class="who">v${c.v} · ${esc(c.author)} · ${esc(fmtInstant(c.at))}</span>
         ${adminLog.snapshots.includes(c.v - 1) ? ` <button class="btn small" data-act="restore" data-v="${c.v - 1}">Ripristina com'era prima</button>` : ''}</li>`;
     }).join('')}</ul>` : '<p class="lead">Nessuna modifica finora.</p>';
+    const info = data.admin || {};
+    const publish = data.storeError ? `<div class="alert plain"><b>Non riesco a leggere il programma da GitHub.</b> ${esc(data.storeError)} Qui sotto vedi la versione pubblicata; i salvataggi potrebbero non riuscire.</div>`
+      : data.pending ? '<div class="alert plain"><b>Pubblicazione in corso.</b> Tu vedi già le modifiche salvate; gli altri le vedranno tra circa un minuto. Se dopo qualche minuto questo avviso è ancora qui, controlla il deploy su Vercel.</div>'
+      : data.readOnly ? '<p class="lead">Ogni salvataggio viene pubblicato subito: gli altri lo vedono dopo circa un minuto.</p>' : '';
     return `<div class="hero"><h1>Amministrazione</h1><p>Accesso di ${esc(admin.name)} · la sessione scade alle ${esc(new Date(admin.exp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }))}</p></div>
+      ${publish}
       <div class="actions"><button class="btn primary" data-act="new-activity">+ Nuova attività</button><button class="btn" data-act="new-poi">+ Nuovo punto di interesse</button></div>
       <p class="lead">Per modificare una tappa o una curiosità usa «✎ Modifica» sulla sua scheda. ${drafts ? `Ci sono ${drafts} schede in bozza, visibili solo a voi in «Vicino a me».` : ''}</p>
       <h2>TrovaCibo e note</h2>
@@ -564,10 +569,10 @@
         <label class="field"><span>Opzioni di emergenza per il cibo, una per riga: Nome | Indirizzo | Nota</span><textarea name="foodFallback">${esc((cfg.foodFallback || []).map((r) => [r.name, r.address, r.note].join(' | ')).join('\n'))}</textarea></label>
         <label class="field"><span>Note del gruppo (sezione Info)</span><textarea name="infoNotes">${esc(cfg.infoNotes || '')}</textarea><small>Pagina pubblica: niente dati personali, biglietti o numeri di prenotazione.</small></label>
         <p class="err" hidden></p><button class="btn primary">Salva impostazioni</button></form>
-      <h2>Cronologia delle modifiche</h2><article class="card">${hist}</article>
+      ${data.readOnly ? (info.historyUrl ? `<h2>Storico</h2><div class="actions">${extLink(info.historyUrl, 'Storia delle modifiche su GitHub')}</div><p class="meta">Per tornare indietro si ripristina da lì una versione precedente del file.</p>` : '') : `<h2>Cronologia delle modifiche</h2><article class="card">${hist}</article>`}
       <h2>Accesso</h2>
-      <div class="actions"><button class="btn" data-act="rotate">Cambia il mio codice</button><button class="btn" data-act="logout">Esci</button></div>
-      <p class="meta">Per aggiungere o revocare il secondo amministratore: sul server, <code>node server.js admin add|revoke &lt;nome&gt;</code>.</p>`;
+      <div class="actions">${info.pin ? '' : '<button class="btn" data-act="rotate">Cambia il mio codice</button>'}<button class="btn" data-act="logout">Esci</button></div>
+      ${info.pin ? '<p class="meta">Il PIN si cambia nelle impostazioni del server (variabile <code>ADMIN_PIN</code>).</p>' : '<p class="meta">Per aggiungere o revocare il secondo amministratore: sul server, <code>node server.js admin add|revoke &lt;nome&gt;</code>.</p>'}`;
   }
 
   function render() {
@@ -588,7 +593,7 @@
     if (typing && $('#poi-q')) { const el = $('#poi-q'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
     const target = v.name === 'programma' && v.b ? $('#act-' + CSS.escape(v.b)) : v.name === 'vicino' && v.a ? $('#poi-' + CSS.escape(v.a)) : null;
     if (target && render.flashed !== location.hash) { render.flashed = location.hash; target.scrollIntoView({ block: 'center' }); target.classList.add('flash'); }
-    if (v.name === 'admin' && admin && !adminLog) loadHistory();
+    if (v.name === 'admin' && admin && !adminLog && !data.readOnly) loadHistory();
   }
   async function loadHistory() {
     try { adminLog = await api('/api/admin/history'); if (view().name === 'admin') render(); } catch { /* sessione scaduta: gestita in api() */ }
@@ -628,7 +633,7 @@
     return out.join('');
   }
   function routeSheet(day) {
-    const stops = dayActs(day).filter((a) => included(a) && stopOf(a));
+    const stops = dayActs(day).filter((a) => a.status !== 'annullato' && included(a) && stopOf(a));
     const groups = {};
     for (const a of stops) (groups[fascia(a)] ||= []).push(stopOf(a));
     const body = Object.entries(groups).map(([f, list]) => `<h3 class="fascia">${f}</h3>
@@ -689,8 +694,8 @@
       <div class="foot">${item ? '<button type="button" class="btn danger" data-act="delete">Elimina</button>' : ''}<button type="button" class="btn" data-act="close">Annulla</button><button class="btn primary">Salva</button></div></form>`);
   }
   function loginSheet() {
-    openSheet(`<form data-form="login"><h2>Accesso amministratori</h2><p class="lead">Il codice viene verificato sul server e non resta salvato su questo telefono.</p>
-      <label class="field"><span>Codice amministratore</span><input name="code" type="password" autocomplete="off" autocapitalize="characters" required></label>
+    openSheet(`<form data-form="login"><h2>Accesso amministratori</h2><p class="lead">Il PIN viene verificato sul server e non resta salvato su questo telefono. Dopo 5 errori l'accesso si blocca per 15 minuti.</p>
+      <label class="field"><span>PIN degli organizzatori</span><input name="code" type="password" autocomplete="off" autocapitalize="characters" required></label>
       <p class="err" hidden></p><div class="foot"><button type="button" class="btn" data-act="close">Annulla</button><button class="btn primary">Entra</button></div></form>`);
     $('input', sheet).focus();
   }
@@ -720,7 +725,7 @@
         const base = kind === 'activity' ? '/api/activities' : '/api/pois';
         if (item && !Object.keys(body).length) return closeSheet();
         await api(item ? `${base}/${item.id}` : base, { method: item ? 'PUT' : 'POST', body });
-        await saved('Salvato. Chi apre l\'app vedrà l\'aggiornamento.');
+        await saved(data.readOnly ? 'Salvato. Gli altri lo vedranno tra circa un minuto.' : 'Salvato. Chi apre l\'app vedrà l\'aggiornamento.');
       } else if (form.dataset.form === 'config') {
         const body = {
           excludedTypes: String(fd.get('excludedTypes')).split(/[,\n]/).map((s) => s.trim()).filter(Boolean),
@@ -728,7 +733,7 @@
           infoNotes: String(fd.get('infoNotes')),
         };
         await api('/api/config', { method: 'PUT', body });
-        await saved('Impostazioni salvate.');
+        await saved(data.readOnly ? 'Impostazioni salvate. Online tra circa un minuto.' : 'Impostazioni salvate.');
       }
     } catch (err) { showErr(form, err.message); }
   });
@@ -780,7 +785,7 @@
     'edit-poi'(el) { editSheet('poi', data.pois.find((p) => p.id === el.dataset.id)); },
     async delete() {
       const { kind, item } = editSheet.ctx;
-      if (!confirm(`Eliminare «${item.title || item.name}»? Potrai ripristinarla dalla cronologia.`)) return;
+      if (!confirm(`Eliminare «${item.title || item.name}»? ${data.readOnly ? 'Per riaverla dovrai ripristinare il file dalla storia su GitHub.' : 'Potrai ripristinarla dalla cronologia.'}`)) return;
       try { await api(`${kind === 'activity' ? '/api/activities' : '/api/pois'}/${item.id}`, { method: 'DELETE' }); await saved('Eliminata.'); } catch (err) { showErr($('form', sheet), err.message); }
     },
     reload() { refresh().then(() => toast(net === 'offline' ? 'Senza rete: resta la copia salvata.' : 'Programma aggiornato.')); },

@@ -1,8 +1,9 @@
 'use strict';
 // NYC in compagnia — server senza dipendenze (Node >= 20).
 // Serve la PWA, custodisce il programma, verifica il codice admin e fa da proxy a Google Places.
-// Archivio: Supabase (tabella chiave/valore) o Redis via REST se configurati, altrimenti file in data/.
-// Su un hosting senza disco scrivibile e senza Redis parte in sola lettura dal seed.
+// Archivio: Supabase (tabella chiave/valore) o Redis via REST se configurati; oppure GitHub (ogni salvataggio
+// è un commit di data/seed.json, che fa ripartire la pubblicazione); altrimenti file in data/.
+// Su un hosting senza disco scrivibile e senza archivio parte in sola lettura dal seed.
 
 const http = require('http');
 const fs = require('fs');
@@ -13,6 +14,7 @@ const ROOT = __dirname;
 try { process.loadEnvFile(path.join(ROOT, '.env')); } catch { /* .env facoltativo */ }
 
 const SEED = require('./data/seed.json');
+const { validate: validateSeed } = require('./tools/check-seed.js');
 let BUILT_AT = null; // scritto da tools/check-seed.js durante la pubblicazione
 try { BUILT_AT = require('./data/build.json').builtAt || null; } catch { /* in locale non c'è */ }
 const DATA = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(ROOT, 'data');
@@ -27,6 +29,16 @@ const KV_PREFIX = process.env.KV_PREFIX || 'nyc:';
 const SB_URL = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
 const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || '';
 const SB_TABLE = /^[a-z_][a-z0-9_]{0,62}$/.test(process.env.SUPABASE_TABLE || '') ? process.env.SUPABASE_TABLE : 'nyc_kv';
+// GitHub come archivio: servono un token con permesso di scrittura sui contenuti del repository e il nome "proprietario/repo".
+const GH_TOKEN = process.env.GITHUB_TOKEN || '';
+const GH_REPO = /^[\w.-]+\/[\w.-]+$/.test(process.env.GITHUB_REPO || '') ? process.env.GITHUB_REPO : '';
+const GH_BRANCH = /^[\w./-]{1,100}$/.test(process.env.GITHUB_BRANCH || '') ? process.env.GITHUB_BRANCH : 'main';
+const GH_API = (process.env.GITHUB_API_URL || 'https://api.github.com').replace(/\/+$/, '');
+const GH_FILE = 'data/seed.json';
+// PIN unico degli organizzatori: solo nelle variabili d'ambiente, mai nel repository.
+const ADMIN_PIN = String(process.env.ADMIN_PIN || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+const ADMIN_NAME = String(process.env.ADMIN_NAME || 'Organizzatori').trim().slice(0, 40) || 'Organizzatori';
+const PIN_OK = ADMIN_PIN.length >= 6;
 
 // File serviti: elenco esplicito, così ogni hosting li include nel pacchetto e non esistono percorsi arbitrari.
 const STATIC = {
@@ -43,8 +55,10 @@ const STATIC = {
 // ---------- archiviazione ----------
 const clone = (v) => JSON.parse(JSON.stringify(v));
 const fileOf = (key) => path.join(DATA, key + '.json');
-let backend = SB_URL && SB_KEY ? 'supabase' : KV_URL && KV_TOKEN ? 'kv' : 'file'; // 'supabase' | 'kv' | 'file' | 'memory' (sola lettura)
-const backendName = () => ({ supabase: `Supabase, tabella ${SB_TABLE}`, kv: 'Redis', file: DATA, memory: 'nessuno (sola lettura)' }[backend]);
+let backend = SB_URL && SB_KEY ? 'supabase' : KV_URL && KV_TOKEN ? 'kv' : GH_TOKEN && GH_REPO ? 'github' : 'file'; // 'supabase' | 'kv' | 'github' | 'file' | 'memory' (sola lettura)
+const backendName = () => ({ supabase: `Supabase, tabella ${SB_TABLE}`, kv: 'Redis', github: `GitHub, ${GH_REPO} (${GH_BRANCH})`, file: DATA, memory: 'nessuno (sola lettura)' }[backend]);
+// Con 'memory' e 'github' il programma che tutti leggono è il seed pubblicato; il resto (tentativi falliti, consumi) vive solo in memoria.
+const fromSeed = () => backend === 'memory' || backend === 'github';
 const memory = new Map();
 
 async function kv(cmd) {
@@ -73,13 +87,13 @@ const store = {
   async get(key, fallback) {
     if (backend === 'supabase') { const rows = await sb('GET', `?key=eq.${encodeURIComponent(key)}&select=value`); return rows.length ? rows[0].value : fallback; }
     if (backend === 'kv') { const v = await kv(['GET', KV_PREFIX + key]); return v == null ? fallback : JSON.parse(v); }
-    if (backend === 'memory') return memory.has(key) ? memory.get(key) : fallback;
+    if (fromSeed()) return memory.has(key) ? memory.get(key) : fallback;
     try { return JSON.parse(fs.readFileSync(fileOf(key), 'utf8')); } catch { return fallback; }
   },
   async set(key, value) {
     if (backend === 'supabase') return void await sb('POST', '?on_conflict=key', { key, value, updated_at: new Date().toISOString() });
     if (backend === 'kv') return void await kv(['SET', KV_PREFIX + key, JSON.stringify(value)]);
-    if (backend === 'memory') return void memory.set(key, value);
+    if (fromSeed()) return void memory.set(key, value);
     fs.mkdirSync(DATA, { recursive: true });
     const tmp = fileOf(key) + '.tmp';
     fs.writeFileSync(tmp, JSON.stringify(value, null, 2));
@@ -99,7 +113,8 @@ function init() {
       catch { backend = 'memory'; console.log('Disco non scrivibile e nessun archivio Redis configurato: avvio in sola lettura dal seed.'); }
     }
     await loadState(true);
-    secret = process.env.SESSION_SECRET || await store.get('secret', '');
+    // con GitHub non c'è dove salvare una chiave: si ricava dal token, che è già un segreto del server
+    secret = process.env.SESSION_SECRET || (backend === 'github' ? crypto.createHmac('sha256', GH_TOKEN).update('nyc-session').digest('hex') : await store.get('secret', ''));
     if (!secret) { secret = crypto.randomBytes(32).toString('hex'); await store.set('secret', secret); }
   })().catch((e) => { ready = null; throw e; });
 }
@@ -109,11 +124,72 @@ async function loadState(fresh) {
   let s = await store.get('state', null);
   if (!s) {
     // senza archivio il programma è il file pubblicato: vale la data di pubblicazione, non quella di avvio dell'istanza
-    s = { version: 1, updatedAt: readOnly() ? BUILT_AT : new Date().toISOString(), changes: [], ...clone(SEED) };
+    s = { version: 1, updatedAt: fromSeed() ? BUILT_AT : new Date().toISOString(), changes: [], ...clone(SEED) };
     await store.set('state', s);
   }
   state = s; stateAt = Date.now();
   return state;
+}
+
+// ---------- archivio GitHub ----------
+// Chi legge il sito vede il seed pubblicato. L'admin invece legge e scrive il file sul ramo: così vede subito
+// ciò che ha salvato, anche nel minuto in cui la nuova pubblicazione è ancora in corso.
+const ghProblem = (status) => status === 401 || status === 403 ? 'GitHub ha rifiutato il token: è scaduto o non ha il permesso di scrittura sul repository.'
+  : status === 404 ? 'Repository, ramo o file non trovato su GitHub: controlla GITHUB_REPO e GITHUB_BRANCH.'
+  : `GitHub non ha risposto come previsto (${status}). Riprova tra poco.`;
+async function gh(method, rest, body, accept) {
+  try {
+    return await fetch(`${GH_API}/repos/${GH_REPO}/${rest}`, {
+      method,
+      headers: { Authorization: `Bearer ${GH_TOKEN}`, Accept: accept || 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'nyc-in-compagnia', ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      body: body ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(20000),
+    });
+  } catch { throw new Bad('GitHub non è raggiungibile in questo momento. Riprova tra poco.', 502); }
+}
+const blobSha = (buf) => crypto.createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
+const SEED_TEXT = JSON.stringify(SEED);
+let ghCache = null; // { at, sha, seed }
+async function ghLoad(fresh) {
+  if (!fresh && ghCache && Date.now() - ghCache.at < 3000) return ghCache;
+  const res = await gh('GET', `contents/${GH_FILE}?ref=${encodeURIComponent(GH_BRANCH)}`, null, 'application/vnd.github.raw+json');
+  if (!res.ok) throw new Bad(ghProblem(res.status), 502);
+  const buf = Buffer.from(await res.arrayBuffer());
+  let seed;
+  try { seed = JSON.parse(buf.toString('utf8')); } catch { throw new Bad('Il programma su GitHub non è un JSON valido: va corretto a mano nel repository.', 502); }
+  const errors = validateSeed(seed);
+  if (errors.length) throw new Bad(`Il programma su GitHub ha un errore da correggere a mano nel repository: ${errors[0]}`, 502);
+  return ghCache = { at: Date.now(), sha: blobSha(buf), seed };
+}
+// Lo stato come lo vede l'admin, con "pending" finché il sito pubblicato non coincide con il file sul ramo.
+const ghView = (c) => ({ state: { version: 1, updatedAt: BUILT_AT, changes: [], ...c.seed }, rev: c.sha.slice(0, 12), pending: JSON.stringify(c.seed) !== SEED_TEXT });
+function commitMessage(entries) {
+  const verb = { create: 'aggiunta', update: 'modificata', delete: 'eliminata' };
+  const e = entries[0];
+  const what = e.entity === 'config' ? 'impostazioni' : `${verb[e.action]} «${String(e.title || '').slice(0, 80)}»`;
+  return `Admin: ${what}${entries.length > 1 ? ` e altre ${entries.length - 1} modifiche` : ''}`;
+}
+async function mutateGithub(fn) {
+  for (let attempt = 0; ; attempt++) {
+    const cur = await ghLoad(true);
+    const prev = clone(editable(cur.seed));
+    const next = clone(prev);
+    fn(next);
+    const entries = diffState(prev, next);
+    if (!entries.length) return false;
+    stamp(entries, next, new Date().toISOString());
+    const seed = { ...cur.seed, ...next };
+    // stesso controllo che fa la pubblicazione: un file sbagliato fermerebbe il deploy, quindi non viene nemmeno salvato
+    const errors = validateSeed(seed);
+    if (errors.length) throw new Bad(`Modifica non salvata: ${errors[0]}`);
+    const buf = Buffer.from(JSON.stringify(seed, null, 2) + '\n', 'utf8');
+    const res = await gh('PUT', `contents/${GH_FILE}`, { message: commitMessage(entries), content: buf.toString('base64'), sha: cur.sha, branch: GH_BRANCH });
+    if (res.status === 409 && attempt === 0) continue; // il file è cambiato nel frattempo: si rilegge e si riapplica una volta
+    if (res.status === 409) throw new Bad('Il programma è stato modificato da qualcun altro proprio ora: riprova.', 409);
+    if (!res.ok) throw new Bad(ghProblem(res.status), 502);
+    ghCache = { at: Date.now(), sha: blobSha(buf), seed };
+    return true;
+  }
 }
 
 // ---------- amministratori ----------
@@ -143,6 +219,10 @@ async function findAdminByCode(code) {
   }
   return found;
 }
+// PIN unico: nessun archivio, vale ciò che c'è in ADMIN_PIN. L'impronta lega le sessioni al PIN: se cambia, decadono.
+const sha256 = (v) => crypto.createHash('sha256').update(String(v)).digest();
+const pinAdmin = () => (PIN_OK ? { name: ADMIN_NAME, pin: true, hash: crypto.createHmac('sha256', secret).update('pin:' + ADMIN_PIN).digest('hex') } : null);
+const isPin = (code) => PIN_OK && crypto.timingSafeEqual(sha256(normCode(code)), sha256(ADMIN_PIN));
 
 // Sessione = gettone firmato (nessuna memoria sul server). Decade alla scadenza, o se il codice viene cambiato o revocato.
 const sign = (body) => crypto.createHmac('sha256', secret).update(body).digest('hex');
@@ -157,6 +237,8 @@ async function sessionOf(req) {
   let p;
   try { p = JSON.parse(Buffer.from(m[1], 'base64url').toString('utf8')); } catch { return null; }
   if (!(p.e > Date.now())) return null;
+  const pa = pinAdmin();
+  if (pa && p.n === pa.name && p.f === pa.hash.slice(0, 16)) return { name: pa.name, exp: p.e, pin: true };
   const a = (await getAdmins()).find((x) => x.name === p.n && x.hash.slice(0, 16) === p.f);
   return a ? { name: a.name, exp: p.e } : null;
 }
@@ -172,7 +254,7 @@ async function recentFails(ip) {
 // ---------- validazione ----------
 const ENUMS = {
   type: ['ritrovo', 'visita', 'pasto', 'spostamento'],
-  status: ['prenotato', 'proposto', 'da_confermare', 'facoltativo'],
+  status: ['prenotato', 'proposto', 'da_confermare', 'facoltativo', 'annullato'],
   audience: ['tutti', 'facoltativo', 'sottogruppo'],
   category: ['film', 'marvel', 'pop', 'curiosita', 'storia', 'natale', 'ragazzi'],
   linkType: ['set_verificato', 'ispirazione', 'ambientazione', 'luogo_storico', 'curiosita'],
@@ -319,7 +401,15 @@ function diffState(prev, next) {
 }
 const editable = (s) => ({ activities: s.activities, pois: s.pois, config: s.config });
 
+function stamp(entries, next, at) {
+  for (const e of entries) {
+    if (e.action === 'delete' || e.entity === 'config') continue;
+    const item = (e.entity === 'activity' ? next.activities : next.pois).find((x) => x.id === e.entityId);
+    if (item) item.updatedAt = at;
+  }
+}
 async function mutate(author, fn) {
+  if (backend === 'github') return mutateGithub(fn);
   await loadState(true); // sempre dall'archivio: un altro admin (o un'altra istanza) può aver appena salvato
   const prev = clone(editable(state));
   const next = clone(prev);
@@ -328,13 +418,8 @@ async function mutate(author, fn) {
   if (!entries.length) return false;
   const at = new Date().toISOString();
   const v = state.version + 1;
-  for (const e of entries) {
-    e.v = v; e.at = at; e.author = author;
-    if (e.action !== 'delete' && e.entity !== 'config') {
-      const item = (e.entity === 'activity' ? next.activities : next.pois).find((x) => x.id === e.entityId);
-      if (item) item.updatedAt = at;
-    }
-  }
+  for (const e of entries) { e.v = v; e.at = at; e.author = author; }
+  stamp(entries, next, at);
   const snapshots = (await store.get('snapshots', [])).concat({ version: state.version, at, data: prev }).slice(-40);
   const saved = { ...state, ...next, version: v, updatedAt: at, changes: state.changes.concat(entries).slice(-300) };
   await store.set('snapshots', snapshots);
@@ -343,17 +428,18 @@ async function mutate(author, fn) {
   return true;
 }
 
-const publicData = (isAdmin) => ({
-  version: state.version,
-  updatedAt: state.updatedAt,
-  trip: state.trip,
-  activities: state.activities,
-  pois: isAdmin ? state.pois : state.pois.filter((p) => p.published),
-  config: state.config,
+const publicData = (s, isAdmin) => ({
+  version: s.version,
+  updatedAt: s.updatedAt,
+  trip: s.trip,
+  activities: s.activities,
+  pois: isAdmin ? s.pois : s.pois.filter((p) => p.published),
+  config: s.config,
   // ai lettori servono solo i cambi di programma; le bozze POI restano riservate agli admin
-  changes: (isAdmin ? state.changes : state.changes.filter((c) => c.entity === 'activity')).slice(-80),
+  changes: (isAdmin ? s.changes : s.changes.filter((c) => c.entity === 'activity')).slice(-80),
   foodSearch: Boolean(PLACES_KEY),
-  readOnly: readOnly(),
+  readOnly: fromSeed(), // il programma è il file pubblicato: i cambi «prima → dopo» li calcola il telefono
+  canLogin: !readOnly(),
 });
 
 // ---------- TrovaCibo (proxy Google Places, API "New") ----------
@@ -467,7 +553,7 @@ const readBody = (req) => new Promise((resolve, reject) => {
 });
 const ipOf = (req) => (TRUST_PROXY && String(req.headers['x-forwarded-for'] || '').split(',')[0].trim()) || req.socket.remoteAddress || '?';
 const newId = (p) => p + '-' + crypto.randomBytes(4).toString('hex');
-const NO_STORE = 'Su questo server le modifiche non sono attive: manca un archivio (Supabase, Redis o disco scrivibile).';
+const NO_STORE = 'Su questo server le modifiche non sono attive: manca un archivio (Supabase, Redis, GitHub o disco scrivibile).';
 
 async function api(req, res, url) {
   const p = url.pathname;
@@ -476,7 +562,19 @@ async function api(req, res, url) {
   const sess = await sessionOf(req);
   const needAdmin = () => { if (!sess) throw new Bad('Sessione amministratore scaduta o assente.', 401); return sess; };
 
-  if (m === 'GET' && p === '/api/data') return send(res, 200, { ...publicData(Boolean(sess)), admin: sess ? { name: sess.name, exp: sess.exp } : null });
+  if (m === 'GET' && p === '/api/data') {
+    const admin = sess ? { name: sess.name, exp: sess.exp, pin: Boolean(sess.pin) } : null;
+    if (!sess || backend !== 'github') return send(res, 200, { ...publicData(state, Boolean(sess)), admin });
+    admin.historyUrl = `https://github.com/${GH_REPO}/commits/${GH_BRANCH}/${GH_FILE}`;
+    try {
+      const v = ghView(await ghLoad());
+      return send(res, 200, { ...publicData(v.state, true), rev: v.rev, pending: v.pending, admin });
+    } catch (e) {
+      if (!(e instanceof Bad)) throw e;
+      // GitHub non risponde: l'admin vede il programma pubblicato e il motivo, senza restare a schermo vuoto
+      return send(res, 200, { ...publicData(state, true), storeError: e.message, admin });
+    }
+  }
 
   if (m === 'GET' && p === '/api/food') return send(res, 200, await foodSearch(url.searchParams, ipOf(req)));
 
@@ -486,13 +584,14 @@ async function api(req, res, url) {
     const { all, list } = await recentFails(ip);
     if (list.length >= FAIL_MAX) throw new Bad('Troppi tentativi: riprova tra 15 minuti.', 429);
     const { code } = await readBody(req);
-    const a = normCode(code).length >= 8 ? await findAdminByCode(code) : null;
+    const a = isPin(code) ? pinAdmin() : normCode(code).length >= 8 ? await findAdminByCode(code) : null;
     if (!a) { all[ip] = list.concat(Date.now()); await store.set('fails', all); throw new Bad('Codice non valido.', 401); }
     return send(res, 200, newSession(a));
   }
   if (m === 'POST' && p === '/api/admin/logout') return send(res, 200, { ok: true }); // il gettone viene scartato dal telefono
   if (m === 'POST' && p === '/api/admin/rotate') {
     const s = needAdmin();
+    if (s.pin) throw new Bad('Il PIN si cambia nella variabile ADMIN_PIN del server.');
     const { code, rec } = await setAdmin(s.name); // il vecchio codice e le vecchie sessioni decadono subito
     return send(res, 200, { code, ...newSession(rec) });
   }
@@ -582,6 +681,7 @@ async function cli() {
   const name = rest.join(' ').trim();
   await init();
   if (readOnly()) return console.log(NO_STORE);
+  if (backend === 'github') return console.log('Con l\'archivio GitHub non ci sono codici per nome: si entra con il PIN impostato in ADMIN_PIN.');
   const admins = await getAdmins();
   if (cmd === 'add' && name) {
     const { code } = await setAdmin(name);
@@ -602,6 +702,7 @@ if (process.argv[2] === 'admin') {
 } else {
   http.createServer(handle).listen(PORT, () => {
     console.log(`NYC in compagnia: http://localhost:${PORT}  (archivio: ${backendName()})`);
+    console.log(PIN_OK ? `Accesso admin con PIN attivo (firma delle modifiche: ${ADMIN_NAME}).` : process.env.ADMIN_PIN ? 'ADMIN_PIN ignorato: servono almeno 6 caratteri tra lettere e cifre.' : 'ADMIN_PIN assente: l\'accesso con PIN è spento.');
     if (!PLACES_KEY) console.log('GOOGLE_PLACES_API_KEY assente: TrovaCibo mostra solo le opzioni salvate dal gruppo.');
   });
 }
