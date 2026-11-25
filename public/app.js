@@ -23,7 +23,7 @@
     placeName: 'Luogo', address: 'Indirizzo', status: 'Stato', title: 'Titolo', audience: 'Destinatari',
   };
   const KEY_FIELDS = Object.keys(FIELD_L);
-  const ADMIN_FIELD_L = { ...FIELD_L, excludedTypes: 'Cucine escluse', foodFallback: 'Opzioni cibo di emergenza', infoNotes: 'Note del gruppo', description: 'Descrizione', transportNote: 'Trasporti', type: 'Tipo', audienceNote: 'Nota destinatari', published: 'Pubblicata', alertsEnabled: 'Segnalazione', coordsVerified: 'Coordinate verificate', context: 'Racconto', category: 'Categoria', linkType: 'Legame' };
+  const ADMIN_FIELD_L = { ...FIELD_L, excludedTypes: 'Cucine escluse', foodFallback: 'Opzioni cibo di emergenza', infoNotes: 'Note del gruppo', packing: 'Cosa portare', description: 'Descrizione', transportNote: 'Trasporti', type: 'Tipo', audienceNote: 'Nota destinatari', published: 'Pubblicata', alertsEnabled: 'Segnalazione', coordsVerified: 'Coordinate verificate', context: 'Racconto', category: 'Categoria', linkType: 'Legame' };
 
   // ---------- stato ----------
   let data = LS.get('data', null);
@@ -35,6 +35,7 @@
   let hiddenCats = LS.get('hiddenCats', []);
   let onlyMine = LS.get('onlyMine', false);
   let muted = LS.get('muted', false);
+  let packed = LS.get('packed', {});
   let geo = { pos: null, watch: null, err: '' };
   let near = []; // POI segnalati ora
   let poiQuery = '';
@@ -374,7 +375,7 @@
     let hero, day = now.date;
     if (now.date < t.start) {
       const n = Math.round((asUTC(t.start) - asUTC(now.date)) / 864e5);
-      hero = `<h1>${n === 1 ? 'Manca 1 giorno' : `Mancano ${n} giorni`} alla partenza</h1><p>Si parte ${esc(fmtDay(t.start))}. Qui sotto il primo giorno.</p>`;
+      hero = `<h1>${n === 1 ? 'Manca 1 giorno' : `Mancano ${n} giorni`} alla partenza</h1><p>Si parte ${esc(fmtDay(t.start))}. Qui sotto il primo giorno.</p>${packItems().length ? `<div class="actions"><a class="btn" href="#/info/portare">Cosa portare · ${esc(packSummary())}</a></div>` : ''}`;
       day = t.start;
     } else if (now.date > t.end) {
       hero = '<h1>Il viaggio è concluso</h1><p>Il programma resta consultabile.</p>'; day = t.end;
@@ -520,9 +521,31 @@
       : '<p class="lead">Gli amministratori non hanno ancora salvato opzioni di emergenza.</p>'}`;
   }
 
-  function viewInfo() {
+  // ---------- cosa portare: le spunte restano su questo telefono ----------
+  const packItems = () => (data.config.packing || []).flatMap((g) => g.items);
+  const packCount = (items) => `${items.filter((it) => packed[it.id]).length} di ${items.length}`;
+  function packSummary() {
+    const items = packItems();
+    const n = items.filter((it) => packed[it.id]).length;
+    return n === items.length ? `Tutto pronto: ${n} di ${n}` : `${n} di ${items.length} già in valigia`;
+  }
+  function viewPacking() {
+    const groups = data.config.packing || [];
+    if (!groups.length) return '<div class="hero"><h1>Cosa portare</h1></div><p class="empty">Gli organizzatori non hanno ancora preparato la lista.</p><div class="actions"><a class="btn" href="#/info">← Info pratiche</a></div>';
+    return `<div class="hero"><h1>Cosa portare</h1><p>Spunta ciò che è già in valigia. Le spunte restano su questo telefono: ogni famiglia ha la sua lista, anche senza rete.</p></div>
+      <div class="row pack-bar"><span class="badge" id="pack-total">${esc(packSummary())}</span><button class="btn small" data-act="pack-reset">Azzera le spunte</button></div>
+      ${groups.map((g, i) => `<article class="card pack"><div class="row"><h3>${esc(g.title)}</h3><span class="badge" data-pack-group="${i}">${packCount(g.items)}</span></div>
+        ${g.items.map((it) => `<label class="field check"><input type="checkbox" data-pack="${esc(it.id)}"${packed[it.id] ? ' checked' : ''}><span>${esc(it.text)}${it.note ? `<small>${esc(it.note)}</small>` : ''}</span></label>`).join('')}</article>`).join('')}
+      <p class="meta">Regole d'ingresso e di volo controllate sulle fonti ufficiali il 25 novembre 2026: possono cambiare, ricontrollatele prima di partire su viaggiaresicuri.it ed esta.cbp.dhs.gov.</p>
+      <div class="actions"><a class="btn" href="#/info">← Info pratiche</a></div>`;
+  }
+
+  function viewInfo(v) {
+    if (v.a === 'portare') return viewPacking();
     const h = data.trip.hotel;
     return `<div class="hero"><h1>Info pratiche</h1></div>
+      ${packItems().length ? `<article class="card"><div class="times">Prima di partire</div><h3>Cosa portare</h3><p class="place">Documenti, soldi, biglietti, elettronica e abbigliamento: la lista da spuntare. <b>${esc(packSummary())}</b>.</p>
+        <div class="actions"><a class="btn primary" href="#/info/portare">Apri la lista</a></div></article>` : ''}
       <article class="card"><div class="times">Il nostro hotel</div><h3>${esc(h.name)}</h3><p class="place">${esc(h.address)}</p>
         <p class="note">Indirizzo da mostrare a un tassista: <b>${esc(h.address)}</b></p>
         <div class="actions">${extLink(mapsDir({ placeName: h.name, address: h.address }), 'Portami in hotel', 'btn primary')}</div></article>
@@ -568,6 +591,7 @@
         <label class="field"><span>Tipi di cucina esclusi (nomi Google Places, separati da virgola)</span><textarea name="excludedTypes">${esc((cfg.excludedTypes || []).join(', '))}</textarea></label>
         <label class="field"><span>Opzioni di emergenza per il cibo, una per riga: Nome | Indirizzo | Nota</span><textarea name="foodFallback">${esc((cfg.foodFallback || []).map((r) => [r.name, r.address, r.note].join(' | ')).join('\n'))}</textarea></label>
         <label class="field"><span>Note del gruppo (sezione Info)</span><textarea name="infoNotes">${esc(cfg.infoNotes || '')}</textarea><small>Pagina pubblica: niente dati personali, biglietti o numeri di prenotazione.</small></label>
+        <label class="field"><span>Cosa portare (sezione Info): «# Titolo» apre un gruppo, poi una voce per riga: Voce | Nota</span><textarea name="packing" rows="14">${esc((cfg.packing || []).map((g) => ['# ' + g.title, ...g.items.map((it) => it.note ? it.text + ' | ' + it.note : it.text)].join('\n')).join('\n\n'))}</textarea><small>Se cambi il testo di una voce, la sua spunta sui telefoni riparte da zero.</small></label>
         <p class="err" hidden></p><button class="btn primary">Salva impostazioni</button></form>
       ${data.readOnly ? (info.historyUrl ? `<h2>Storico</h2><div class="actions">${extLink(info.historyUrl, 'Storia delle modifiche su GitHub')}</div><p class="meta">Per tornare indietro si ripristina da lì una versione precedente del file.</p>` : '') : `<h2>Cronologia delle modifiche</h2><article class="card">${hist}</article>`}
       <h2>Accesso</h2>
@@ -704,6 +728,19 @@
   const showErr = (form, msg) => { const p = $('.err', form); p.textContent = msg; p.hidden = false; };
   async function saved(msg) { adminLog = null; closeSheet(); await refresh(); toast(msg); }
 
+  // «# Titolo» apre un gruppo; le righe seguenti sono «Voce | Nota». Una voce con lo stesso testo conserva il suo id (e quindi le spunte).
+  function parsePacking(txt) {
+    const ids = new Map(packItems().map((it) => [it.text, it.id]));
+    const groups = [];
+    for (const line of txt.split('\n').map((l) => l.trim()).filter(Boolean)) {
+      if (line.startsWith('#')) { groups.push({ title: line.replace(/^#+\s*/, ''), items: [] }); continue; }
+      if (!groups.length) groups.push({ title: 'Da portare', items: [] });
+      const [text, ...rest] = line.split('|').map((x) => x.trim());
+      if (text) groups[groups.length - 1].items.push({ id: ids.get(text) || '', text, note: rest.join(' | ') });
+    }
+    return groups;
+  }
+
   document.addEventListener('submit', async (e) => {
     const form = e.target.closest('form[data-form]');
     if (!form) return;
@@ -731,6 +768,7 @@
           excludedTypes: String(fd.get('excludedTypes')).split(/[,\n]/).map((s) => s.trim()).filter(Boolean),
           foodFallback: String(fd.get('foodFallback')).split('\n').map((l) => l.split('|').map((s) => s.trim())).filter((p) => p[0]).map(([name, address = '', note = '']) => ({ name, address, note })),
           infoNotes: String(fd.get('infoNotes')),
+          packing: parsePacking(String(fd.get('packing'))),
         };
         await api('/api/config', { method: 'PUT', body });
         await saved(data.readOnly ? 'Impostazioni salvate. Online tra circa un minuto.' : 'Impostazioni salvate.');
@@ -768,6 +806,11 @@
       } catch (err) { food.err = err instanceof TypeError ? 'Senza rete non posso cercare: guarda le opzioni salvate dal gruppo qui sotto.' : err.message; food.results = null; }
       food.busy = false; render();
     },
+    'pack-reset'() {
+      if (!Object.keys(packed).length) return toast('Nessuna spunta da azzerare.');
+      if (!confirm('Togliere tutte le spunte dalla lista su questo telefono?')) return;
+      packed = {}; LS.set('packed', packed); render(); toast('Lista azzerata.');
+    },
     login: loginSheet,
     async logout() { await api('/api/admin/logout', { method: 'POST' }).catch(() => {}); setAdmin(null); adminLog = null; location.hash = '#/info'; await refresh(); },
     async rotate() {
@@ -802,6 +845,12 @@
   });
   document.addEventListener('change', (e) => {
     const t = e.target;
+    if (t.dataset.pack) {
+      if (t.checked) packed[t.dataset.pack] = true; else delete packed[t.dataset.pack];
+      LS.set('packed', packed);
+      $('#pack-total').textContent = packSummary();
+      (data.config.packing || []).forEach((g, i) => { const b = $(`[data-pack-group="${i}"]`); if (b) b.textContent = packCount(g.items); });
+    }
     if (t.dataset.food) {
       food[t.dataset.food] = t.type === 'checkbox' ? t.checked : t.dataset.food === 'radius' ? Number(t.value) : t.value;
       const box = $('#food-results'); if (box && t.type === 'checkbox') box.innerHTML = foodResultsHtml();

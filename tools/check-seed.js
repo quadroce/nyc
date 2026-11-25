@@ -29,6 +29,29 @@ if (!t.hotel || !t.hotel.name || !t.hotel.address) err('trip.hotel', 'servono "n
 if (!seed.config || !Array.isArray(seed.config.excludedTypes) || !Array.isArray(seed.config.foodFallback)) err('config', 'servono le liste "excludedTypes" e "foodFallback"');
 if (!Array.isArray(seed.activities) || !Array.isArray(seed.pois)) err('seed', 'servono le liste "activities" e "pois"');
 
+// lista «Cosa portare»: gruppi con titolo e voci; l'id di ogni voce resta stabile perché le spunte sui telefoni lo usano come chiave
+const packing = (seed.config || {}).packing;
+if (packing != null) {
+  if (!Array.isArray(packing)) err('config.packing', 'deve essere una lista di gruppi');
+  else {
+    const seen = new Set();
+    for (const g of packing) {
+      const where = `cosa portare, gruppo "${(g && g.title) || '?'}"`;
+      if (!g || typeof g.title !== 'string' || !g.title || g.title.length > 60) { err(where, 'serve "title" (al massimo 60 caratteri)'); continue; }
+      if (!Array.isArray(g.items)) { err(where, 'serve la lista "items"'); continue; }
+      for (const it of g.items) {
+        const w = `${where}, voce "${(it && (it.id || it.text)) || '?'}"`;
+        if (!it || typeof it !== 'object') { err(w, 'ogni voce deve avere "id" e "text"'); continue; }
+        if (!/^[a-z0-9-]{1,60}$/.test(it.id || '')) err(w, '"id" mancante o con caratteri non ammessi (solo minuscole, cifre e -)');
+        else if (seen.has(it.id)) err(w, '"id" ripetuto');
+        else seen.add(it.id);
+        if (typeof it.text !== 'string' || !it.text || it.text.length > 140) err(w, 'serve "text" (al massimo 140 caratteri)');
+        text(it, 'note', w, 400);
+      }
+    }
+  }
+}
+
 const ids = new Set();
 for (const a of seed.activities || []) {
   const where = `attività "${a.id || a.title || '?'}"`;

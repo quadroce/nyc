@@ -70,7 +70,140 @@
         "note": "Famoso per la cheesecake. Downtown Brooklyn. Proposto, non prenotato: verificare apertura e posto."
       }
     ],
-    "infoNotes": "VOLI (orari comunicati dal gruppo, da ricontrollare sul biglietto)\nAndata, venerdì 4 dicembre: EK205, Milano Malpensa 15:05 → New York JFK 18:55. Ritrovo proposto a Malpensa alle 12:00.\nRitorno, mercoledì 9 dicembre: EK206, New York JFK 22:20 → Milano Malpensa 11:15 di giovedì 10.\nNew York è 6 ore indietro rispetto all'Italia. Gli orari dell'app sono quelli di New York.\n\nCOME FUNZIONIAMO IN 23\n«Ritrovo sotto hotel» significa tutti pronti davanti all'ingresso. Chi non c'è… amen! Raggiungerà da solo il posto. Ogni adulto è responsabile dei propri minorenni.\n\nMEZZI E PAGAMENTI\nMetro e bus: pagamento contactless OMNY; una carta o un dispositivo può pagare fino a 4 persone. I percorsi indicati sono proposte con margine per il gruppo: verificare sull'app MTA le modifiche al servizio, soprattutto nel weekend.\n\nNELLO ZAINETTO\nGuanti, cappello, strati caldi, scarpe comode, impermeabile, power bank e acqua. Biglietti salvati offline. Per i pattini: calze comode e guanti. Per le luci a Brooklyn: vestirsi molto bene!\n\nMISSIONE RAGAZZI\nUna foto al giorno che racconti New York senza usare un selfie."
+    "infoNotes": "VOLI (orari comunicati dal gruppo, da ricontrollare sul biglietto)\nAndata, venerdì 4 dicembre: EK205, Milano Malpensa 15:05 → New York JFK 18:55. Ritrovo proposto a Malpensa alle 12:00.\nRitorno, mercoledì 9 dicembre: EK206, New York JFK 22:20 → Milano Malpensa 11:15 di giovedì 10.\nNew York è 6 ore indietro rispetto all'Italia. Gli orari dell'app sono quelli di New York.\n\nCOME FUNZIONIAMO IN 23\n«Ritrovo sotto hotel» significa tutti pronti davanti all'ingresso. Chi non c'è… amen! Raggiungerà da solo il posto. Ogni adulto è responsabile dei propri minorenni.\n\nMEZZI E PAGAMENTI\nMetro e bus: pagamento contactless OMNY; una carta o un dispositivo può pagare fino a 4 persone. I percorsi indicati sono proposte con margine per il gruppo: verificare sull'app MTA le modifiche al servizio, soprattutto nel weekend.\n\nNELLO ZAINETTO\nGuanti, cappello, strati caldi, scarpe comode, impermeabile, power bank e acqua. Biglietti salvati offline. Per i pattini: calze comode e guanti. Per le luci a Brooklyn: vestirsi molto bene!\n\nMISSIONE RAGAZZI\nUna foto al giorno che racconti New York senza usare un selfie.",
+    "packing": [
+      {
+        "title": "Documenti",
+        "items": [
+          {
+            "id": "passaporto",
+            "text": "Passaporto elettronico di ognuno, ragazzi compresi",
+            "note": "Deve scadere dopo il rientro in Italia: non servono 6 mesi residui. Per entrare con l'ESTA dev'essere elettronico. Ogni minore ha il suo."
+          },
+          {
+            "id": "esta",
+            "text": "ESTA approvata per ognuno, ragazzi compresi",
+            "note": "Si chiede solo su esta.cbp.dhs.gov (40,62 $ a testa), almeno 72 ore prima della partenza: meglio subito. Vale 2 anni o fino alla scadenza del passaporto. Chi è stato a Cuba dal 12 gennaio 2021 deve chiedere il visto."
+          },
+          {
+            "id": "attestazione-ebola",
+            "text": "Attestazione Ebola compilata per ognuno",
+            "note": "Obbligatoria dal 3 novembre 2026 su tutti i voli per gli USA: si dichiara di non essere stati nella Repubblica Democratica del Congo negli ultimi 21 giorni. Si compila online sul sito Emirates da 72 ore prima del volo (da martedì 1 dicembre), una per passeggero; per i minori firma un genitore. Senza, niente imbarco."
+          },
+          {
+            "id": "copie-documenti",
+            "text": "Copia di passaporti ed ESTA, su carta e sul telefono",
+            "note": "Tenetele separate dagli originali."
+          },
+          {
+            "id": "lettera-minori",
+            "text": "Lettera di autorizzazione, se un minore viaggia senza entrambi i genitori",
+            "note": "La dogana americana la raccomanda fortemente, autenticata, quando il minore viaggia con un solo genitore o con altri adulti."
+          },
+          {
+            "id": "assicurazione",
+            "text": "Polizza sanitaria di viaggio e numero di assistenza"
+          }
+        ]
+      },
+      {
+        "title": "Soldi",
+        "items": [
+          {
+            "id": "contanti",
+            "text": "Contanti in dollari",
+            "note": "Vanno dichiarati solo da 10.000 € a testa in uscita dall'UE e oltre i 10.000 $ all'arrivo negli USA."
+          },
+          {
+            "id": "carte",
+            "text": "Carte di pagamento contactless abilitate all'estero",
+            "note": "Servono anche per metro e bus (OMNY)."
+          }
+        ]
+      },
+      {
+        "title": "Biglietti e voucher",
+        "items": [
+          {
+            "id": "biglietti-aerei",
+            "text": "Biglietti aerei stampati"
+          },
+          {
+            "id": "voucher",
+            "text": "Voucher di hotel e attività stampati"
+          },
+          {
+            "id": "biglietti-offline",
+            "text": "Biglietti e voucher salvati anche sul telefono, consultabili senza rete"
+          }
+        ]
+      },
+      {
+        "title": "Elettronica",
+        "items": [
+          {
+            "id": "adattatori",
+            "text": "Adattatore (2) + cavi per caricare",
+            "note": "Prese americane a lamelle piatte (tipo A/B), corrente a 120 V: controllate che sui caricatori sia scritto «100–240 V»."
+          },
+          {
+            "id": "power-bank",
+            "text": "Power bank",
+            "note": "Solo nel bagaglio a mano, mai in stiva. Emirates: uno a testa, fino a 100 Wh con la capacità scritta sopra; in volo non si usa e non si ricarica; va sotto il sedile o nella tasca, non nella cappelliera."
+          },
+          {
+            "id": "telefono",
+            "text": "Telefono carico, con l'app aperta una volta e l'area di New York scaricata in Google Maps"
+          }
+        ]
+      },
+      {
+        "title": "Abbigliamento",
+        "items": [
+          {
+            "id": "cappelli-sciarpe-guanti",
+            "text": "Cappelli + sciarpe + guanti + copricollo (1 a testa)"
+          },
+          {
+            "id": "intimo",
+            "text": "Abbigliamento intimo"
+          },
+          {
+            "id": "termiche",
+            "text": "Termiche + pantaloni termici"
+          },
+          {
+            "id": "felpe",
+            "text": "2/3 felpe a testa"
+          },
+          {
+            "id": "pantaloni",
+            "text": "Pantaloni (2/3 a testa)"
+          },
+          {
+            "id": "k-way",
+            "text": "K-way"
+          }
+        ]
+      },
+      {
+        "title": "Altro",
+        "items": [
+          {
+            "id": "zaino-boxe",
+            "text": "Zaino della boxe"
+          },
+          {
+            "id": "borraccia",
+            "text": "1 borraccia"
+          },
+          {
+            "id": "medicine",
+            "text": "Medicine"
+          }
+        ]
+      }
+    ]
   },
   "activities": [
     {

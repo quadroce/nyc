@@ -362,6 +362,24 @@ function cleanConfig(input) {
     if (typeof input.infoNotes !== 'string' || input.infoNotes.length > 4000) throw new Bad('Note troppo lunghe.');
     out.infoNotes = input.infoNotes.trim();
   }
+  if ('packing' in input) {
+    if (!Array.isArray(input.packing) || input.packing.length > 20) throw new Bad('Lista «Cosa portare» non valida.');
+    const used = new Set();
+    out.packing = input.packing.map((g) => ({
+      title: String((g && g.title) || '').trim().slice(0, 60),
+      items: (Array.isArray(g && g.items) ? g.items : []).slice(0, 60).map((it) => {
+        const text = String((it && it.text) || '').trim().slice(0, 140);
+        if (!text) return null;
+        // l'id nasce dal testo: finché la voce non cambia, le spunte già messe sui telefoni restano
+        let id = /^[a-z0-9-]{1,60}$/.test((it && it.id) || '') ? it.id
+          : (text.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'voce');
+        for (let n = 2; used.has(id); n++) id = id.replace(/-\d+$/, '').slice(0, 50) + '-' + n;
+        used.add(id);
+        const note = String((it && it.note) || '').trim().slice(0, 400);
+        return note ? { id, text, note } : { id, text };
+      }).filter(Boolean),
+    })).filter((g) => g.title && g.items.length);
+  }
   return out;
 }
 
@@ -392,7 +410,7 @@ function diffState(prev, next) {
     ...diffList('poi', prev.pois, next.pois, SCHEMA.poi),
   ];
   const fields = [];
-  for (const k of ['excludedTypes', 'foodFallback', 'infoNotes']) {
+  for (const k of ['excludedTypes', 'foodFallback', 'infoNotes', 'packing']) {
     const a = JSON.stringify(prev.config[k] ?? null), b = JSON.stringify(next.config[k] ?? null);
     if (a !== b) fields.push({ f: k, before: a, after: b });
   }

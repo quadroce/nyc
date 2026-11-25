@@ -163,6 +163,12 @@ main { max-width: 640px; margin: 0 auto; padding: 12px 14px 24px; outline: none;
 .field.check { display: flex; gap: 10px; align-items: center; }
 .field.check > span { margin: 0; font-size: .92rem; color: var(--ink); }
 .field.check input { width: 22px; height: 22px; }
+.pack .field.check { min-height: 48px; margin: 0; padding: 8px 0; border-top: 1px solid var(--line); cursor: pointer; }
+.pack .field.check input { flex: none; width: 24px; height: 24px; }
+.pack .field.check input:checked + span { color: var(--muted); text-decoration: line-through; }
+.pack .field.check small { display: inline-block; width: 100%; }
+.pack h3 { margin: 0 0 10px; }
+.pack-bar { align-items: center; margin-top: 8px; }
 .field small { display: block; color: var(--muted); font-size: .78rem; margin-top: 3px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
 .filters { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
