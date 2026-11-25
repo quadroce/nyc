@@ -92,6 +92,9 @@ const LIST = [
   ['p-nypl-film', 'La biblioteca dei fantasmi', 'film', SET, 'Ghostbusters · The Day After Tomorrow', '476 5th Ave, New York, NY 10018', 'Midtown', 40.7532, -73.9822,
     "La prima scena di Ghostbusters, col fantasma della bibliotecaria, è girata qui. In The Day After Tomorrow i sopravvissuti si rifugiano nella biblioteca e bruciano i libri per scaldarsi.",
     'Domenica 6.', { linkedActivityId: 'a-0612-bryant-park' }],
+  ['p-library-way', 'Library Way', 'curiosita', CUR, 'Le targhe letterarie della 41ª Strada', 'East 41st St tra Park Ave e 5th Ave, New York, NY 10017', 'Midtown', 40.7520, -73.9800,
+    "Due isolati di marciapiede che portano dritti all'ingresso della biblioteca: nel selciato sono incastonate 96 targhe di bronzo dello scultore Gregg LeFevre, ognuna con una frase di uno scrittore e un piccolo disegno. Si leggono camminando a testa bassa, da Park Avenue verso i leoni.",
+    'Domenica 6: arrivando da Grand Central prendete la 41ª invece della 42ª, la biblioteca vi compare in fondo alla strada.', { linkedActivityId: 'a-0612-bryant-park' }],
 
   // ---------- Times Square e dintorni ----------
   ['p-times-nome', 'Perché si chiama Times Square', 'curiosita', CUR, '', 'Times Square, New York, NY 10036', 'Times Square e dintorni', 40.758, -73.9855,
