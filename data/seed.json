@@ -12,7 +12,7 @@
     }
   },
   "config": {
-    "milanoEnabled": true,
+    "milanoEnabled": false,
     "excludedTypes": [
       "italian_restaurant",
       "pizza_restaurant",
