@@ -421,7 +421,8 @@
   }
   function poiCard(p) {
     const d = geo.pos && p.lat != null ? dist(geo.pos, p) : null;
-    return `<article class="card" id="poi-${esc(p.id)}">
+    const photo = p.photoUrl ? `<figure class="photo"><img src="${esc(p.photoUrl)}" alt="${esc(p.name)}" loading="lazy" referrerpolicy="no-referrer"><figcaption>${p.photoPage ? `<a href="${esc(p.photoPage)}" target="_blank" rel="noopener noreferrer">${esc(p.photoCredit)}</a>` : esc(p.photoCredit)}</figcaption></figure>` : '';
+    return `<article class="card" id="poi-${esc(p.id)}">${photo}
       <div class="row"><div class="times">${esc(CAT_L[p.category])}${p.zone ? ' · ' + esc(p.zone) : ''}</div>
         <div class="badges">${p.published ? '' : badge('draft', 'Bozza non pubblicata')}${badge('', LINK_L[p.linkType])}</div></div>
       <h3>${esc(p.name)}${p.work ? ` <span class="place">· ${esc(p.work)}</span>` : ''}</h3>
@@ -802,6 +803,9 @@
     }
     if (t.dataset.route) $(`[data-route-links="${CSS.escape(t.dataset.route)}"]`, sheet).innerHTML = routeLinks(routeSheet.groups[t.dataset.route], t.value);
   });
+
+  // foto non raggiungibile (senza rete o rimossa): la scheda resta senza immagine
+  document.addEventListener('error', (e) => { const f = e.target.tagName === 'IMG' && e.target.closest('figure.photo'); if (f) f.remove(); }, true);
 
   // ---------- avvio ----------
   let lastNav = 0;

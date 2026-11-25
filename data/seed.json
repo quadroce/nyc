@@ -742,7 +742,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-hook-ladder"
+      "linkedActivityId": "a-hook-ladder",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/Ladder82026.jpg/500px-Ladder82026.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: I ran with scissors, CC0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Ladder82026.jpg"
     },
     {
       "id": "p-mcgees",
@@ -784,7 +787,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/Waldorf_Astoria_New_York_%2855272623437%29.jpg/500px-Waldorf_Astoria_New_York_%2855272623437%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: ajay_suresh, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Waldorf_Astoria_New_York_(55272623437).jpg"
     },
     {
       "id": "p-msg",
@@ -805,7 +811,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Madison_Square_Garden_%28MSG%29_-_Full_%2848124330357%29.jpg/500px-Madison_Square_Garden_%28MSG%29_-_Full_%2848124330357%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh from New York, NY, USA, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Madison_Square_Garden_(MSG)_-_Full_(48124330357).jpg"
     },
     {
       "id": "p-mcdowells",
@@ -847,7 +856,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-0712-isole"
+      "linkedActivityId": "a-0712-isole",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Aerial_view_of_Ellis_Island%2C_Jersey_City%2C_New_Jersey_LCCN2011635626_-_cropped_balance.jpg/500px-Aerial_view_of_Ellis_Island%2C_Jersey_City%2C_New_Jersey_LCCN2011635626_-_cropped_balance.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Carol M. Highsmith, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Aerial_view_of_Ellis_Island,_Jersey_City,_New_Jersey_LCCN2011635626_-_cropped_balance.jpg"
     },
     {
       "id": "p-911",
@@ -868,7 +880,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-0712-ground-zero"
+      "linkedActivityId": "a-0712-ground-zero",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/9-11_Memorial_and_Museum_%2828815276064%29.jpg/500px-9-11_Memorial_and_Museum_%2828815276064%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Paul Sableman, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:9-11_Memorial_and_Museum_(28815276064).jpg"
     },
     {
       "id": "p-brooklyn-bridge",
@@ -889,7 +904,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Brooklyn_Bridge_and_the_Lower_Manhattan_skyline_from_Pebble_Beach%2C_New_York.jpg/500px-Brooklyn_Bridge_and_the_Lower_Manhattan_skyline_from_Pebble_Beach%2C_New_York.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Christian David, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Brooklyn_Bridge_and_the_Lower_Manhattan_skyline_from_Pebble_Beach,_New_York.jpg"
     },
     {
       "id": "p-grand-central-storia",
@@ -910,7 +928,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-0612-grand-central"
+      "linkedActivityId": "a-0612-grand-central",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Image-Grand_central_Station_Outside_Night_2.jpg/500px-Image-Grand_central_Station_Outside_Night_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Fcb981 ; Eric Baetscher (attribution required), CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Image-Grand_central_Station_Outside_Night_2.jpg"
     },
     {
       "id": "p-rockefeller",
@@ -931,7 +952,10 @@
       "zone": "Midtown",
       "lat": 40.7587,
       "lng": -73.9787,
-      "context": "Un complesso di edifici Art Déco nel cuore di Midtown. A Natale la piazza con l'albero e la pista di ghiaccio diventa una delle immagini simbolo della città."
+      "context": "Un complesso di edifici Art Déco nel cuore di Midtown. A Natale la piazza con l'albero e la pista di ghiaccio diventa una delle immagini simbolo della città.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/New_York_City_%28New_York%2C_USA%29%2C_Rockefeller_Center_--_2012_--_6413.jpg/500px-New_York_City_%28New_York%2C_USA%29%2C_Rockefeller_Center_--_2012_--_6413.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "photoCredit": "Foto: Dietmar Rabich, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:New_York_City_(New_York,_USA),_Rockefeller_Center_--_2012_--_6413.jpg"
     },
     {
       "id": "p-st-patrick",
@@ -952,7 +976,10 @@
       "zone": "Midtown",
       "lat": 40.7585,
       "lng": -73.976,
-      "context": "Vetrine, grattacieli e una cattedrale neogotica che spunta tra i palazzi. La Fifth Avenue è una delle strade più famose al mondo: qui la frase «entro solo a dare un'occhiata» va interpretata con prudenza."
+      "context": "Vetrine, grattacieli e una cattedrale neogotica che spunta tra i palazzi. La Fifth Avenue è una delle strade più famose al mondo: qui la frase «entro solo a dare un'occhiata» va interpretata con prudenza.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/St._Patrick%27s_Cathedral_-_2026_%2855284018525%29.jpg/500px-St._Patrick%27s_Cathedral_-_2026_%2855284018525%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:St._Patrick%27s_Cathedral_-_2026_(55284018525).jpg"
     },
     {
       "id": "p-top-of-the-rock",
@@ -973,7 +1000,10 @@
       "zone": "Midtown",
       "lat": 40.7593,
       "lng": -73.9794,
-      "context": "Il panorama comprende l'Empire State Building e Central Park. Sfida: riuscite a riconoscerli prima di guardare la mappa?"
+      "context": "Il panorama comprende l'Empire State Building e Central Park. Sfida: riuscite a riconoscerli prima di guardare la mappa?",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/GE_Building_by_David_Shankbone.JPG/500px-GE_Building_by_David_Shankbone.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: David Shankbone, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:GE_Building_by_David_Shankbone.JPG"
     },
     {
       "id": "p-wollman",
@@ -994,7 +1024,10 @@
       "zone": "Central Park",
       "lat": 40.7679,
       "lng": -73.9743,
-      "context": "Un grande parco costruito nel cuore di Manhattan, con una pista circondata dallo skyline. La posa da campioni vale anche se si pattina piano."
+      "context": "Un grande parco costruito nel cuore di Manhattan, con una pista circondata dallo skyline. La posa da campioni vale anche se si pattina piano.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/Central_Park_Wollman_Rink.jpg/500px-Central_Park_Wollman_Rink.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Tomás Fano, CC BY-SA 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Central_Park_Wollman_Rink.jpg"
     },
     {
       "id": "p-tramway",
@@ -1015,7 +1048,10 @@
       "zone": "Midtown East",
       "lat": 40.7613,
       "lng": -73.9642,
-      "context": "Una funivia urbana che attraversa l'East River. Per pochi minuti il tragitto diventa una vista panoramica sospesa tra i palazzi."
+      "context": "Una funivia urbana che attraversa l'East River. Per pochi minuti il tragitto diventa una vista panoramica sospesa tra i palazzi.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Roosevelt_Island_tramcar_2010.jpg/500px-Roosevelt_Island_tramcar_2010.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Autopilot, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Roosevelt_Island_tramcar_2010.jpg"
     },
     {
       "id": "p-bryant-park",
@@ -1036,7 +1072,10 @@
       "zone": "Midtown",
       "lat": 40.7536,
       "lng": -73.9832,
-      "context": "Un piccolo parco tra i grattacieli che in inverno ospita il Winter Village. Perfetto per una pausa calda e per cercare un regalo da portare a casa."
+      "context": "Un piccolo parco tra i grattacieli che in inverno ospita il Winter Village. Perfetto per una pausa calda e per cercare un regalo da portare a casa.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/New-York_-_Bryant_Park.jpg/500px-New-York_-_Bryant_Park.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Jean-Christophe BENOIST, CC BY 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:New-York_-_Bryant_Park.jpg"
     },
     {
       "id": "p-nypl-leoni",
@@ -1057,7 +1096,10 @@
       "zone": "Midtown",
       "lat": 40.7532,
       "lng": -73.9822,
-      "context": "I due leoni all'ingresso sulla Fifth Avenue si chiamano Patience e Fortitude. Un'ottima coppia di qualità per viaggiare con un gruppo di 23 persone."
+      "context": "I due leoni all'ingresso sulla Fifth Avenue si chiamano Patience e Fortitude. Un'ottima coppia di qualità per viaggiare con un gruppo di 23 persone.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/New_York_Public_Library_-_Main_Branch_%2851396225599%29.jpg/500px-New_York_Public_Library_-_Main_Branch_%2851396225599%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: ajay_suresh, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:New_York_Public_Library_-_Main_Branch_(51396225599).jpg"
     },
     {
       "id": "p-liberty",
@@ -1078,7 +1120,10 @@
       "zone": "Baia di New York",
       "lat": 40.6892,
       "lng": -74.0445,
-      "context": "Dono della Francia agli Stati Uniti, fu inaugurata nel 1886. La torcia è il simbolo più riconoscibile di Lady Liberty."
+      "context": "Dono della Francia agli Stati Uniti, fu inaugurata nel 1886. La torcia è il simbolo più riconoscibile di Lady Liberty.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Front_view_of_Statue_of_Liberty_%28cropped%29.jpg/500px-Front_view_of_Statue_of_Liberty_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: AskALotl, CC0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Front_view_of_Statue_of_Liberty_(cropped).jpg"
     },
     {
       "id": "p-dumbo",
@@ -1099,7 +1144,10 @@
       "zone": "Brooklyn",
       "lat": 40.7033,
       "lng": -73.9894,
-      "context": "Il nome significa Down Under the Manhattan Bridge Overpass. Da Washington Street il Manhattan Bridge si incornicia tra i palazzi; sul waterfront si apre lo skyline."
+      "context": "Il nome significa Down Under the Manhattan Bridge Overpass. Da Washington Street il Manhattan Bridge si incornicia tra i palazzi; sul waterfront si apre lo skyline.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/DUMBO_Brooklyn%2C_as_seen_from_the_viewing_gallery_of_One_World_Trade_Center.jpg/500px-DUMBO_Brooklyn%2C_as_seen_from_the_viewing_gallery_of_One_World_Trade_Center.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Benhodgson, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:DUMBO_Brooklyn,_as_seen_from_the_viewing_gallery_of_One_World_Trade_Center.jpg"
     },
     {
       "id": "p-chelsea-market",
@@ -1120,7 +1168,10 @@
       "zone": "Chelsea e Flatiron",
       "lat": 40.7424,
       "lng": -74.0061,
-      "context": "Un ex edificio industriale trasformato in mercato gastronomico. Un posto dove il problema non è trovare qualcosa da mangiare, ma scegliere."
+      "context": "Un ex edificio industriale trasformato in mercato gastronomico. Un posto dove il problema non è trovare qualcosa da mangiare, ma scegliere.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Chelsea_Market_%2849052085186%29.jpg/500px-Chelsea_Market_%2849052085186%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh from New York, NY, USA, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Chelsea_Market_(49052085186).jpg"
     },
     {
       "id": "p-high-line",
@@ -1141,7 +1192,10 @@
       "zone": "Chelsea e Flatiron",
       "lat": 40.7396,
       "lng": -74.0089,
-      "context": "Un parco sopraelevato ricavato da una vecchia linea ferroviaria merci. Si cammina tra giardini, arte e scorci sui palazzi e sul fiume Hudson."
+      "context": "Un parco sopraelevato ricavato da una vecchia linea ferroviaria merci. Si cammina tra giardini, arte e scorci sui palazzi e sul fiume Hudson.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/High_Line_Park%2C_Section_1a.jpg/500px-High_Line_Park%2C_Section_1a.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Dansnguyen, CC0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:High_Line_Park,_Section_1a.jpg"
     },
     {
       "id": "p-dyker",
@@ -1162,7 +1216,10 @@
       "zone": "Brooklyn",
       "lat": 40.6193,
       "lng": -74.0133,
-      "context": "Prima gli schermi giganti di Manhattan, poi le case di Brooklyn vestite di luci. A Dyker Heights le decorazioni sono una tradizione degli abitanti del quartiere."
+      "context": "Prima gli schermi giganti di Manhattan, poi le case di Brooklyn vestite di luci. A Dyker Heights le decorazioni sono una tradizione degli abitanti del quartiere.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/Dyker_Lights_%2862317%29.jpg/500px-Dyker_Lights_%2862317%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "photoCredit": "Foto: Rhododendrites, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Dyker_Lights_(62317).jpg"
     },
     {
       "id": "p-amnh",
@@ -1183,7 +1240,10 @@
       "zone": "Upper West Side",
       "lat": 40.7813,
       "lng": -73.974,
-      "context": "Fossili, animali e storie del nostro pianeta riempiono uno dei musei più famosi di New York. È anche il museo che ha ispirato l'ambientazione di Una notte al museo."
+      "context": "Fossili, animali e storie del nostro pianeta riempiono uno dei musei più famosi di New York. È anche il museo che ha ispirato l'ambientazione di Una notte al museo.",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ec/USA-NYC-American_Museum_of_Natural_History.JPG/500px-USA-NYC-American_Museum_of_Natural_History.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ingfbruno, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:USA-NYC-American_Museum_of_Natural_History.JPG"
     },
     {
       "id": "p-marvel-grand-central",
@@ -1204,7 +1264,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/GCT_PAV_2.jpg/500px-GCT_PAV_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ɱ, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:GCT_PAV_2.jpg"
     },
     {
       "id": "p-marvel-nypl",
@@ -1288,7 +1351,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/New_york_times_square-terabass.jpg/500px-New_york_times_square-terabass.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Terabass, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:New_york_times_square-terabass.jpg"
     },
     {
       "id": "p-marvel-bleecker",
@@ -1309,7 +1375,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/11/Carime_bleecker.jpg/500px-Carime_bleecker.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: JohnSweeney85, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Carime_bleecker.jpg"
     },
     {
       "id": "p-marilyn",
@@ -1351,7 +1420,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://upload.wikimedia.org/wikipedia/commons/1/12/Citigroup_center.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "photoCredit": "Foto: Johan Burati, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Citigroup_center.jpg"
     },
     {
       "id": "p-greenacre",
@@ -1372,7 +1444,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Greenacre_Pk_1_jeh.jpg/500px-Greenacre_Pk_1_jeh.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Jim.henderson, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Greenacre_Pk_1_jeh.jpg"
     },
     {
       "id": "p-track61",
@@ -1414,7 +1489,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Madison_Av_Oct_2024_57.jpg/500px-Madison_Av_Oct_2024_57.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Epicgenius, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Madison_Av_Oct_2024_57.jpg"
     },
     {
       "id": "p-chrysler",
@@ -1435,7 +1513,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Chrysler_Building_by_David_Shankbone_Retouched.jpg/500px-Chrysler_Building_by_David_Shankbone_Retouched.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "photoCredit": "Foto: w:User:Overand derivative work: Overand ( talk ), Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Chrysler_Building_by_David_Shankbone_Retouched.jpg"
     },
     {
       "id": "p-daily-news",
@@ -1456,7 +1537,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/PIX11_%2854823910716%29.jpg/500px-PIX11_%2854823910716%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: ajay_suresh, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:PIX11_(54823910716).jpg"
     },
     {
       "id": "p-tudor-city",
@@ -1477,7 +1561,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Tudor_City_jeh.JPG/500px-Tudor_City_jeh.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Jim.henderson, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Tudor_City_jeh.JPG"
     },
     {
       "id": "p-onu",
@@ -1498,7 +1585,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/Midtown_Manhattan_Skyline_004_%28cropped%29.jpg/500px-Midtown_Manhattan_Skyline_004_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Kidfly182, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Midtown_Manhattan_Skyline_004_(cropped).jpg"
     },
     {
       "id": "p-roosevelt-hotel",
@@ -1519,7 +1609,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Roosevelt_Hotel.jpg/500px-Roosevelt_Hotel.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: gargola87 from Charlottesville, VA, CC BY-SA 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Roosevelt_Hotel.jpg"
     },
     {
       "id": "p-metlife",
@@ -1540,7 +1633,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/MetLife_Building.jpg/500px-MetLife_Building.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "photoCredit": "Foto: Choinowski, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:MetLife_Building.jpg"
     },
     {
       "id": "p-baxter",
@@ -1624,7 +1720,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/St._Regis_New_York_%2855284018005%29.jpg/500px-St._Regis_New_York_%2855284018005%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:St._Regis_New_York_(55284018005).jpg"
     },
     {
       "id": "p-radio-city",
@@ -1645,7 +1744,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Radio_City_Music_Hall_%2851395756913%29.jpg/500px-Radio_City_Music_Hall_%2851395756913%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: ajay_suresh, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Radio_City_Music_Hall_(51395756913).jpg"
     },
     {
       "id": "p-albero",
@@ -1666,7 +1768,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-0412-rockefeller"
+      "linkedActivityId": "a-0412-rockefeller",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/Rockefeller_Christmas_Tree.jpg/500px-Rockefeller_Christmas_Tree.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Praneeth Thalla, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Rockefeller_Christmas_Tree.jpg"
     },
     {
       "id": "p-pranzo-trave",
@@ -1687,7 +1792,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Lunch_atop_a_Skyscraper_-_Charles_Clyde_Ebbets.jpg/500px-Lunch_atop_a_Skyscraper_-_Charles_Clyde_Ebbets.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Charles Clyde Ebbets, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Lunch_atop_a_Skyscraper_-_Charles_Clyde_Ebbets.jpg"
     },
     {
       "id": "p-fao",
@@ -1729,7 +1837,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/1221_Avenue_of_the_Americas_2016.jpg/500px-1221_Avenue_of_the_Americas_2016.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Capcor1, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:1221_Avenue_of_the_Americas_2016.jpg"
     },
     {
       "id": "p-moma",
@@ -1750,7 +1861,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/MoMa_NY_USA_1.jpg/500px-MoMa_NY_USA_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: hibino, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:MoMa_NY_USA_1.jpg"
     },
     {
       "id": "p-tiffany",
@@ -1771,7 +1885,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Tiffany_%26_Co._flagship_store_%2853872772975%29.jpg/500px-Tiffany_%26_Co._flagship_store_%2853872772975%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: ajay_suresh, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Tiffany_%26_Co._flagship_store_(53872772975).jpg"
     },
     {
       "id": "p-plaza",
@@ -1792,7 +1909,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/New_York_-_Manhattan_-_Plaza_Hotel.jpg/500px-New_York_-_Manhattan_-_Plaza_Hotel.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Yarl, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:New_York_-_Manhattan_-_Plaza_Hotel.jpg"
     },
     {
       "id": "p-carnegie",
@@ -1813,7 +1933,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Carnegie_Hall_-_Full_%2848155558466%29.jpg/500px-Carnegie_Hall_-_Full_%2848155558466%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh from New York, NY, USA, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Carnegie_Hall_-_Full_(48155558466).jpg"
     },
     {
       "id": "p-nypl-film",
@@ -1855,7 +1978,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-0812-dyker"
+      "linkedActivityId": "a-0812-dyker",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/2024-06-17_10_15_08_View_south-southwest_from_near_the_intersection_of_7th_Avenue%2C_Broadway_and_44th_Street_in_Times_Square%2C_Manhattan%2C_New_York_City%2C_New_York.jpg/500px-thumbnail.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Famartin, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:2024-06-17_10_15_08_View_south-southwest_from_near_the_intersection_of_7th_Avenue,_Broadway_and_44th_Street_in_Times_Square,_Manhattan,_New_York_City,_New_York.jpg"
     },
     {
       "id": "p-macys",
@@ -1876,7 +2002,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/NYC-manhattan-macys.jpg/500px-NYC-manhattan-macys.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Balou46, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:NYC-manhattan-macys.jpg"
     },
     {
       "id": "p-empire",
@@ -1897,7 +2026,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/500px-Empire_State_Building_%28aerial_view%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Sam Valadi, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Empire_State_Building_(aerial_view).jpg"
     },
     {
       "id": "p-timely",
@@ -1939,7 +2071,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Ninth-ave-at-49th-st-facing-south.jpg/500px-Ninth-ave-at-49th-st-facing-south.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: autore non indicato, CC BY-SA 2.5, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Ninth-ave-at-49th-st-facing-south.jpg"
     },
     {
       "id": "p-gapstow",
@@ -1960,7 +2095,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-0512-central-park"
+      "linkedActivityId": "a-0512-central-park",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Central_Park_New_York_January_2016_002.jpg/500px-Central_Park_New_York_January_2016_002.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "photoCredit": "Foto: King of Hearts, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Central_Park_New_York_January_2016_002.jpg"
     },
     {
       "id": "p-wollman-film",
@@ -2002,7 +2140,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/Central_Park_Zoo_area.jpg/500px-Central_Park_Zoo_area.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Tim Rodenberg, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Central_Park_Zoo_area.jpg"
     },
     {
       "id": "p-balto",
@@ -2023,7 +2164,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Balto_%284688256007%29.jpg/500px-Balto_%284688256007%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Tony Hisgett from Birmingham, UK, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Balto_(4688256007).jpg"
     },
     {
       "id": "p-bethesda",
@@ -2044,7 +2188,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Bethesda_Terrace_and_Fountain%2C_Central_Park%2C_2025.jpg/500px-Bethesda_Terrace_and_Fountain%2C_Central_Park%2C_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Julian Lupyan, CC0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Bethesda_Terrace_and_Fountain,_Central_Park,_2025.jpg"
     },
     {
       "id": "p-strawberry",
@@ -2065,7 +2212,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/2960-Central_Park-Strawberry_Fields.JPG/500px-2960-Central_Park-Strawberry_Fields.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ingfbruno, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:2960-Central_Park-Strawberry_Fields.JPG"
     },
     {
       "id": "p-frick",
@@ -2086,7 +2236,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/36/The_Frick_Collection_%2849958273187%29.jpg/500px-The_Frick_Collection_%2849958273187%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh from New York, NY, USA, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:The_Frick_Collection_(49958273187).jpg"
     },
     {
       "id": "p-san-remo",
@@ -2107,7 +2260,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-0912-museo"
+      "linkedActivityId": "a-0912-museo",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/San_Remo_apartments_from_Central_Park%2C_NYC.jpg/500px-San_Remo_apartments_from_Central_Park%2C_NYC.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ed Yourdon from New York City, USA, CC BY-SA 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:San_Remo_apartments_from_Central_Park,_NYC.jpg"
     },
     {
       "id": "p-dana",
@@ -2128,7 +2284,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3e/55_Central_Park_West_%28Ghostbusters_Building%29_by_David_Shankbone.jpg/500px-55_Central_Park_West_%28Ghostbusters_Building%29_by_David_Shankbone.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: David Shankbone, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:55_Central_Park_West_(Ghostbusters_Building)_by_David_Shankbone.jpg"
     },
     {
       "id": "p-lincoln-center",
@@ -2149,7 +2308,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-cena-messicana"
+      "linkedActivityId": "a-cena-messicana",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/24/Lincoln_Center_Overview_%2848047495362%29.jpg/500px-Lincoln_Center_Overview_%2848047495362%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh from New York, NY, USA, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Lincoln_Center_Overview_(48047495362).jpg"
     },
     {
       "id": "p-zabars",
@@ -2170,7 +2332,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/Zabars-2016-front-wide.jpg/500px-Zabars-2016-front-wide.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Fuzheado, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Zabars-2016-front-wide.jpg"
     },
     {
       "id": "p-serendipity",
@@ -2191,7 +2356,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Entrance_to_Serendipity_3%2C_the_New_York_City_dessert_restaurant.jpg/500px-Entrance_to_Serendipity_3%2C_the_New_York_City_dessert_restaurant.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ben W, CC BY-SA 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Entrance_to_Serendipity_3,_the_New_York_City_dessert_restaurant.jpg"
     },
     {
       "id": "p-flatiron",
@@ -2212,7 +2380,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Edificio_Fuller_%28Flatiron%29_en_2010_desde_el_Empire_State_crop_boxin.jpg/500px-Edificio_Fuller_%28Flatiron%29_en_2010_desde_el_Empire_State_crop_boxin.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Imelenchon (original work), Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Edificio_Fuller_(Flatiron)_en_2010_desde_el_Empire_State_crop_boxin.jpg"
     },
     {
       "id": "p-oreo",
@@ -2254,7 +2425,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Friends_building.jpg/500px-Friends_building.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "photoCredit": "Foto: Redlands597198, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Friends_building.jpg"
     },
     {
       "id": "p-casa-stretta",
@@ -2275,7 +2449,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/Edna_St._Vincent_Millay_home_1923%E2%80%9324.jpg/500px-Edna_St._Vincent_Millay_home_1923%E2%80%9324.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Sphilbrick, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Edna_St._Vincent_Millay_home_1923%E2%80%9324.jpg"
     },
     {
       "id": "p-carrie",
@@ -2296,7 +2473,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/66_Perry_St_2022_jeh.jpg/500px-66_Perry_St_2022_jeh.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "photoCredit": "Foto: Jim.henderson, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:66_Perry_St_2022_jeh.jpg"
     },
     {
       "id": "p-washington-square",
@@ -2317,7 +2497,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Washington_Square_Arch_%2840430304445%29.jpg/500px-Washington_Square_Arch_%2840430304445%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Nan Palmero from San Antonio, TX, USA, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Washington_Square_Arch_(40430304445).jpg"
     },
     {
       "id": "p-katz",
@@ -2338,7 +2521,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b2/Katz%27s_Delicatessen_%2851623899326%29.jpg/500px-Katz%27s_Delicatessen_%2851623899326%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: ajay_suresh, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Katz%27s_Delicatessen_(51623899326).jpg"
     },
     {
       "id": "p-old-st-patrick",
@@ -2359,7 +2545,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8b/Saint_Pats_Old_Cathedral_Manh_jeh.JPG/500px-Saint_Pats_Old_Cathedral_Manh_jeh.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Jim.henderson, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Saint_Pats_Old_Cathedral_Manh_jeh.JPG"
     },
     {
       "id": "p-mott",
@@ -2380,7 +2569,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/Mott_street_fire_escapes.jpg/500px-Mott_street_fire_escapes.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Hu Totya, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Mott_street_fire_escapes.jpg"
     },
     {
       "id": "p-lombardis",
@@ -2401,7 +2593,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/82/Lombardi%27s_Pizza.jpg/500px-Lombardi%27s_Pizza.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Beyond My Ken, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Lombardi%27s_Pizza.jpg"
     },
     {
       "id": "p-yancy",
@@ -2422,7 +2617,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/Delancey_Street.jpg/500px-Delancey_Street.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Eden, Janine and Jim, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Delancey_Street.jpg"
     },
     {
       "id": "p-mib",
@@ -2443,7 +2641,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/Brooklyn_battery_tunnel_building.jpg/500px-Brooklyn_battery_tunnel_building.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "photoCredit": "Foto: Photograph by Mike Peel ( www.mikepeel.net )., CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Brooklyn_battery_tunnel_building.jpg"
     },
     {
       "id": "p-toro",
@@ -2485,7 +2686,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-0712-isole"
+      "linkedActivityId": "a-0712-isole",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Habs_castle_clinton.jpg/500px-Habs_castle_clinton.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Unknown author Unknown author, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Habs_castle_clinton.jpg"
     },
     {
       "id": "p-wall-street",
@@ -2506,7 +2710,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/Wall_Street_%2855314253740%29.jpg/500px-Wall_Street_%2855314253740%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Wall_Street_(55314253740).jpg"
     },
     {
       "id": "p-federal-hall",
@@ -2527,7 +2734,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/Federal_Hall_%2848126566178%29.jpg/500px-Federal_Hall_%2848126566178%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh from New York, NY, USA, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Federal_Hall_(48126566178).jpg"
     },
     {
       "id": "p-trinity",
@@ -2569,7 +2779,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/1_Wall_St_Court_jeh.jpg/500px-1_Wall_St_Court_jeh.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Jim.henderson, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:1_Wall_St_Court_jeh.jpg"
     },
     {
       "id": "p-poltrona",
@@ -2716,7 +2929,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": "a-0712-dumbo"
+      "linkedActivityId": "a-0712-dumbo",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Manhattan_Bridge%2C_New_York_City%2C_20231001_1051_0959.jpg/500px-Manhattan_Bridge%2C_New_York_City%2C_20231001_1051_0959.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Jakub Hałun, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Manhattan_Bridge,_New_York_City,_20231001_1051_0959.jpg"
     },
     {
       "id": "p-nintendo",
@@ -2737,7 +2953,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Nintendo_Switch_2_release_in_NYC_113.jpg/500px-Nintendo_Switch_2_release_in_NYC_113.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: SWinxy, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Nintendo_Switch_2_release_in_NYC_113.jpg"
     },
     {
       "id": "p-lego",
@@ -2779,7 +2998,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/2015_Federal_Reserve_Bank_of_New_York_from_west.jpg/500px-2015_Federal_Reserve_Bank_of_New_York_from_west.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Beyond My Ken, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:2015_Federal_Reserve_Bank_of_New_York_from_west.jpg"
     },
     {
       "id": "p-dh-oneill",
@@ -2800,7 +3022,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e6/O%27Neill_Building_%2855606537974%29.jpg/500px-O%27Neill_Building_%2855606537974%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: ajay_suresh, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:O%27Neill_Building_(55606537974).jpg"
     },
     {
       "id": "p-dh-72",
@@ -2821,7 +3046,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/72nd_Street_IRT_Broadway_013.JPG/500px-72nd_Street_IRT_Broadway_013.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Gryffindor, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:72nd_Street_IRT_Broadway_013.JPG"
     },
     {
       "id": "p-dh-tompkins",
@@ -2842,7 +3070,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2f/Tompkins_Square_Park.JPG/500px-Tompkins_Square_Park.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: David Shankbone, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Tompkins_Square_Park.JPG"
     },
     {
       "id": "p-dh-zeus",
@@ -2905,7 +3136,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Yankee_Stadium_overhead_2010.jpg/500px-Yankee_Stadium_overhead_2010.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: vtravelled.com, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Yankee_Stadium_overhead_2010.jpg"
     },
     {
       "id": "p-columbia",
@@ -2926,7 +3160,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Columbia_University_-_Low_Memorial_Library_%2848170370506%29.jpg/500px-Columbia_University_-_Low_Memorial_Library_%2848170370506%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh from New York, NY, USA, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Columbia_University_-_Low_Memorial_Library_(48170370506).jpg"
     },
     {
       "id": "p-oscorp",
@@ -2947,7 +3184,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/E_57_St_Jul_2021_16.jpg/500px-E_57_St_Jul_2021_16.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Epicgenius, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:E_57_St_Jul_2021_16.jpg"
     },
     {
       "id": "p-casa-parker",
@@ -2989,7 +3229,10 @@
       "lastVerified": "",
       "published": true,
       "alertsEnabled": false,
-      "linkedActivityId": ""
+      "linkedActivityId": "",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Prometheus_and_Skate_Rink_at_Night.JPG/500px-Prometheus_and_Skate_Rink_at_Night.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "photoCredit": "Foto: Andy C, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Prometheus_and_Skate_Rink_at_Night.JPG"
     },
     {
       "id": "p-toms",
@@ -3011,7 +3254,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Seinfeld Monk's Café Tom's Restaurant"
+      "videoQuery": "Seinfeld Monk's Café Tom's Restaurant",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Tom%27s_Restaurant_on_2880_Broadway%2C_New_York.JPG/500px-Tom%27s_Restaurant_on_2880_Broadway%2C_New_York.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Christophe Gevrey, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Tom%27s_Restaurant_on_2880_Broadway,_New_York.JPG"
     },
     {
       "id": "p-soup",
@@ -3055,7 +3301,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Mad Men Time Life Building Sterling Cooper Draper Pryce"
+      "videoQuery": "Mad Men Time Life Building Sterling Cooper Draper Pryce",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/From_the_QM5_td_%282022-09-12%29_006_-_1271_Avenue_of_the_Americas.jpg/500px-From_the_QM5_td_%282022-09-12%29_006_-_1271_Avenue_of_the_Americas.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Tdorante10, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:From_the_QM5_td_(2022-09-12)_006_-_1271_Avenue_of_the_Americas.jpg"
     },
     {
       "id": "p-snl",
@@ -3077,7 +3326,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Saturday Night Live Studio 8H tour"
+      "videoQuery": "Saturday Night Live Studio 8H tour",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/SNL_stage.jpg/500px-SNL_stage.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Rex Sorgatz from New York, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:SNL_stage.jpg"
     },
     {
       "id": "p-arconia",
@@ -3099,7 +3351,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Only Murders in the Building Arconia Belnord"
+      "videoQuery": "Only Murders in the Building Arconia Belnord",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Upper_West_Side_May_2026_198.jpg/500px-Upper_West_Side_May_2026_198.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Epicgenius, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Upper_West_Side_May_2026_198.jpg"
     },
     {
       "id": "p-b99",
@@ -3143,7 +3398,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Law & Order courthouse steps 60 Centre Street"
+      "videoQuery": "Law & Order courthouse steps 60 Centre Street",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/New_York_County_Courthouse_-_2026_%2855313845776%29.jpg/500px-New_York_County_Courthouse_-_2026_%2855313845776%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:New_York_County_Courthouse_-_2026_(55313845776).jpg"
     },
     {
       "id": "p-magnolia",
@@ -3165,7 +3423,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Sex and the City Magnolia Bakery cupcake scena"
+      "videoQuery": "Sex and the City Magnolia Bakery cupcake scena",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Magnolia_Bakery_%2855380999079%29.jpg/500px-Magnolia_Bakery_%2855380999079%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Magnolia_Bakery_(55380999079).jpg"
     },
     {
       "id": "p-bloomingdales",
@@ -3187,7 +3448,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Friends Rachel Bloomingdale's"
+      "videoQuery": "Friends Rachel Bloomingdale's",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/86/Bloomingdale%27s_%2848064045898%29.jpg/500px-Bloomingdale%27s_%2848064045898%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh from New York, NY, USA, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Bloomingdale%27s_(48064045898).jpg"
     },
     {
       "id": "p-waverly",
@@ -3231,7 +3495,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Gossip Girl Met steps scena"
+      "videoQuery": "Gossip Girl Met steps scena",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Metropolitan_Museum_of_Art_%28The_Met%29_-_Central_Park%2C_NYC.jpg/500px-Metropolitan_Museum_of_Art_%28The_Met%29_-_Central_Park%2C_NYC.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Hugo Schneider, CC BY-SA 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Metropolitan_Museum_of_Art_(The_Met)_-_Central_Park,_NYC.jpg"
     },
     {
       "id": "p-guggenheim",
@@ -3253,7 +3520,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Men in Black Guggenheim chase scene"
+      "videoQuery": "Men in Black Guggenheim chase scene",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Solomon_R._Guggenheim_Museum_%2848059131351%29.jpg/500px-Solomon_R._Guggenheim_Museum_%2848059131351%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ajay Suresh from New York, NY, USA, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Solomon_R._Guggenheim_Museum_(48059131351).jpg"
     },
     {
       "id": "p-holly",
@@ -3319,7 +3589,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Manhattan Woody Allen Queensboro Bridge bench scene"
+      "videoQuery": "Manhattan Woody Allen Queensboro Bridge bench scene",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Queensboro_Bridge_October_2024_006.jpg/500px-Queensboro_Bridge_October_2024_006.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Kidfly182, CC BY 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Queensboro_Bridge_October_2024_006.jpg"
     },
     {
       "id": "p-tavern",
@@ -3341,7 +3614,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Ghostbusters Louis Tully Tavern on the Green scena"
+      "videoQuery": "Ghostbusters Louis Tully Tavern on the Green scena",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Tavern_on_the_Green_cloudy_jeh.JPG/500px-Tavern_on_the_Green_cloudy_jeh.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Jim.henderson, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Tavern_on_the_Green_cloudy_jeh.JPG"
     },
     {
       "id": "p-columbus-circle",
@@ -3363,7 +3639,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Ghostbusters Stay Puft Marshmallow Man Columbus Circle"
+      "videoQuery": "Ghostbusters Stay Puft Marshmallow Man Columbus Circle",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Columbus_Circle_in_New_York_City.jpg/500px-Columbus_Circle_in_New_York_City.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: TarHeel4793, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Columbus_Circle_in_New_York_City.jpg"
     },
     {
       "id": "p-kevin-torri",
@@ -3385,7 +3664,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Home Alone 2 World Trade Center scene"
+      "videoQuery": "Home Alone 2 World Trade Center scene",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/World_Trade_Center%2C_New_York_City_-_aerial_view_%28March_2001%29.jpg/500px-World_Trade_Center%2C_New_York_City_-_aerial_view_%28March_2001%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Jeffmock, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:World_Trade_Center,_New_York_City_-_aerial_view_(March_2001).jpg"
     },
     {
       "id": "p-times-film",
@@ -3495,7 +3777,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Joker 2019 stairs dance scene"
+      "videoQuery": "Joker 2019 stairs dance scene",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/93/Anderson_Avenue.jpg/500px-Anderson_Avenue.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Dcastillo4070, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Anderson_Avenue.jpg"
     },
     {
       "id": "p-febbre",
@@ -3539,7 +3824,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Stuart Little boat race Central Park"
+      "videoQuery": "Stuart Little boat race Central Park",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/2910-Central_Park-Conservatory_Pond.JPG/500px-2910-Central_Park-Conservatory_Pond.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Ingfbruno, CC BY-SA 3.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:2910-Central_Park-Conservatory_Pond.JPG"
     },
     {
       "id": "p-macusa",
@@ -3561,7 +3849,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Animali fantastici MACUSA Woolworth Building scena"
+      "videoQuery": "Animali fantastici MACUSA Woolworth Building scena",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/View_of_Woolworth_Building_fixed.jpg/500px-View_of_Woolworth_Building_fixed.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "photoCredit": "Foto: Copyright by The Pictorial News Co., N.Y. No. NN 98. {{PD-US}}, Public domain, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:View_of_Woolworth_Building_fixed.jpg"
     },
     {
       "id": "p-olimpo",
@@ -3605,7 +3896,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Spider-Man 2 pizza delivery scene Joe's Pizza"
+      "videoQuery": "Spider-Man 2 pizza delivery scene Joe's Pizza",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Joe%27s_Pizza%2C_Greenwich_Village%2C_NYC.jpg/500px-Joe%27s_Pizza%2C_Greenwich_Village%2C_NYC.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Steam Pipe Trunk Distribution Venue, CC BY 2.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Joe%27s_Pizza,_Greenwich_Village,_NYC.jpg"
     },
     {
       "id": "p-infinity",
@@ -3627,7 +3921,10 @@
       "published": true,
       "alertsEnabled": false,
       "linkedActivityId": "",
-      "videoQuery": "Avengers Infinity War New York battle scene"
+      "videoQuery": "Avengers Infinity War New York battle scene",
+      "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Washington_Square_Arch-Isabella.jpg/500px-Washington_Square_Arch-Isabella.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "photoCredit": "Foto: Isabella Ruffalo-Burgat, CC BY-SA 4.0, Wikimedia Commons",
+      "photoPage": "https://commons.wikimedia.org/wiki/File:Washington_Square_Arch-Isabella.jpg"
     }
   ]
 }

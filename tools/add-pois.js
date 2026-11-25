@@ -387,9 +387,10 @@ Object.assign(UPDATE, {
 const DROP = new Set(['p-marvel-rockefeller']);
 const ZONE = { Chelsea: 'Chelsea e Flatiron', 'Greenwich Village': 'Village e SoHo', 'Downtown / Brooklyn': 'Downtown' };
 
+const photoOf = new Map(seed.pois.filter((p) => p.photoUrl).map((p) => [p.id, { photoUrl: p.photoUrl, photoCredit: p.photoCredit, photoPage: p.photoPage }]));
 const added = LIST.map(([id, name, category, linkType, work, address, zone, lat, lng, context, note, extra = {}]) => ({
   id, name, category, linkType, work, address, zone, lat, lng, coordsVerified: false, placeId: '', radius: 250,
-  context, note, source: SRC, lastVerified: '', published: true, alertsEnabled: false, linkedActivityId: '', ...extra,
+  context, note, source: SRC, lastVerified: '', published: true, alertsEnabled: false, linkedActivityId: '', ...extra, ...(photoOf.get(id) || {}),
 }));
 const ids = new Set(added.map((p) => p.id));
 const kept = seed.pois.filter((p) => !ids.has(p.id) && !DROP.has(p.id)).map((p) => {

@@ -54,6 +54,7 @@ for (const p of seed.pois || []) {
   if (p.linkedActivityId && !ids.has(p.linkedActivityId)) err(where, `"linkedActivityId" punta a un'attività che non esiste: ${p.linkedActivityId}`);
   if (typeof p.published !== 'boolean') err(where, '"published" deve essere true o false');
   text(p, 'context', where, 2000);
+  if (p.photoUrl && (!/^https:\/\/(upload|thumb)\.wikimedia\.org\//.test(p.photoUrl) || !p.photoCredit)) err(where, 'la foto deve venire da Wikimedia (upload o thumb.wikimedia.org) e avere "photoCredit" (autore e licenza)');
   coord(p, where);
 }
 

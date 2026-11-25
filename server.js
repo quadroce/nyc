@@ -208,6 +208,7 @@ const SCHEMA = {
     published: { t: 'bool' }, alertsEnabled: { t: 'bool' },
     linkedActivityId: { t: 'str', max: 40 },
     videoQuery: { t: 'str', max: 140 },
+    photoUrl: { t: 'url' }, photoCredit: { t: 'str', max: 200 }, photoPage: { t: 'url' },
   },
 };
 class Bad extends Error { constructor(msg, code = 400) { super(msg); this.code = code; } }
@@ -447,7 +448,7 @@ const SEC = {
   'Referrer-Policy': 'no-referrer',
   'X-Robots-Tag': 'noindex, nofollow',
   'X-Frame-Options': 'DENY',
-  'Content-Security-Policy': "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+  'Content-Security-Policy': "default-src 'self'; img-src 'self' data: https://upload.wikimedia.org https://thumb.wikimedia.org; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
 };
 const send = (res, code, body, headers = {}) => {
   const isObj = typeof body === 'object' && !Buffer.isBuffer(body);
