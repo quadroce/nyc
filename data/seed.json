@@ -4921,6 +4921,27 @@
       "photoUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/WonderWheelNewYork.jpg/500px-WonderWheelNewYork.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
       "photoCredit": "Foto: DangApricot, CC BY-SA 3.0, Wikimedia Commons",
       "photoPage": "https://commons.wikimedia.org/wiki/File:WonderWheelNewYork.jpg"
+    },
+    {
+      "id": "p-mi-bovisa",
+      "name": "Stazione di Milano Bovisa",
+      "category": "curiosita",
+      "linkType": "curiosita",
+      "work": "",
+      "address": "Piazza Emilio Alfieri, 20158 Milano",
+      "zone": "Milano",
+      "lat": 45.5022,
+      "lng": 9.1593,
+      "coordsVerified": true,
+      "placeId": "",
+      "radius": 500,
+      "context": "Scheda di prova, per controllare a Milano che le segnalazioni di vicinanza funzionino prima di partire. La Bovisa era la periferia delle fabbriche: il regista Ermanno Olmi, cresciuto qui, l'ha raccontata nel libro «Ragazzo della Bovisa». Oggi al posto di molte fabbriche ci sono le aule del Politecnico.",
+      "note": "Non c'entra con il viaggio: serve solo per la prova e si potrà togliere prima della partenza.",
+      "source": "Coordinate da OpenStreetMap (stazione Milano Bovisa Politecnico), novembre 2026",
+      "lastVerified": "2026-11-25",
+      "published": true,
+      "alertsEnabled": true,
+      "linkedActivityId": ""
     }
   ]
 }
