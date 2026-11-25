@@ -178,6 +178,20 @@
     if (e <= s) e = new Date(e.getTime() + 864e5);
     return { allDay: false, start: compact(s), end: compact(e) };
   }
+  // Pulsante «Condividi»: l'icona classica dei tre punti collegati; il link apre l'app direttamente su quella scheda.
+  const shareBtn = (kind, id) => `<button class="btn" data-act="share" data-kind="${kind}" data-id="${esc(id)}" aria-label="Condividi"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Condividi</button>`;
+  const poiUrl = (p) => `${location.origin}/#/vicino/${p.id}`;
+  const firstSentence = (s) => { const t = String(s || '').split(/(?<=[.!?])\s/)[0]; return t.length > 160 ? t.slice(0, 157).trimEnd() + '…' : t; };
+  async function copyLink(url) {
+    try { await navigator.clipboard.writeText(url); }
+    catch { // appunti non disponibili (permesso negato o browser vecchio): si ripiega sulla selezione
+      const t = Object.assign(document.createElement('textarea'), { value: url, readOnly: true });
+      (sheet.open ? sheet : document.body).append(t); t.select();
+      const ok = document.execCommand('copy'); t.remove();
+      if (!ok) return toast('Non riesco a copiare il link: ' + url);
+    }
+    toast('Link copiato.');
+  }
   const cardUrl = (a) => `${location.origin}/#/programma/${a.date}/${a.id}`;
   function calDetails(a) {
     return [a.meetTime ? `Ritrovo ore ${a.meetTime}${a.meetPlace ? ' — ' + a.meetPlace : ''}` : '', a.time ? `Inizio ore ${a.time}` : '', a.description,
@@ -341,6 +355,7 @@
         ${target ? extLink(mapsDir(target), 'Portami qui', 'btn primary') : ''}
         <button class="btn" data-act="cal" data-id="${esc(a.id)}">Aggiungi al calendario</button>
         ${a.voucherUrl ? extLink(a.voucherUrl, 'Voucher') : ''}
+        ${shareBtn('activity', a.id)}
         ${a.audience !== 'tutti' ? `<button class="btn${interest[a.id] ? ' on' : ''}" data-act="interest" data-id="${esc(a.id)}" aria-pressed="${Boolean(interest[a.id])}">${interest[a.id] ? '★ Mi interessa' : '☆ Mi interessa'}</button>` : ''}
         ${admin ? `<button class="btn small" data-act="edit-activity" data-id="${esc(a.id)}">✎ Modifica</button>` : ''}
       </div>
@@ -436,7 +451,7 @@
       <p class="desc">${esc(p.context)}</p>
       ${p.note ? `<p class="note">${esc(p.note)}</p>` : ''}
       ${p.linkedActivityId ? '<p class="note">Fa già parte del programma.</p>' : '<p class="note">Curiosità: non è una tappa del programma.</p>'}
-      <div class="actions">${extLink(mapsPlace(p), 'Apri in Maps')}${videoUrl(p) ? extLink(videoUrl(p), '▶ Cerca la scena su YouTube') : ''}
+      <div class="actions">${extLink(mapsPlace(p), 'Apri in Maps')}${videoUrl(p) ? extLink(videoUrl(p), '▶ Cerca la scena su YouTube') : ''}${shareBtn('poi', p.id)}
         <button class="btn${poiSeen[p.id] ? ' on' : ''}" data-act="poi-seen" data-id="${esc(p.id)}" aria-pressed="${Boolean(poiSeen[p.id])}">${poiSeen[p.id] ? '✓ Visto' : 'Segna come visto'}</button>
         ${admin ? `<button class="btn small" data-act="edit-poi" data-id="${esc(p.id)}">✎ Modifica</button>` : ''}</div>
       ${!p.coordsVerified && d != null ? '<p class="meta">Distanza indicativa: coordinate ancora da verificare.</p>' : ''}
@@ -446,7 +461,8 @@
   function poiListHtml() {
     const q = poiQuery.trim().toLowerCase();
     const zoneRank = (p) => { const i = ZONES.indexOf(p.zone); return i < 0 ? ZONES.length : i; };
-    let list = data.pois.filter((p) => !hiddenCats.includes(p.category) && (admin || !milanoOff(p)) // l'admin la vede ancora, per poterla modificare
+    const linked = view().name === 'vicino' ? view().a : ''; // scheda aperta da un link: si vede anche se la sua categoria è nascosta
+    let list = data.pois.filter((p) => (!hiddenCats.includes(p.category) || p.id === linked) && (admin || !milanoOff(p)) // l'admin la vede ancora, per poterla modificare
       && (!q || [p.name, p.work, p.zone, p.context, p.address].some((t) => String(t || '').toLowerCase().includes(q))));
     list = geo.pos
       ? list.slice().sort((a, b) => (a.lat == null ? 1e9 : dist(geo.pos, a)) - (b.lat == null ? 1e9 : dist(geo.pos, b)))
@@ -639,6 +655,7 @@
     if (typing && $('#poi-q')) { const el = $('#poi-q'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
     const target = v.name === 'programma' && v.b ? $('#act-' + CSS.escape(v.b)) : v.name === 'vicino' && v.a ? $('#poi-' + CSS.escape(v.a)) : null;
     if (target && render.flashed !== location.hash) { render.flashed = location.hash; target.scrollIntoView({ block: 'center' }); target.classList.add('flash'); }
+    else if (!target && v.name === 'vicino' && v.a && net === 'ok' && render.flashed !== location.hash) { render.flashed = location.hash; toast('Questa scheda non è più disponibile.'); }
     if (v.name === 'admin' && admin && !adminLog && !data.readOnly) loadHistory();
   }
   async function loadHistory() {
@@ -811,6 +828,18 @@
       document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
     },
     route(el) { routeSheet(el.dataset.day); },
+    async share(el) {
+      const isPoi = el.dataset.kind === 'poi';
+      const item = (isPoi ? data.pois : data.activities).find((x) => x.id === el.dataset.id);
+      if (!item) return;
+      const url = isPoi ? poiUrl(item) : cardUrl(item);
+      const payload = isPoi
+        ? { title: item.name, text: [item.work, firstSentence(item.context)].filter(Boolean).join(' — '), url }
+        : { title: item.title, text: [fmtDay(item.date) + (startOf(item) ? `, ore ${startOf(item)} (ora di New York)` : ''), item.placeName || item.meetPlace].filter(Boolean).join(' · '), url };
+      if (!navigator.share) return copyLink(url);
+      try { await navigator.share(payload); }
+      catch (err) { if (err.name !== 'AbortError') copyLink(url); } // condivisione annullata: nessun messaggio
+    },
     close: closeSheet,
     'geo-start': startWatch, 'geo-stop': stopWatch,
     mute() { muted = !muted; LS.set('muted', muted); near = []; render(); toast(muted ? 'Segnalazioni silenziate.' : 'Segnalazioni riattivate.'); },
